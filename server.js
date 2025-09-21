@@ -108,7 +108,7 @@ async function getOrCreatePageForUser(sessionId) {
 
 // --- API ROUTE ---
 app.post('/api/analyze', async (req, res) => {
-    const { url } = req.body;
+    const { url, rquest } = req.body;
     if (!url) return res.status(400).json({ error: 'URL is required' });
 
     try {
@@ -126,6 +126,7 @@ app.post('/api/analyze', async (req, res) => {
                 delete req.session.webData;
             }
         }
+
 
         let resultsWebData = await getWebData(page, config);
         let resultsPosts = await getPosts(resultsWebData);

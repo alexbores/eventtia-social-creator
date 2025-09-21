@@ -15,7 +15,7 @@ async function getWebData(page) {
         html: null
     };
 
-    const consoleLogs = [];
+    console.log('getting web data');
 
     try {
         report.html = await page.content();
@@ -24,10 +24,10 @@ async function getWebData(page) {
         console.error(`Error during getWebData for ${url}:`, error);
         throw error;
     }
+
+    console.log(report.html);
     
-    return {
-        html: report.html
-    };
+    return report.html;
 }
 
 module.exports = { getWebData };

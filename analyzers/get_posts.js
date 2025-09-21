@@ -39,6 +39,9 @@ async function getAiAnalysis(webData) {
     let aiSummary = '';
     let cleanedJsonString = '';
 
+
+    console.log('AI analyis started');
+
     try {
         aiSummary = await getAIFetch('chatgpt', finalPrompt, []);
         console.log("AI says:", aiSummary);
