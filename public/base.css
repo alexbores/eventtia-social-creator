@@ -1,0 +1,324 @@
+
+:root{
+  --content-width: 1300px;
+  --content-sides: 40px;
+
+  --color-error: #be1b1b;
+  --color-ok: #00A86B;
+  --color-warn: #ffeb3b;
+
+  --header-height: 80px;
+  --footer-height: 80px;
+}
+
+@media all and (max-width: 500px){
+  :root{
+     --content-sides: 20px;
+  }
+}
+
+/* General Reset */
+*, 
+*::before, 
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  vertical-align: baseline;
+  background: transparent;
+  font-size: 100%;
+  text-decoration: none;
+  list-style: none;
+}
+
+/* HTML elements reset */
+body, 
+html {
+  height: 100%;
+  line-height: 1.1;
+  font-family: sans-serif;
+  color: black;
+  background: white;
+}
+html{
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+body{
+  scrollbar-width: auto;
+/*  scrollbar-color: rgb(82,82,82) rgba(0,0,0,0);*/
+  scroll-behavior: smooth;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: auto;
+  overflow-x: hidden;
+/*  overflow-y: auto;*/
+}
+::-webkit-scrollbar {
+  width: 10px;
+  max-width: 10px;
+}
+::-webkit-scrollbar-track {
+  background-color: rgba(0,0,0,0);
+}
+::-webkit-scrollbar-thumb{
+  background-color: rgb(82,82,82);
+}
+
+article, 
+aside, 
+details, 
+figcaption, 
+figure, 
+footer, 
+header, 
+hgroup, 
+main, 
+menu, 
+nav,  
+summary {
+  display: block;
+}
+
+
+main,
+header,
+footer{
+  width: 100%;
+  max-width: 100%;
+}
+header,
+footer,
+section,
+.content{
+  display: flex;
+  position: relative;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+section,
+header,
+footer{
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+}
+.content{
+  flex-wrap: wrap;
+  flex-direction: column;
+  max-width: var(--content-width);
+  width: calc(100% - var(--content-sides));
+}
+
+main{
+  min-height: calc(100vh - var(--footer-height) - var(--header-height));
+}
+
+
+/* Form elements reset */
+input, 
+button {
+  font-family: inherit;
+  font-size: 100%;
+  color: inherit;
+  line-height: inherit;
+  background-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+button::-moz-focus-inner, 
+[type="button"]::-moz-focus-inner, 
+[type="submit"]::-moz-focus-inner, 
+[type="reset"]::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
+}
+
+button:-moz-focusring, 
+[type="button"]:-moz-focusring, 
+[type="submit"]:-moz-focusring, 
+[type="reset"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Adjusting styles for disabled elements */
+input:disabled, 
+button:disabled{
+  opacity: 0.5;
+}
+
+textarea{
+  resize: none;
+}
+
+.input{
+  --placeholder-font-family: sans-serif;
+  --placeholder-font-size: 20px;
+  --placeholder-font-weight: 400;
+  --placeholder-line-height: 1.1;
+  --placeholder-text-align: left;
+  --placeholder-color: gray;
+  height: 45px;
+  -webkit-appearance: initial;
+  appearance: none;
+  flex-grow: 1;
+  padding: 8px;
+  text-decoration: unset !important;
+}
+.input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+.input:placeholder{
+  font-family: var(--placeholder-font-family);
+  font-size: var(--placeholder-font-size);
+  font-weight: var(--placeholder-font-weight);
+  line-height: var(--placeholder-line-height);
+  text-align: var(--placeholder-text-align);
+  color: var(--placeholder-color);
+}
+.input:-moz-placeholder{ 
+  font-family: var(--placeholder-font-family);
+  font-size: var(--placeholder-font-size);
+  font-weight: var(--placeholder-font-weight);
+  line-height: var(--placeholder-line-height);
+  text-align: var(--placeholder-text-align);
+  color: var(--placeholder-color);
+}
+.input:-ms-input-placeholder{ 
+  font-family: var(--placeholder-font-family);
+  font-size: var(--placeholder-font-size);
+  font-weight: var(--placeholder-font-weight);
+  line-height: var(--placeholder-line-height);
+  text-align: var(--placeholder-text-align);
+  color: var(--placeholder-color);
+}
+.input::-moz-placeholder{ 
+  font-family: var(--placeholder-font-family);
+  font-size: var(--placeholder-font-size);
+  font-weight: var(--placeholder-font-weight);
+  line-height: var(--placeholder-line-height);
+  text-align: var(--placeholder-text-align);
+  color: var(--placeholder-color);
+}
+.input::-webkit-input-placeholder{ 
+  font-family: var(--placeholder-font-family);
+  font-size: var(--placeholder-font-size);
+  font-weight: var(--placeholder-font-weight);
+  line-height: var(--placeholder-line-height);
+  text-align: var(--placeholder-text-align);
+  color: var(--placeholder-color);
+}
+
+
+.button {
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none; 
+  border: none;
+  font-size: 16px; 
+  line-height: 1;
+}
+
+
+/* Reset anchor tag underlines */
+
+
+/* Prevent text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+ol,ul{
+  list-style: disc;
+}
+
+/* Image and iframe border reset */
+img{
+  border: 0;
+  object-fit: contain;
+  user-select: none;
+  -webkit-touch-callout: none;  
+}
+img, 
+embed, 
+object, 
+iframe, 
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+
+strong,b{
+  font-weight: bold;
+}
+span,strong,b,a,option{
+  font-size: inherit;
+  color: inherit;
+  font-family: inherit;
+  line-height: inherit;
+}
+a {
+  text-decoration: none;
+}
+a,a:hover{
+  text-decoration: none; 
+}
+a:focus{
+  color: none;
+}
+
+
+
+.hide{
+  display: none;
+}
+[hidden]{
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  z-index: -1;
+}
+
+
+
+
+/*tables*/
+table {
+    width: 100%;               
+    border-collapse: separate; 
+    table-layout: fixed;   
+    border-spacing: 0 0;
+}
+th,
+td {
+    padding: 8px;               
+    text-align: left;     
+    align-content: center;      
+}
+
