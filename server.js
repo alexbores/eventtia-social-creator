@@ -138,7 +138,7 @@ app.post('/api/analyze', async (req, res) => {
         );
         
     } catch (error) {
-        console.error(`Error during analysis for request '${request}':`, error);
+        console.error(`Error during analysis for request :`, error);
         res.status(500).json({ error: `Failed to analyze the page. Error: ${error.message}` });
     }
 });
