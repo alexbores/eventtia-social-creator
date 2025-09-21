@@ -1,6 +1,7 @@
 
 :root{
   --content-width: 1300px;
+  --content-width-small: 900px;
   --content-sides: 40px;
 
   --color-error: #be1b1b;

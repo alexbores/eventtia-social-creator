@@ -36,7 +36,17 @@
     </section>
 
     <section id="fetching-screen">
-        
+        <div class="content">
+            <div class="loading-card">
+                <h2 class="title">
+                   Event wep is being analyzed
+                </h2>
+
+                <div class="progress-bar">
+                  <div class="progress-bar-inner"></div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <section id="posts-screen">
@@ -145,8 +155,16 @@
                 this.state.posts = response.posts;
 
                 console.log(response);
+
+                let screen = document.querySelector('#fetching-screen');
+                // screen.classList.remove('loading');
+                screen.classList.add('end-loading');
+
+                setTimeout(()=>{
+                     this.showScreen('posts-screen');
+                },1000);
+
                 
-                this.showScreen('posts-screen');
             } catch (error) {
                 console.error("Initial data fetch failed:", error.message);
                 
@@ -161,7 +179,12 @@
               screen.classList.add('hide');
             });
 
-            document.querySelector(`#${screenName}`).classList.remove('hide');
+            let screen = document.querySelector(`#${screenName}`);
+            screen.classList.remove('hide');
+
+            if(screenName == 'fetching-screen'){
+                screen.classList.add('loading');
+            }
         },
     };
 
