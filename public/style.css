@@ -304,18 +304,23 @@ p,h1,h2,h3,li{
 
 #posts-screen{
    padding-top: 60px;
+   align-items: center;
+   justify-content: center;
 }
 #posts-screen .title{
 	color: white;
+	text-align: center;
 }
 #posts-screen .text{
 	color: var(--color-gray);
+	text-align: center;
 }
 #posts-screen .posts-wrapper{
 	display: flex;
 	gap: 40px;
     flex-direction: column;
     max-width: 900px;
+    margin-top: 40px;
 }
 #posts-screen .post-card{
    width: 100%;
