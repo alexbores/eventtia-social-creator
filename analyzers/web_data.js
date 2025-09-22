@@ -25,7 +25,6 @@ async function getWebData(page) {
         throw error;
     }
 
-    console.log(report.html);
     
     return report.html;
 }

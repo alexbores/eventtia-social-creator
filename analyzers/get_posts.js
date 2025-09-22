@@ -12,11 +12,10 @@ const { getPrompt } = require('../modules/prompt_generator');
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getPosts(webData) {
-    const { html } = webData;
+async function getPosts(html) {
 
     let items;
-    items = await getAiAnalysis(webData);
+    items = await getAiAnalysis(hmtl);
     items.map(item => {
       item.status = 'schedule'
     });
@@ -28,8 +27,7 @@ async function getPosts(webData) {
 
 
 
-async function getAiAnalysis(webData) {
-    const { html } = webData;
+async function getAiAnalysis(html) {
 
     const prompt = getPrompt();
     
