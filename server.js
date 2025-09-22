@@ -77,7 +77,7 @@ app.post('/api/analyze', async (req, res) => {
         });
         
         const page = await browser.newPage();
-        await page.goto(url, { waitUntil: 'networkidle0', timeout: 90000 });
+        await page.goto(url, { waitUntil: 'networkidle0', timeout: 900000 });
         await autoScroll(page);
 
         const webData = await getWebData(page, config);
