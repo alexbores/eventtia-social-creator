@@ -53,7 +53,12 @@
 
     <section id="posts-screen">
         <div class="content">
-            
+            <h2 class="title">
+                Your Instagram Campaign
+            </h2>
+            <p class="text">
+                AI generated 5 strategic posts for your event promotion
+            </p>
             <div class="posts-wrapper">
                 
             </div>
@@ -202,10 +207,10 @@
                     <div class="post-card">
                        <div class="bar">
                            <p class="type">${post.type}</p>
-                           <p class="type">${post.date}</p>
+                           <p class="date">posting date: ${post.date}</p>
                        </div>
                        <h3 class="post-title">${post.title}</h3>
-                       <p class="post-content">${post.description}</p>
+                       <p class="post-content">${post.content}</p>
                     </div>
                 `;
             });

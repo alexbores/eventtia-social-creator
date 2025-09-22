@@ -16,7 +16,7 @@
 
 }
 
-html{
+html,body{
    background-color: var(--color-blue-deep);
 }
 p,h1,h2,h3,li{
@@ -303,12 +303,19 @@ p,h1,h2,h3,li{
 
 
 #posts-screen{
-
+   padding-top: 60px;
+}
+#posts-screen .title{
+	color: white;
+}
+#posts-screen .text{
+	color: var(--color-gray);
 }
 #posts-screen .posts-wrapper{
 	display: flex;
 	gap: 40px;
     flex-direction: column;
+    max-width: 900px;
 }
 #posts-screen .post-card{
    width: 100%;
@@ -318,8 +325,8 @@ p,h1,h2,h3,li{
    background-color: #000000cf;
    display: flex;
    flex-direction: column;
-   align-items: center;
-   justify-content: center;
+   align-items: start;
+   justify-content: start;
    gap: 10px;
 
    backdrop-filter: blur(4.1px);
@@ -340,4 +347,15 @@ p,h1,h2,h3,li{
 }
 #posts-screen .post-card .post-content{
 	color: var(--color-gray);
+}
+#posts-screen .post-card .type{
+   border-radius: 500px;
+   padding: 5px 12px;
+   background-color: rgb(192 132 252);
+   color: white;
+   font-size: var(--font-size-text-small);
+}
+#posts-screen .post-card .date{
+	color: white;
+	font-size: var(--font-size-text-small);
 }
