@@ -1,20 +1,21 @@
 function getPrompt() {
     const prompt = `
-        You are an automated event analysis and social media post creator engine. 
-        Your sole function is to process the html content of the event website 
+        You are an automated social media post creator engine. 
+        Your sole function is to create a list of posts for social media promotting the upcomming event
+        by processing the html content of the event website 
         and return a single, raw JSON array \`[]\` that lists all the posts.
 
-        find the date of the event based on the html and then generate a list 
-        of posts that will become more urgent when the date of the event is near, 
+        The posts will become more urgent when the date of the event is near, 
         start with a simple announcement, then promote key event detail like acitvities and speakers
         then make them more urgent as the date approches.
 
-        the list lenght must vary depending of the date of the event 
+        The list lenght must vary depending of the date of the event 
         try to create the posts logically apart for the best marketing impact.
         
         Your entire output **MUST** be a single JSON array, 
         with no explanatory text or markdown formatting. 
-        Each object in the array represents a single issue and **MUST** 
+
+        Each object in the array represents a single post and **MUST** 
         contain these six keys:
         
         1.  **\`"id"\`**: (int) a unique id secuential.
