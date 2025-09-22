@@ -41,20 +41,20 @@ Each object in the array **MUST** contain these seven keys:
 [
   {
     "id": 1,
-    "date": "2025-09-29",
-    "title": "🎉 Announcing Innovate Summit 2025!",
-    "content": "Mark your calendars! The premier event for digital creators and innovators is coming. Join us for a week of groundbreaking talks and workshops.",
-    "image": "https://example.com/images/hero-banner.jpg",
-    "hashtags": ["#InnovateSummit2025", "#DigitalCreators", "#TechEvent"],
+    "date": "YYYY-MM-DD",
+    "title": "🎉 [Catchy Announcement Title]!",
+    "content": "[Engaging 1-3 sentence description of the event, what it is, and for whom.]",
+    "image": "https://example.com/images/[relevant_image_name].jpg",
+    "hashtags": ["[#EventNameYYYY]", "#[PrimaryTopic]", "#[City]"],
     "type": "announcement"
   },
   {
     "id": 2,
-    "date": "2025-10-06",
-    "title": "Speaker Spotlight: Meet Jane Doe",
-    "content": "We're thrilled to have AI visionary Jane Doe as our keynote speaker! She'll be diving deep into the future of creative AI.",
-    "image": "https://example.com/images/speaker-jane-doe.jpg",
-    "hashtags": ["#AI", "#Keynote", "#InnovateSummit2025"],
+    "date": "YYYY-MM-DD",
+    "title": "[Post Type] Spotlight: Meet [Name]",
+    "content": "[Exciting 1-3 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
+    "image": "https://example.com/images/[feature_specific_image].jpg",
+    "hashtags": ["[#SpecificTopic]", "#[FeatureType]", "#[EventName]"],
     "type": "speaker"
   }
 ]
