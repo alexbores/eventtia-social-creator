@@ -7,7 +7,7 @@ function getPrompt() {
 ---
 ### ### Content Generation Logic
 
-1.  **Reference Date:** based on the current date and the date of the event. Calculate all post dates relative to this.
+1.  **Reference Date:** based on the current date and the date of the event extracted from the html. Calculate all post dates relative to this.
 2.  **Post Cadence:** Determine the number and frequency of posts based on the event's date:
     * **More than 1 month away:** Post once every 1-2 weeks (announcements, venue, city highlights).
     * **2-4 weeks away:** Post once or twice a week (speaker reveals, activity details, early-bird deadlines).
@@ -19,13 +19,6 @@ function getPrompt() {
     * **Phase 2 (Details):** Highlight key features like speakers, activities, workshops, or sponsors.
     * **Phase 3 (Urgency):** Focus on ticket deadlines, "selling out soon," and final reminders.
 
-
----
-### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
-
-* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
-* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
-* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
 
 
 ---
@@ -42,7 +35,7 @@ Each object in the array **MUST** contain these seven keys:
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
 
 ---
-### ### Example Output Format, but use the real information on the html provided
+### ### Example Output Format
 
 \\\`\\\`\\\`json
 [
@@ -67,7 +60,16 @@ Each object in the array **MUST** contain these seven keys:
 ]
 \\\`\\\`\\\`
 
+but use the real information from the html provided and generate the content based on the context fo the html
+
 ---
+### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
+
+* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
+* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
+* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
+
+
 
 **Begin analysis. Process the following HTML content:**
 
