@@ -20,7 +20,7 @@ async function getPosts(html) {
       item.status = 'schedule'
     });
 
-    return posts;
+    return items;
 }
 
 
@@ -30,7 +30,7 @@ async function getAiAnalysis(html) {
     const prompt = getPrompt();
     
     let srippedHtml = stripHtml(html);
-    let finalPrompt = `\n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
+    let finalPrompt = `${prompt} \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
     
     let aiSummary = '';
     let cleanedJsonString = '';
