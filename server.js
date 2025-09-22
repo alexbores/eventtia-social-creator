@@ -78,8 +78,22 @@ app.post('/api/analyze', async (req, res) => {
         
         const page = await browser.newPage();
 
+        // 1. Enable request interception
+        await page.setRequestInterception(true);
+        
+        // 2. Listen for each request and decide whether to continue or abort it
+        page.on('request', (req) => {
+            const resourceType = req.resourceType();
+            if (['stylesheet', 'font'].includes(resourceType)) {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
+
+
         console.log(`going to the url`);
-        await page.goto(url, { waitUntil: 'networkidle0', timeout: 900000 });
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 900000 });
         // await autoScroll(page);
         
 
