@@ -3,12 +3,6 @@ function getPrompt() {
 
 **Primary Directive:** Analyze the event html provided at the end of this prompt and generate a JSON array containing a social media posting schedule.
 
----
-### ### Output Rules (Strictly Adhere)
-
-* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
-* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
-* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
 
 ---
 ### ### Content Generation Logic
@@ -67,6 +61,14 @@ Each object in the array **MUST** contain these seven keys:
 ---
 
 **Begin analysis. Process the following HTML content:**
+
+---
+### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
+
+* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
+* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
+* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
+
 
 `;
 

@@ -20,9 +20,7 @@ async function getPosts(html) {
       item.status = 'schedule'
     });
 
-    return {
-        posts: items
-    };
+    return posts;
 }
 
 
