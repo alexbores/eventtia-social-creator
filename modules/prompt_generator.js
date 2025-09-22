@@ -60,7 +60,7 @@ Each object in the array **MUST** contain these seven keys:
 ]
 \\\`\\\`\\\`
 
-but use the real information from the html provided and generate the content based on the context fo the html
+but use the real information from the html provided and generate the content based on the context of the html
 
 ---
 ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
