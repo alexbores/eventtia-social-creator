@@ -48,7 +48,10 @@ function getPrompt() {
           },
         ]
         \`\`\`
+        
 
+        Very important that Your entire output **MUST** be a single JSON array.
+        with no explanatory text or markdown formatting. 
     `;
 
     return prompt;
