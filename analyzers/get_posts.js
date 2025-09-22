@@ -15,7 +15,7 @@ const { getPrompt } = require('../modules/prompt_generator');
 async function getPosts(html) {
 
     let items;
-    items = await getAiAnalysis(hmtl);
+    items = await getAiAnalysis(html);
     items.map(item => {
       item.status = 'schedule'
     });
