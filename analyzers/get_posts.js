@@ -25,7 +25,7 @@ async function getPosts(data) {
 
 async function getAiAnalysis(data) {
 
-    const prompt = getPrompt();
+    const prompt = getPromptPosts();
     
     let finalPrompt = `${prompt} \n\nHere is the page's content:\n\`\`\`json\n${data}\n\`\`\``;
     

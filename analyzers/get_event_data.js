@@ -23,7 +23,7 @@ async function getEventData(html) {
 
 async function getAiAnalysis(html) {
 
-    const prompt = getPrompt();
+    const prompt = getPromptContent();
     
     let srippedHtml = stripHtml(html);
     let finalPrompt = `${prompt} \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
