@@ -285,15 +285,15 @@
 
 
         renderData(){
-            postsGeneratedEls.forEach(el=>{
+            this.elements.postsGeneratedEls.forEach(el=>{
                el.innerHTML = this.state.posts.length;
             });
 
-            eventDateEls.forEach(el=>{
+            this.elements.eventDateEls.forEach(el=>{
                el.innerHTML = this.state.eventData.eventDate;
             });
 
-            daysUntilEventEls.forEach(el=>{
+            this.elements.daysUntilEventEls.forEach(el=>{
                el.innerHTML = this.getDaysUntil(this.state.eventData.eventDate);
             });
         },
