@@ -380,6 +380,7 @@ p,h1,h2,h3,li{
 	border: 1px solid rgba(209, 203, 192, 0.38);
 	padding: 20px;
 	width: 100%;
+	border-radius: 22px;
 }
 #posts-screen .posts-content .posts-content-title{
 	color: white;
@@ -389,10 +390,10 @@ p,h1,h2,h3,li{
 	gap: 40px;
     flex-direction: column;
     max-width: 900px;
-    width: calc(100% - 40px);
+    width: calc(100% - 80px);
     margin-top: 40px;
-    margin-right: 20px;
-    margin-left: 20px;
+    margin-right: 40px;
+    margin-left: 40px;
 }
 #posts-screen .post-card{
    width: 100%;
