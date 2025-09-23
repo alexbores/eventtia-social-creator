@@ -269,7 +269,7 @@ p,h1,h2,h3,li{
   width: 0; 
   background-color: hsl(142 70% 45%); 
   border-radius: 10px;
-  transition: width 4s ease-out;
+  transition: width 8s ease-out;
 }
 
 #fetching-screen[progress="1"] .progress-bar-inner{
@@ -289,6 +289,9 @@ p,h1,h2,h3,li{
 }
 #fetching-screen[progress="6"] .progress-bar-inner{
   width: 60%; 
+}
+#fetching-screen[progress="7"] .progress-bar-inner{
+  width: 70%; 
 }
 #fetching-screen[progress="8"] .progress-bar-inner{
   width: 80%; 
