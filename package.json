@@ -16,6 +16,8 @@
     "express-session": "^1.18.0",
     "node-fetch": "^2.7.0",
     "puppeteer-core": "^22.12.1",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "jsdom": "^24.1.0"
   }
+
 }

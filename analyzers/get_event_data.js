@@ -1,7 +1,10 @@
 const path = require('path');
 const fs = require('fs');
-// crypto is no longer needed in this file
+
+
 const fetch = require('node-fetch');
+const { JSDOM } = require('jsdom');
+
 const { getAIFetch } = require('../modules/AI_fetcher');
 const { stripHtml } = require('../modules/html_stripper');
 const { getPromptDate } = require('../modules/prompt_generator');
@@ -53,11 +56,12 @@ async function getAiAnalysis(html) {
 
 async function getContent(html){
     
-    // 1. Use DOMParser to turn the HTML string into a real DOM document.
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlString, 'text/html');
+  // 2. Create a JSDOM instance from the HTML string.
+  // The 'dom.window.document' object is your equivalent to the browser's 'document'.
+  const dom = new JSDOM(htmlString);
+  const doc = dom.window.document;
 
-  // 2. Define the CSS selectors for all tags you want to extract text from.
+  // 3. The rest of your code works exactly the same!
   const selectors = [
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // Headings
     'p', // Paragraphs
@@ -74,20 +78,17 @@ async function getContent(html){
     '[type="application/ld+json"]'
   ];
 
-  // 3. Find all matching elements and extract their text content.
+
   const elements = doc.querySelectorAll(selectors.join(', '));
   let combinedText = '';
 
   elements.forEach(el => {
-    // el.textContent gets the text of an element and all its children.
-    // .trim() removes extra whitespace from the start and end.
     const text = el.textContent.trim();
     if (text) {
-      combinedText += text + '\n'; // Add a newline for readability
+      combinedText += text + '\n';
     }
   });
 
-  // 4. Specifically find and add the content of any ld+json scripts.
   const ldJsonScripts = doc.querySelectorAll('script[type="application/ld+json"]');
   ldJsonScripts.forEach(script => {
     const jsonContent = script.textContent.trim();
