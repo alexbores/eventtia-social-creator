@@ -115,7 +115,6 @@ app.post('/api/analyze', async (req, res) => {
             response = await getEventData(webData);
           break;
           case 'posts':
-            // --- Step 3: CPU-bound analysis block (no browser open) ---
             console.log('Starting analysis of web data...');
             response = await getPosts(webData);
           break;
@@ -123,7 +122,7 @@ app.post('/api/analyze', async (req, res) => {
         }
 
         // --- Step 4: Send the final response ---
-        res.status(200).json({ response });
+        res.status(200).json(response);
 
     } catch (error) {
         console.error(`Error during analysis for ${url}:`, error);
