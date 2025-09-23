@@ -306,6 +306,7 @@ p,h1,h2,h3,li{
    padding-top: 60px;
    align-items: center;
    justify-content: center;
+   padding-bottom: 60px;
 }
 #posts-screen .content{
   align-items: center;
