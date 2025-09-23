@@ -21,8 +21,12 @@ async function getEventData(html) {
 
     let eventDate = await getAiAnalysis(html);
 
+    console.log('event date :'+eventDate);
+
 
     eventDate = advanceDateIfOlder(eventDate, currentDate);
+
+    console.log('event date modified:'+eventDate);
 
 
     let content = await getContent(html);
@@ -50,7 +54,7 @@ async function getAiAnalysis(html) {
         aiSummary = await getAIFetch('chatgpt', finalPrompt, []);
         console.log("AI says:", aiSummary);
 
-        cleanedString = aiSummary.trim();
+        cleanedString = aiSummary.trim().slice(1, -1);
     
     } catch (error) {
         console.error('error in ai fetch: ',error);

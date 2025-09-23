@@ -24,6 +24,9 @@ async function getPosts(data) {
 }
 
 async function getAiAnalysis(data) {
+    
+    console.log('Event Data');
+    console.log(data);
 
     const prompt = getPromptPosts();
     
