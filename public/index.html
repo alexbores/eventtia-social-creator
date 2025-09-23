@@ -12,6 +12,17 @@
 
 <body>
     
+    <section id="nav">
+        <div class="content">
+            <h1>Event Social Creator</h1>
+
+            <div class="options">
+                <a href="/" target="_blank" class="option">
+                   Analyze Other Event
+                </a>
+            </div>
+        </div>
+    </section>
 
     <section id="url-screen">
         <img src="./back.jpg" class="back">
@@ -67,9 +78,14 @@
                     <p class="text info">Event Date: <span event-date></span></p>
                     <p class="text info">Days Until Event: <span days-until-event></span></p>
                 </div>
-            <div>
-            <div class="posts-wrapper">
+            </div>
+            <div class="posts-content">
+              <h3 class="posts-content-title">
+                  Posts List
+              </h3>
+              <div class="posts-wrapper">
                 
+              </div>
             </div>
         </div>
     </section>
@@ -270,12 +286,17 @@
             this.state.posts.forEach(post=>{
                 html += `
                     <div class="post-card">
-                       <div class="bar">
-                           <p class="type">${post.type}</p>
-                           <p class="date">posting date: ${post.date}</p>
-                       </div>
-                       <h3 class="post-title">${post.title}</h3>
-                       <p class="post-content">${post.content}</p>
+                        <div class="bar">
+                            <p class="type" type="${post.type}">${post.type.replace('_',' ')}</p>
+                            <p class="date">posting date: ${post.date}</p>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-content">${post.content}</p>
+                        <div class="hashtags">
+                            ${post.hashtags.map(hashtag => {
+                                return `<p class="hashtag">${hashtag}</p>`;
+                            }).join('')} 
+                        </div>
                     </div>
                 `;
             });
