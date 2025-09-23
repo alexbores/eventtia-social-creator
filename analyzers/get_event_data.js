@@ -70,7 +70,7 @@ async function getContent(html){
     'strong', 'b', // Bold text
     'em', 'i', // Italicized text
     'blockquote', // Blockquotes
-    'title' // The page title
+    'title', // The page title
     '[type="application/ld+json"]'
   ];
 
