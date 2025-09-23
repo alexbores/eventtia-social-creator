@@ -226,7 +226,7 @@
         
             // Update state with the new data
             this.state.webData = response;
-        }
+        },
         async getEventData(){
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
@@ -240,7 +240,7 @@
         
             // Update state with the new data
             this.state.eventData = response;
-        }
+        },
         async getPosts(){
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
@@ -254,7 +254,7 @@
         
             // Update state with the new data
             this.state.posts = response;
-        }
+        },
 
 
         // --- UI RENDERING ---
