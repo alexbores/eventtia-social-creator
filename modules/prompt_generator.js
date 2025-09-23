@@ -10,9 +10,9 @@ function getPromptPosts() {
 1.  **Reference Date:** based on the current date provided at the end of the prompt and the date of the event given at the end of this prompt. Calculate all post dates relative to this.
 2.  **Post Cadence:** Determine the number and frequency of posts based on the event's date:
     * **More than 1 month away:** Post once every 1-2 weeks (announcements, venue, city highlights).
-    * **2-4 weeks away:** Post once or twice a week (speaker reveals, activity details, early-bird deadlines).
-    * **Final Week:** Post every 1-2 days (build hype, post reminders, ticket warnings).
-    * **Final 2 Days:** Post daily, creating urgency ("Tomorrow!", "Last chance!").
+    * **3-4 weeks away:** Post twice a week (speaker reveals, activity details, early-bird deadlines).
+    * **Final 2 Week:** Post every 1-2 days (build hype, post reminders, ticket warnings).
+    * **Final 3 Days:** Post daily, once per day until the event, creating urgency ("Tomorrow!", "Last chance!").
     * **Event Day:** Post at the start of the event ("It's happening now!").
 3.  **Content Arc:** The posts must tell a story, starting broad and becoming more urgent.
     * **Phase 1 (Announcement):** General announcement of the event.

@@ -102,10 +102,13 @@ p,h1,h2,h3,li{
   border: 1.7px solid white;
   background-color: unset;
   color: white;
+  height: 40px;
+  padding: 0 15px;
+  font-size: 16px;
 }
 .button.button-secondary:hover{
 	background-color: white;
-	color: black;
+	color: black!important;
 }
 
 
@@ -141,6 +144,7 @@ p,h1,h2,h3,li{
 }
 #nav .content{
   height: 60px;
+  padding-top: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -456,7 +460,9 @@ p,h1,h2,h3,li{
    background-color: #a855f733;
    color: rgb(192, 132,252);
 }
-#posts-screen .post-card .type[type="reminder"]{
+#posts-screen .post-card .type[type="reminder"],
+#posts-screen .post-card .type[type="venue"],
+#posts-screen .post-card .type[type="sponsors"]{
    background-color: #f9731633;
    color: rgb(251,146,60);
 }
@@ -464,7 +470,7 @@ p,h1,h2,h3,li{
        background-color: #ef444433;
    color: rgb(248, 113, 113);
 }
-#posts-screen .post-card .type[type="event_date"]{
+#posts-screen .post-card .type[type="event_day"]{
        background-color: #ef444433;
    color: rgb(74, 222, 128);
 }
