@@ -65,43 +65,40 @@ async function getAiAnalysis(html) {
 }
 
 
-async function getContent(html){
-    
+async function getContent(html) {
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
-  const selectors = [
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // Headings
-    'p', // Paragraphs
-    'li', // List items
-    'a', // Links
-    'button', // Buttons
-    'span', // Spans
-    'label', // Form labels
-    'td', 'th', // Table cells
-    'strong', 'b', // Bold text
-    'em', 'i', // Italicized text
-    'blockquote', // Blockquotes
-    'title', // The page title
-    '[type="application/ld+json"]'
+  // 1. Define selectors for standard, human-readable text tags.
+  const textSelectors = [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'li', 'a', 'button', 'span', 'label',
+    'td', 'th', 'strong', 'b', 'em', 'i',
+    'blockquote', 'title', 'div',
   ];
 
-
-  const elements = doc.querySelectorAll(selectors.join(', '));
   let combinedText = '';
 
-  elements.forEach(el => {
+  // 2. Query for the standard text elements and extract their content.
+  const textElements = doc.querySelectorAll(textSelectors.join(', '));
+  textElements.forEach(el => {
     const text = el.textContent.trim();
     if (text) {
       combinedText += text + '\n';
     }
   });
 
+  // 3. Query separately and specifically for the ld+json script tags.
+  const ldJsonScripts = doc.querySelectorAll('script[type="application/ld+json"]');
+  ldJsonScripts.forEach(script => {
+    const jsonContent = script.textContent.trim();
+    if (jsonContent) {
+      combinedText += jsonContent + '\n';
+    }
+  });
 
   console.log(combinedText);
-
   return combinedText;
-
 }
 
 function getCurrentDate(){
@@ -123,7 +120,13 @@ function getCurrentDate(){
 }
 
 
-
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Add 1 because months are 0-indexed
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+}
 function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
   const dateToCheck = new Date(dateToCheckStr);
   const referenceDate = new Date(referenceDateStr);
@@ -142,8 +145,9 @@ function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
   }
 
   console.log(`Final updated date: ${dateToCheck.toDateString()}`);
-  return dateToCheck;
+  return formatDate(dateToCheck);
 }
+
 
 
 module.exports = { getEventData };
