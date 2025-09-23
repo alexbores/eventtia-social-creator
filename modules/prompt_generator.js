@@ -1,5 +1,5 @@
 function getPromptPosts() {
-    const prompt = `You are a JSON generation service. Your function is to convert the provided event website content into a single, raw JSON array of social media posts.
+    const prompt = `You are a JSON generation service. Your function is to convert the provided event CONTENT into a single, raw JSON array of social media posts.
 
 **Primary Directive:** Analyze the event html provided at the end of this prompt and generate a JSON array containing a social media posting schedule with generated content.
 
@@ -71,7 +71,7 @@ but use the real information from the html provided and generate the content bas
 
 
 
-**Begin analysis. Process the following content content:**
+**Begin analysis. Process the following content but ignore any css code in you analysis:**
 
 
 
@@ -81,48 +81,22 @@ but use the real information from the html provided and generate the content bas
 }
 
 function getPromptContent() {
-    const prompt = `You are a JSON generation service. Your function is to convert the provided event website HTML into a single, raw JSON array of key information.
+    const prompt = `You are a content cleaning service. Your function is to convert the provided event website HTML and Content into a single string of readable information.
 
-**Primary Directive:** Analyze the event html provided at the end of this prompt and generate a JSON array containing key event details.
+**Primary Directive:** Analyze the event html and content provided at the end of this prompt and extract any valuable information in a single string.
 
-
----
-### ### JSON Object Schema
-
-Each object in the array **MUST** contain these seven keys:
-
-1.  **\`date\`** (string): Get the first date of the event and save it in \`YYYY-MM-DD\` format from the html content, do not invent it, if not found leave it blank.
-.
-2.  **\`content\`** (string): Get a single paragraph with all the event data founded in the html that is relevant to the event, without the html tags.
-3.  **\`image\`** (string): A list of the **full URL** of a relevant images from the website. **Do not repeat images.** If a full URL isn't available, use the relative path.
-
----
-### ### Example Output Format (only one item)
-
-\\\`\\\`\\\`json
-[
-  {
-    "date": "YYYY-MM-DD",
-    "content": "[all the relevant text content of the event]",
-    "image": "https://example.com/images/[relevant_image_name].jpg, https://example.com/images/[relevant_image_name_2].jpg",
-  }
-]
-\\\`\\\`\\\`
-
-but use the real information from the html provided.
+Use the real information from the html and content provided do not invent or make up anything.
 
 ---
 ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
 
-* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array with one item.
+* **STRING ONLY:** Your entire output **MUST** be a single, valid, string.
 * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
 * **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
 
 
 
-**Begin analysis. Process the following HTML content:**
-
-
+**Begin analysis. Process the following HTML and content:**
 
 `;
 

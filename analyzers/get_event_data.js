@@ -7,7 +7,7 @@ const { JSDOM } = require('jsdom');
 
 const { getAIFetch } = require('../modules/AI_fetcher');
 const { stripHtml } = require('../modules/html_stripper');
-const { getPromptDate } = require('../modules/prompt_generator');
+const { getPromptDate, getPromptContent } = require('../modules/prompt_generator');
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
@@ -19,7 +19,7 @@ async function getEventData(html) {
     
     let currentDate = getCurrentDate();
 
-    let eventDate = await getAiAnalysis(html);
+    let eventDate = await getAiAnalysisDate(html);
 
     console.log('event date :'+eventDate);
 
@@ -31,12 +31,16 @@ async function getEventData(html) {
 
     let content = await getContent(html);
 
+    content = await getAiAnalysisDate(content);
+
+    console.log('event cleaned content :'+content);
+
     return {currentDate, eventDate, content};
 }
 
 
 
-async function getAiAnalysis(html) {
+async function getAiAnalysisDate(html) {
 
     const prompt = getPromptDate();
     
@@ -55,6 +59,33 @@ async function getAiAnalysis(html) {
         console.log("AI says:", aiSummary);
 
         cleanedString = aiSummary.trim().slice(1, -1);
+    
+    } catch (error) {
+        console.error('error in ai fetch: ',error);
+        aiSummary = error.message;
+    }
+
+    return cleanedString;
+}
+
+async function getAiAnalysisContent(data) {
+
+    const prompt = getPromptContent();
+    
+    let finalPrompt = `${prompt} 
+                       \n\nHere is the content:\n\`\`\`\n${data}\n\`\`\``;
+    
+    let aiSummary = '';
+    let cleanedString = '';
+
+
+    console.log('AI analyis started');
+
+    try {
+        aiSummary = await getAIFetch('chatgpt', finalPrompt, []);
+        console.log("AI says:", aiSummary);
+
+        cleanedString = aiSummary.trim();
     
     } catch (error) {
         console.error('error in ai fetch: ',error);
