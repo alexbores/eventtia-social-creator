@@ -13,7 +13,7 @@ const { getPromptPosts } = require('../modules/prompt_generator');
  * @returns {Promise<object>} - The structured analysis report.
  */
 async function getPosts(data) {
-
+    
     let items = await getAiAnalysis(data);
 
     items.map(item => {
@@ -33,7 +33,7 @@ async function getAiAnalysis(data) {
     let finalPrompt = `${prompt} 
                        \n\nHere is the current date ${data.currentDate}. 
                        \n\nHere is the date of the event ${data.eventDate}. 
-                       \n\nHere is the page's content:\n\`\`\`json\n${data.content}\n\`\`\``;
+                       \n\nHere is the page's content:\n\`\`\`\n${data.content}\n\`\`\``;
     
     let aiSummary = '';
     let cleanedJsonString = '';

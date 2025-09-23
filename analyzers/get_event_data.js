@@ -69,28 +69,24 @@ async function getContent(html) {
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
+  // 1. Define selectors for standard, human-readable text tags.
+  const textSelectors = [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'li', 'a', 'button', 'span', 'label',
+    'td', 'th', 'strong', 'b', 'em', 'i',
+    'blockquote', 'title', 'div', 'script[type="application/ld+json"]'
+  ];
 
   let combinedText = '';
 
-  // 1. Get ALL visible text from the entire <body> tag.
-  // This is a more robust way to capture all human-readable content.
-  const body = doc.querySelector('body');
-  if (body) {
-    const bodyText = body.textContent.trim();
-    if (bodyText) {
-      combinedText += bodyText + '\n';
-    }
-  }
-
-  console.log(combinedText);
-
-  // 3. Query separately and specifically for the ld+json script tags.
-  const ldJsonScripts = doc.querySelectorAll('script[type="application/ld+json"]');
-  ldJsonScripts.forEach(script => {
-    const jsonContent = script.textContent.trim();
-    if (jsonContent) {
-      combinedText += jsonContent + '\n';
-    }
+  textSelectors.forEach(selector=>{
+     let textElements = doc.querySelectorAll(selector);
+     textElements.forEach(el => {
+       let text = el.textContent.trim();
+       if (text) {
+         combinedText += text + '\n';
+       }
+     });
   });
 
   console.log(combinedText);
