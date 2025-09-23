@@ -58,7 +58,7 @@ async function getContent(html){
     
   // 2. Create a JSDOM instance from the HTML string.
   // The 'dom.window.document' object is your equivalent to the browser's 'document'.
-  const dom = new JSDOM(htmlString);
+  const dom = new JSDOM(html);
   const doc = dom.window.document;
 
   // 3. The rest of your code works exactly the same!
