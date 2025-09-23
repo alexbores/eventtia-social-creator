@@ -88,6 +88,8 @@ async function getContent(html) {
     }
   });
 
+  console.log(combinedText);
+
   // 3. Query separately and specifically for the ld+json script tags.
   const ldJsonScripts = doc.querySelectorAll('script[type="application/ld+json"]');
   ldJsonScripts.forEach(script => {
