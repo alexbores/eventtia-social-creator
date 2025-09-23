@@ -98,6 +98,18 @@ p,h1,h2,h3,li{
 	fill: var(--color-white);
 }*/
 
+.button.button-secondary{
+  border: 1.7px solid white;
+  background-color: unset;
+  color: white;
+}
+.button.button-secondary:hover{
+	background-color: white;
+	color: black;
+}
+
+
+
 .input{
 	height: 50px;
 	border: 2px solid rgba(209, 203, 192, 0.38);
@@ -116,10 +128,10 @@ p,h1,h2,h3,li{
 
 
 #nav{
-  background-color: #000000cf;
+  /*background-color: #000000cf;*/
   backdrop-filter: blur(4.1px);
   -webkit-backdrop-filter: blur(4.1px);
-  border: 1px solid rgba(209, 203, 192, 0.38);
+  /*border: 1px solid rgba(209, 203, 192, 0.38);*/
   box-shadow: 0 0 5px #0003;
   position: absolute;
   top: 0;
@@ -378,22 +390,21 @@ p,h1,h2,h3,li{
 
 #posts-screen .posts-content{
 	border: 1px solid rgba(209, 203, 192, 0.38);
-	padding: 20px;
+	padding: 40px;
 	width: 100%;
 	border-radius: 22px;
+	margin-top: 40px;
 }
 #posts-screen .posts-content .posts-content-title{
 	color: white;
+	font-weight: 600;
 }
 #posts-screen .posts-wrapper{
 	display: flex;
 	gap: 40px;
     flex-direction: column;
-    max-width: 900px;
-    width: calc(100% - 80px);
-    margin-top: 40px;
-    margin-right: 40px;
-    margin-left: 40px;
+    width: 100%;
+    margin-top: 20px;
 }
 #posts-screen .post-card{
    width: 100%;
@@ -433,6 +444,7 @@ p,h1,h2,h3,li{
    background-color: rgb(192 132 252);
    color: white;
    font-size: var(--font-size-text-small);
+   font-weight: 600;
 }
 #posts-screen .post-card .type[type="announcement"]{
    background-color: #3b82f633;
@@ -467,11 +479,13 @@ p,h1,h2,h3,li{
 	align-items: start;
 	justify-content: start;
 	width: 100%;
+	margin-top: 10px;
 }
 #posts-screen .post-card .hashtags .hashtag{
-	padding: 2px 5px;
-	font-size: var(--font-size-text-xs);
-	background-color: var(--color-gray-light);
-	color: var(--color-gray-dark);
-	text-align: center;
+	padding: 2px 10px;
+    font-size: var(--font-size-text-xs);
+    background-color: var(--color-gray);
+    color: var(--color-gray-light);
+    text-align: center;
+    border-radius: 1000px;
 }

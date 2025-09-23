@@ -29,7 +29,7 @@ Each object in the array **MUST** contain these seven keys:
 1.  **\`id\`** (number): A unique, sequential integer ID, starting at 1.
 2.  **\`date\`** (string): The recommended posting date in \`YYYY-MM-DD\` format.
 3.  **\`title\`** (string): A concise, engaging headline for the post (5-10 words).
-4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone.
+4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 5.  **\`image\`** (string): The **full URL** of a relevant image from the website. **Do not repeat images.** If a full URL isn't available, use the relative path.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
@@ -43,7 +43,7 @@ Each object in the array **MUST** contain these seven keys:
     "id": 1,
     "date": "YYYY-MM-DD",
     "title": "🎉 [Catchy Announcement Title]!",
-    "content": "[Engaging 1-3 sentence description of the event, what it is, and for whom.]",
+    "content": "[Engaging 2-5 sentence description of the event, what it is, and for whom.]",
     "image": "https://example.com/images/[relevant_image_name].jpg",
     "hashtags": ["[#EventNameYYYY]", "#[PrimaryTopic]", "#[City]"],
     "type": "announcement"
@@ -52,7 +52,7 @@ Each object in the array **MUST** contain these seven keys:
     "id": 2,
     "date": "YYYY-MM-DD",
     "title": "[Post Type] Spotlight: Meet [Name]",
-    "content": "[Exciting 1-3 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
+    "content": "[Exciting 2-5 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
     "image": "https://example.com/images/[feature_specific_image].jpg",
     "hashtags": ["[#SpecificTopic]", "#[FeatureType]", "#[EventName]"],
     "type": "speaker"
