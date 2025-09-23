@@ -74,6 +74,7 @@
     const EventSocialManager = {
         state: {
             webData: null,
+            eventData: null,
             posts: [],
             currentPost: null,
             url: null,
@@ -181,6 +182,79 @@
                 console.error("Data fetch failed:", error.message);
             }
         },
+
+
+        async fetchAllData(url) {
+            this.showScreen('fetching-screen');
+            this.state.url = url;
+            console.log(`Fetching data for: ${url}`);
+        
+            try {
+                
+                await getWebData();
+                await getEventData();
+                await getPosts();
+
+                
+                this.renderPosts();
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                setTimeout(() => {
+                    this.showScreen('posts-screen');
+                }, 1000);
+        
+            } catch (error) {
+                // --- Failure Path ---
+                console.error("Data fetch failed:", error.message);
+            }
+        },
+
+
+        async getWebData(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.url, 
+                                       request: 'web_data',
+                                       webData: null })
+            });
+        
+            console.log("Web Data received:", response);
+        
+            // Update state with the new data
+            this.state.webData = response;
+        }
+        async getEventData(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.url, 
+                                       request: 'event_data', 
+                                       webData: this.state.webData })
+            });
+        
+            console.log("Event Data received:", response);
+        
+            // Update state with the new data
+            this.state.eventData = response;
+        }
+        async getPosts(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.url, 
+                                       request: 'posts', 
+                                       webData: JSON.stringify(this.state.eventData) })
+            });
+        
+            console.log("Posts received:", response);
+        
+            // Update state with the new data
+            this.state.posts = response;
+        }
 
 
         // --- UI RENDERING ---

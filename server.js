@@ -8,6 +8,7 @@ require('dotenv').config();
 
 // Import the analyzer modules
 const { getWebData } = require('./analyzers/web_data');
+const { getEventData } = require('./analyzers/get_event_data');
 const { getPosts } = require('./analyzers/get_posts');
 
 const app = express();
@@ -59,58 +60,70 @@ async function autoScroll(page) {
 
 // --- API ROUTE ---
 app.post('/api/analyze', async (req, res) => {
-    const { url } = req.body;
+    const { url, request, webData } = req.body;
     if (!url) {
         return res.status(400).json({ error: 'URL is required' });
     }
 
     let browser = null;
+
+    let response = null;
     try {
-        // --- Step 1: Puppeteer block ---
-        console.log(`Launching browser to get web data from: ${url}`);
-        browser = await puppeteer.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-            ignoreHTTPSErrors: true,
-        });
+        switch(request){
+          case 'web_data':
+            // --- Step 1: Puppeteer block ---
+            console.log(`Launching browser to get web data from: ${url}`);
+            browser = await puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+                ignoreHTTPSErrors: true,
+            });
+            
+            const page = await browser.newPage();
+
+            // 1. Enable request interception
+            await page.setRequestInterception(true);
+            
+            // 2. Listen for each request and decide whether to continue or abort it
+            page.on('request', (req) => {
+                const resourceType = req.resourceType();
+                if (['stylesheet', 'font'].includes(resourceType)) {
+                    req.abort();
+                } else {
+                    req.continue();
+                }
+            });
+
+
+            console.log(`going to the url`);
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 900000 });
+            // await autoScroll(page);
+            
+
+            console.log('Gettign the web data.');
+            response = await getWebData(page, config);
+
+            // --- Step 2: Close browser and release memory ---
+            await browser.close();
+            console.log('Browser closed. Memory released.');
+            browser = null; // Set to null to prevent re-closing in finally block
+          break;
+          case 'event_data':
+            console.log('Starting analysis of event data...');
+            response = await getEventData(webData);
+          break;
+          case 'posts':
+            // --- Step 3: CPU-bound analysis block (no browser open) ---
+            console.log('Starting analysis of web data...');
+            response = await getPosts(webData);
+          break;
         
-        const page = await browser.newPage();
-
-        // 1. Enable request interception
-        await page.setRequestInterception(true);
-        
-        // 2. Listen for each request and decide whether to continue or abort it
-        page.on('request', (req) => {
-            const resourceType = req.resourceType();
-            if (['stylesheet', 'font'].includes(resourceType)) {
-                req.abort();
-            } else {
-                req.continue();
-            }
-        });
-
-
-        console.log(`going to the url`);
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 900000 });
-        // await autoScroll(page);
-        
-
-        console.log('Gettign the web data.');
-        const webData = await getWebData(page, config);
-
-        // --- Step 2: Close browser and release memory ---
-        await browser.close();
-        console.log('Browser closed. Memory released.');
-        browser = null; // Set to null to prevent re-closing in finally block
-
-        // --- Step 3: CPU-bound analysis block (no browser open) ---
-        console.log('Starting analysis of web data...');
-        const posts = await getPosts(webData); // This runs after memory is freed
+        }
 
         // --- Step 4: Send the final response ---
-        res.status(200).json({ webData, posts });
+        res.status(200).json({ response });
 
     } catch (error) {
         console.error(`Error during analysis for ${url}:`, error);

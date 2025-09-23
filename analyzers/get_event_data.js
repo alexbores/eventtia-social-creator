@@ -4,7 +4,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const { getAIFetch } = require('../modules/AI_fetcher');
 const { stripHtml } = require('../modules/html_stripper');
-const { getPromptPosts } = require('../modules/prompt_generator');
+const { getPromptContent } = require('../modules/prompt_generator');
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
@@ -12,22 +12,21 @@ const { getPromptPosts } = require('../modules/prompt_generator');
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getPosts(data) {
+async function getEventData(html) {
 
-    let items;
-    items = await getAiAnalysis(data);
-    items.map(item => {
-      item.status = 'schedule'
-    });
+    let eventData = await getAiAnalysis(html);
 
-    return items;
+    return eventData;
 }
 
-async function getAiAnalysis(data) {
+
+
+async function getAiAnalysis(html) {
 
     const prompt = getPrompt();
     
-    let finalPrompt = `${prompt} \n\nHere is the page's content:\n\`\`\`json\n${data}\n\`\`\``;
+    let srippedHtml = stripHtml(html);
+    let finalPrompt = `${prompt} \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
     
     let aiSummary = '';
     let cleanedJsonString = '';
@@ -66,4 +65,4 @@ async function getAiAnalysis(data) {
 
 
 
-module.exports = { getPosts };
+module.exports = { getEventData };
