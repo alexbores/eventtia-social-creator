@@ -16,22 +16,31 @@ const { getPromptDate } = require('../modules/prompt_generator');
  * @returns {Promise<object>} - The structured analysis report.
  */
 async function getEventData(html) {
+    
+    let currentDate = getCurrentDate();
 
-    let date = await getAiAnalysis(html);
+    let eventDate = await getAiAnalysis(html);
 
-    let content = await getContent(html);
 
-    return {date, content};
+    eventDate = advanceDateIfOlder(eventDate, currentDate);
+
+
+    let content = await getContent(html,date);
+
+    return {currentDate, eventDate, content};
 }
 
 
 
-async function getAiAnalysis(html) {
+async function getAiAnalysis(html,currentDate,eventDate) {
 
     const prompt = getPromptDate();
     
     let srippedHtml = stripHtml(html);
-    let finalPrompt = `${prompt} \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
+    let finalPrompt = `${prompt} 
+                       \n\nHere is the current date ${currentDate}. 
+                       \n\nHere is the date of the event ${eventDate}. 
+                       \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
     
     let aiSummary = '';
     let cleanedString = '';
@@ -56,12 +65,9 @@ async function getAiAnalysis(html) {
 
 async function getContent(html){
     
-  // 2. Create a JSDOM instance from the HTML string.
-  // The 'dom.window.document' object is your equivalent to the browser's 'document'.
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
-  // 3. The rest of your code works exactly the same!
   const selectors = [
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', // Headings
     'p', // Paragraphs
@@ -89,18 +95,53 @@ async function getContent(html){
     }
   });
 
-  const ldJsonScripts = doc.querySelectorAll('script[type="application/ld+json"]');
-  ldJsonScripts.forEach(script => {
-    const jsonContent = script.textContent.trim();
-    if (jsonContent) {
-      combinedText += jsonContent + '\n';
-    }
-  });
+
+  console.log(combinedText);
 
   return combinedText;
 
 }
 
+function getCurrentDate(){
+    const today = new Date();
+
+    // Get the year, month, and day
+    const year = today.getFullYear();
+    
+    // Get the month (which is zero-indexed, so we add 1) and pad with a zero if needed
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    
+    // Get the day and pad with a zero if needed
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    // Combine the parts into the desired format
+    const formattedDate = `${year}-${month}-${day}`;
+
+    return formattedDate;
+}
+
+
+
+function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
+  const dateToCheck = new Date(dateToCheckStr);
+  const referenceDate = new Date(referenceDateStr);
+
+  console.log(`Initial date to check: ${dateToCheck.toDateString()}`);
+  console.log(`Reference date:        ${referenceDate.toDateString()}`);
+
+  // Use a while loop to keep adding a year as long as the date is older
+  while (dateToCheck < referenceDate) {
+    console.log('Date is older, adding one year...');
+    // Get the current year and add 1
+    const newYear = dateToCheck.getFullYear() + 1;
+    // Set the date's year to the new year
+    dateToCheck.setFullYear(newYear);
+    console.log(`Date is now: ${dateToCheck.toDateString()}`);
+  }
+
+  console.log(`Final updated date: ${dateToCheck.toDateString()}`);
+  return dateToCheck;
+}
 
 
 module.exports = { getEventData };
