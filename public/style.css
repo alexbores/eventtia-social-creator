@@ -307,6 +307,9 @@ p,h1,h2,h3,li{
    align-items: center;
    justify-content: center;
 }
+#posts-screen .content{
+  align-items: center;
+}
 #posts-screen .title{
 	color: white;
 	text-align: center;
