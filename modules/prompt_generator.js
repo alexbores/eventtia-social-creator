@@ -91,13 +91,13 @@ function getPromptContent() {
 
 Each object in the array **MUST** contain these seven keys:
 
-1.  **\`date\`** (string): Get the date in \`YYYY-MM-DD\` format of the event from the html content, do not invent it, if not found leave it blank.
+1.  **\`date\`** (string): Get the first date of the event and save it in \`YYYY-MM-DD\` format from the html content, do not invent it, if not found leave it blank.
 .
 2.  **\`content\`** (string): Get a single paragraph with all the event data founded in the html that is relevant to the event, without the html tags.
 3.  **\`image\`** (string): A list of the **full URL** of a relevant images from the website. **Do not repeat images.** If a full URL isn't available, use the relative path.
 
 ---
-### ### Example Output Format
+### ### Example Output Format (only one item)
 
 \\\`\\\`\\\`json
 [
@@ -114,7 +114,7 @@ but use the real information from the html provided.
 ---
 ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
 
-* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
+* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array with one item.
 * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
 * **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
 
