@@ -14,7 +14,7 @@ const { getPromptPosts } = require('../modules/prompt_generator');
  */
 async function getPosts(data) {
 
-    let items = await getAiAnalysis(JSON.parse(data));
+    let items = await getAiAnalysis(data);
 
     items.map(item => {
       item.status = 'schedule'
