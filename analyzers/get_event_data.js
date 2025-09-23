@@ -69,24 +69,18 @@ async function getContent(html) {
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
-  // 1. Define selectors for standard, human-readable text tags.
-  const textSelectors = [
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'p', 'li', 'a', 'button', 'span', 'label',
-    'td', 'th', 'strong', 'b', 'em', 'i',
-    'blockquote', 'title', 'div',
-  ];
 
   let combinedText = '';
 
-  // 2. Query for the standard text elements and extract their content.
-  const textElements = doc.querySelectorAll(textSelectors.join(', '));
-  textElements.forEach(el => {
-    const text = el.textContent.trim();
-    if (text) {
-      combinedText += text + '\n';
+  // 1. Get ALL visible text from the entire <body> tag.
+  // This is a more robust way to capture all human-readable content.
+  const body = doc.querySelector('body');
+  if (body) {
+    const bodyText = body.textContent.trim();
+    if (bodyText) {
+      combinedText += bodyText + '\n';
     }
-  });
+  }
 
   console.log(combinedText);
 
