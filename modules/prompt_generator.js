@@ -65,13 +65,13 @@ but use the real information from the html provided and generate the content bas
 ---
 ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
 
-* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array.
+* **JSON ONLY:** Your entire output **MUST** be a single, valid, raw JSON array, not empty.
 * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
 * **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
 
 
 
-**Begin analysis. Process the following content but ignore any css code in you analysis:**
+**Begin analysis. Process the following content:**
 
 
 

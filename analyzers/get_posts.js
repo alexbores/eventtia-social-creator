@@ -38,6 +38,8 @@ async function getAiAnalysis(data) {
     let aiSummary = '';
     let cleanedJsonString = '';
 
+    console.log(finalPrompt);
+
 
     console.log('AI analyis started');
 

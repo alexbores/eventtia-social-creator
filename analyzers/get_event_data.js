@@ -23,15 +23,16 @@ async function getEventData(html) {
 
     console.log('event date :'+eventDate);
 
-
     eventDate = advanceDateIfOlder(eventDate, currentDate);
 
     console.log('event date modified:'+eventDate);
 
 
+
+
     let content = await getContent(html);
 
-    content = await getAiAnalysisDate(content);
+    content = await getAiAnalysisContent(content);
 
     console.log('event cleaned content :'+content);
 
