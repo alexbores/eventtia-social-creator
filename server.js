@@ -80,7 +80,7 @@ app.post('/api/analyze', async (req, res) => {
                 headless: chromium.headless,
                 ignoreHTTPSErrors: true,
             });
-            
+
             const page = await browser.newPage();
 
             // 1. Enable request interception
@@ -95,6 +95,8 @@ app.post('/api/analyze', async (req, res) => {
                     req.continue();
                 }
             });
+
+            await autoScroll(page);
 
 
             console.log(`going to the url`);
