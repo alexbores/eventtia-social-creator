@@ -29,7 +29,7 @@ Each object in the array **MUST** contain these seven keys:
 1.  **\`id\`** (number): A unique, sequential integer ID, starting at 1.
 2.  **\`date\`** (string): The recommended posting date in \`YYYY-MM-DD\` format.
 3.  **\`title\`** (string): A concise, engaging headline for the post (5-10 words).
-4.  **\`content\`** (string): The post body, 1-3 sentences long. Use an enthusiastic and professional tone.
+4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone.
 5.  **\`image\`** (string): The **full URL** of a relevant image from the website. **Do not repeat images.** If a full URL isn't available, use the relative path.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
@@ -129,4 +129,37 @@ but use the real information from the html provided.
     return prompt;
 }
 
-module.exports = { getPromptPosts, getPromptContent };
+function getPromptDate() {
+    const prompt = `You are a date finder service. Your function is to find the event date of the HTML event web received.
+
+**Primary Directive:** Analyze the event html provided at the end of this prompt and find the date of the event.
+
+
+---
+### ### Example Output Format (only one item)
+
+\\\`\\\`\\\`
+YYYY-MM-DD
+\\\`\\\`\\\`
+
+Use the real information from the html provided.
+
+---
+### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
+
+* **DATE YYYY-MM-DD ONLY:** Your entire output **MUST** be a single, date format.
+* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
+* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
+
+
+
+**Begin analysis. Process the following HTML content:**
+
+
+
+`;
+
+    return prompt;
+}
+
+module.exports = { getPromptPosts, getPromptContent, getPromptDate };
