@@ -25,6 +25,7 @@ async function getPosts(data) {
 
 async function getAiAnalysis(data) {
     
+    data = JSON.parse(data);
     console.log('Event Data');
     console.log(data);
 
