@@ -14,8 +14,8 @@ const { getPromptPosts } = require('../modules/prompt_generator');
  */
 async function getPosts(data) {
 
-    let items;
-    items = await getAiAnalysis(data);
+    let items = await getAiAnalysis(JSON.parse(data));
+
     items.map(item => {
       item.status = 'schedule'
     });
@@ -27,7 +27,10 @@ async function getAiAnalysis(data) {
 
     const prompt = getPromptPosts();
     
-    let finalPrompt = `${prompt} \n\nHere is the page's content:\n\`\`\`json\n${data}\n\`\`\``;
+    let finalPrompt = `${prompt} 
+                       \n\nHere is the current date ${data.currentDate}. 
+                       \n\nHere is the date of the event ${data.eventDate}. 
+                       \n\nHere is the page's content:\n\`\`\`json\n${data.content}\n\`\`\``;
     
     let aiSummary = '';
     let cleanedJsonString = '';

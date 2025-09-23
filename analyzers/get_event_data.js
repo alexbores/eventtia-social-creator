@@ -25,21 +25,19 @@ async function getEventData(html) {
     eventDate = advanceDateIfOlder(eventDate, currentDate);
 
 
-    let content = await getContent(html,date);
+    let content = await getContent(html);
 
     return {currentDate, eventDate, content};
 }
 
 
 
-async function getAiAnalysis(html,currentDate,eventDate) {
+async function getAiAnalysis(html) {
 
     const prompt = getPromptDate();
     
     let srippedHtml = stripHtml(html);
     let finalPrompt = `${prompt} 
-                       \n\nHere is the current date ${currentDate}. 
-                       \n\nHere is the date of the event ${eventDate}. 
                        \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
     
     let aiSummary = '';
