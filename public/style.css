@@ -266,36 +266,36 @@ p,h1,h2,h3,li{
 
 #fetching-screen .progress-bar-inner {
   height: 100%;
-  width: 0; /* Starts at 0 width */
-  background-color: #28a745; /* The green color */
+  width: 0; 
+  background-color: hsl(142 70% 45%); 
   border-radius: 10px;
-  /* Smooth transition for the final fill animation */
+  transition: width 4s ease-out;
+}
+
+#fetching-screen[progress="1"] .progress-bar-inner{
+  width: 10%; 
+}
+#fetching-screen[progress="2"] .progress-bar-inner{
+  width: 20%; 
+}
+#fetching-screen[progress="3"] .progress-bar-inner{
+  width: 30%; 
+}
+#fetching-screen[progress="4"] .progress-bar-inner{
+  width: 40%; 
+}
+#fetching-screen[progress="5"] .progress-bar-inner{
+  width: 50%; 
+}
+#fetching-screen[progress="6"] .progress-bar-inner{
+  width: 60%; 
+}
+#fetching-screen[progress="8"] .progress-bar-inner{
+  width: 80%; 
+}
+#fetching-screen.end-loading .progress-bar-inner {
   transition: width 0.4s ease-out;
-}
-
-
-/* --- Loading Animation State --- */
-#fetching-screen.loading .progress-bar .progress-bar-inner {
-  /* This makes the bar look like it's scanning back and forth */
-  width: 50%; /* The moving part is 50% of the container's width */
-  animation: indeterminate-animation 2s infinite ease-in-out;
-}
-
-/* Keyframes for the indeterminate (never-ending) animation */
-@keyframes indeterminate-animation {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(300%); /* Moves across the container */
-  }
-}
-
-
-/* --- End Loading State --- */
-#fetching-screen.end-loading .progress-bar .progress-bar-inner {
-  animation: none; /* Stop the loading animation */
-  width: 100%;   /* Fill the bar completely */
+  width: 100%; 
 }
 
 
@@ -311,6 +311,12 @@ p,h1,h2,h3,li{
 #posts-screen .content{
   align-items: center;
 }
+#posts-screen .top-bar{
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
+	gap: 60;
+}
 #posts-screen .title{
 	color: white;
 	text-align: center;
@@ -319,6 +325,23 @@ p,h1,h2,h3,li{
 	color: var(--color-gray);
 	text-align: center;
 }
+#posts-screen .top-bar .info{
+	color: var(--color-gray);
+}
+#posts-screen .top-bar .info span{
+  font-weight: 600;
+}
+#posts-screen .top-bar .info [posts-generated]{
+  color: hsl(142 70% 45%);
+}
+#posts-screen .top-bar .info [event-date]{
+  color: hsl(263 70% 50%);
+}
+#posts-screen .top-bar .info [days-until-event]{
+  color: hsl(38 92% 50%);
+}
+
+
 #posts-screen .posts-wrapper{
 	display: flex;
 	gap: 40px;

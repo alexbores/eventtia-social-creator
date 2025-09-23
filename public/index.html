@@ -53,12 +53,21 @@
 
     <section id="posts-screen">
         <div class="content">
-            <h2 class="title">
-                Your Instagram Campaign
-            </h2>
-            <p class="text">
-                AI generated strategic posts for your event promotion
-            </p>
+            <div class="top-bar">
+                <div class="title-holder">
+                  <h2 class="title">
+                    Your Instagram Campaign
+                  </h2>
+                  <p class="text">
+                    AI generated strategic posts for your event promotion
+                  </p>
+                </div>
+                <div class="info-holder">
+                    <p class="text info">Posts Generated: <span posts-generated></span></p>
+                    <p class="text info">Event Date: <span event-date></span></p>
+                    <p class="text info">Days Until Event: <span days-until-event></span></p>
+                </div>
+            <div>
             <div class="posts-wrapper">
                 
             </div>
@@ -94,8 +103,15 @@
                 analyzeUrlForm: document.querySelector('#event-url-form'),
                 urlInput: document.querySelector('#event-url-input'),
                 analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
+
+                fetchingScreen: document.querySelector('#fetching-screen'),
                 
                 postsHolder: document.querySelector('#posts-screen .posts-wrapper'),
+
+
+                postsGeneratedEls: document.querySelectorAll('[posts-generated]');
+                eventDateEls: document.querySelectorAll('[event-date]');
+                daysUntilEventEls: document.querySelectorAll('[days-until-event]');
             } 
         },
 
@@ -146,53 +162,22 @@
             }
         },
 
-        // Step 1 of the analysis process
-        async fetchAllData(url) {
-            this.showScreen('fetching-screen');
-            this.state.url = url;
-            console.log(`Fetching data for: ${url}`);
-        
-            try {
-                // --- Success Path ---
-                const response = await this.fetchApi('/api/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: this.state.url })
-                });
-        
-                console.log("Data received:", response);
-        
-                // Update state with the new data
-                this.state.webData = response.webData;
-                this.state.posts = response.posts;
-                
-                this.renderPosts();
-
-
-                // Transition the UI to the results screen
-                const screen = document.querySelector('#fetching-screen');
-                screen.classList.add('end-loading');
-
-                setTimeout(() => {
-                    this.showScreen('posts-screen');
-                }, 1000);
-        
-            } catch (error) {
-                // --- Failure Path ---
-                console.error("Data fetch failed:", error.message);
-            }
-        },
-
 
         async fetchAllData(url) {
             this.showScreen('fetching-screen');
             this.state.url = url;
             console.log(`Fetching data for: ${url}`);
+
+            this.setLoadingProgress(2);
         
             try {
                 
                 await this.getWebData();
+                this.setLoadingProgress(4);
+
                 await this.getEventData();
+                this.setLoadingProgress(7);
+
                 await this.getPosts();
 
                 
@@ -201,6 +186,8 @@
                 // Transition the UI to the results screen
                 const screen = document.querySelector('#fetching-screen');
                 screen.classList.add('end-loading');
+
+                renderData();
 
                 setTimeout(() => {
                     this.showScreen('posts-screen');
@@ -272,6 +259,10 @@
             }
         },
 
+        setLoadingProgress(val){
+           fetchingScreen.setAttribute('progress',val);
+        },
+
 
         renderPosts(){
             let html = ``;
@@ -290,7 +281,40 @@
             });
 
             this.elements.postsHolder.innerHTML = html;
-        }
+        },
+
+
+        renderData(){
+            postsGeneratedEls.forEach(el=>{
+               el.innerHTML = this.state.posts.length;
+            });
+
+            eventDateEls.forEach(el=>{
+               el.innerHTML = this.state.eventData.eventDate;
+            });
+
+            daysUntilEventEls.forEach(el=>{
+               el.innerHTML = this.getDaysUntil(this.state.eventData.eventDate);
+            });
+        },
+
+        getDaysUntil(futureDateStr) {
+         // Get today's date and set the time to the beginning of the day
+         const today = new Date();
+         today.setHours(0, 0, 0, 0);
+       
+         // Create a Date object for the future date
+         const futureDate = new Date(futureDateStr);
+       
+         // Calculate the difference in milliseconds
+         const timeDifference = futureDate.getTime() - today.getTime();
+       
+         // Convert milliseconds to days and round up
+         const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+       
+         return daysRemaining;
+       },
+
     };
 
     document.addEventListener('DOMContentLoaded', () => {
