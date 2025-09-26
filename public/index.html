@@ -15,7 +15,7 @@
 
 <body>
     
-    <section id="nav">
+    <section id="nav" class="hide">
         <div class="content main-nav">
             <h1 class="nav-title">Event Social Creator</h1>
 
@@ -77,7 +77,7 @@
 
    <div class="section-wrapper">
         
-        <div id="side-nav">
+        <div id="side-nav" class="hide">
             <div class="title-holder">
                <h2 class="title">
                  Your Social Campaign
@@ -110,17 +110,9 @@
         <div class="content">
             <div class="top-bar">
                 <div class="title-holder">
-                  <h2 class="title">
-                    Your Instagram Campaign
-                  </h2>
-                  <p class="text">
-                    AI generated strategic posts for your event promotion
-                  </p>
-                </div>
-                <div class="info-holder">
-                    <p class="text info">Posts Generated: <span posts-generated></span></p>
-                    <p class="text info">Event Date: <span event-date></span></p>
-                    <p class="text info">Days Until Event: <span days-until-event></span></p>
+                   <h3 class="posts-content-title">
+                     AI Generated Posts List (<span posts-generated="">8</span>): 
+                   </h3>
                 </div>
             </div>
             <div class="posts-content">
@@ -445,6 +437,11 @@
 
             if(screenName == 'fetching-screen'){
                 screen.classList.add('loading');
+            }
+
+            if(screenName == 'posts-screen'){
+                 document.querySelector('#nav').classList.remove('hide');
+                 document.querySelector('#side-nav').classList.remove('hide');
             }
         },
 
