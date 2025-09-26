@@ -89,7 +89,7 @@
                <!-- <p class="text info">Event Date: <span event-date="">2025-10-27</span></p> -->
                <form>
                  <p class="text info">Event Date: </p>
-                 <input event-date type="date" class="input" value="2025-10-27">
+                 <input event-date type="date" class="input" value="">
                  <button analyze-url-btn class="button button-secondary">
                    Update Date
                  </button>
@@ -494,7 +494,7 @@
             });
 
             this.elements.eventDateEls.forEach(el=>{
-               el.innerHTML = this.state.eventData.eventDate;
+               el.value = this.state.eventData.eventDate;
             });
 
             this.elements.daysUntilEventEls.forEach(el=>{
