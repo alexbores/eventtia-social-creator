@@ -364,6 +364,8 @@
                 
                 this.renderPosts();
 
+                console.log('posts rendered');
+
                 // Transition the UI to the results screen
                 const screen = document.querySelector('#fetching-screen');
                 screen.classList.add('end-loading');
@@ -464,8 +466,7 @@
 
             this.elements.postsHolder.innerHTML = html;
 
-            this.state.posts.forEach((key,post)=>{
-                // let daysUntilEvent = getDaysUntil(post.date);
+            this.state.posts.forEach((post,key)=>{
                 html += `
                     <div class="post-card" post-card="${key}">
                         <div class="bar">
