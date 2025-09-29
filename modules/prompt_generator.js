@@ -18,15 +18,16 @@ function getPromptPosts() {
     * **Phase 1 (Announcement):** General announcement of the event.
     * **Phase 2 (Details):** Highlight key features like speakers, activities, workshops, or sponsors.
     * **Phase 3 (Urgency):** Focus on ticket deadlines, "selling out soon," and final reminders.
-4.  **Topics: ** Some important topics that have to be considered.
+4.  **Topics: ** Some important topics that have to be in some posts.
     * **General announcement including registration and tickets**
     * **Deadline to register: If the deadline is mentioned.**
     * **Program and activities.**
     * **Who are the speakers if any. **
     * **About the venue**
     * **About the sponsors**
-    * **Reminder with practical details (FAQ): 1 day before event**
+    * **Reminder with practical details: 1 day before event**
     * **Reminder: Event day**
+    * **1 day after the event: thank you post the day after the event, make a post thanking everyone for their participation**
 
 
 
