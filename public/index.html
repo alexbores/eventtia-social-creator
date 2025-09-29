@@ -84,8 +84,8 @@
                </h2>
             </div>
             <div class="info-holder">
-               <h2 class="event-name" event-name=""></h2>
-               <p class="event-url" event-url=""></p>
+               <h3 class="event-name" event-name=""></h3>
+               <a class="event-url link" event-url="" href="">Event Url</a>
 
                <p class="text info">Days Until Event: <span days-until-event="">31</span></p>
 
@@ -288,6 +288,8 @@
                 postsGeneratedEls: document.querySelectorAll('[posts-generated]'),
                 eventDateEls: document.querySelectorAll('[event-date]'),
                 daysUntilEventEls: document.querySelectorAll('[days-until-event]'),
+                eventNameEls: document.querySelectorAll('[event-name]'),
+                eventUrlEls: document.querySelectorAll('[event-url]'),
 
                 postEditorEl: document.querySelector('#post-editor'),
                 postEditorClose: document.querySelector('#post-editor .close'),
@@ -502,6 +504,14 @@
 
             this.elements.daysUntilEventEls.forEach(el=>{
                el.innerHTML = this.getDaysUntil(this.state.eventData.eventDate);
+            });
+
+            this.elements.eventNameEls.forEach(el=>{
+               el.innerHTML = this.state.eventData.eventName;
+            });
+
+            this.elements.eventUrlEls.forEach(el=>{
+               el.href = this.state.url;
             });
         },
 

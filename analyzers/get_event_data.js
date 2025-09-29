@@ -28,6 +28,9 @@ async function getEventData(html) {
     console.log('event date modified:'+eventDate);
 
 
+    let eventName = await getEventName(html);
+
+    console.log('event Name:'+eventName);
 
 
     let content = await getContent(html);
@@ -36,7 +39,7 @@ async function getEventData(html) {
 
     console.log('event cleaned content :'+content);
 
-    return {currentDate, eventDate, content};
+    return {currentDate, eventDate, eventName ,content};
 }
 
 
@@ -173,5 +176,18 @@ function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
 }
 
 
+
+function getEventName(html) {
+  const dom = new JSDOM(html);
+  const doc = dom.window.document;
+
+  const h1Element = doc.querySelector('h1');
+
+  if (h1Element) {
+    return h1Element.textContent.trim();
+  }
+
+  return '';
+}
 
 module.exports = { getEventData };
