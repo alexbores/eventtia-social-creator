@@ -265,6 +265,7 @@
             webData: null,
             eventData: null,
             posts: [],
+            tempPosts: [],
             currentPost: null,
             url: null,
         },
@@ -294,11 +295,12 @@
                 daysUntilEventEls: document.querySelectorAll('[days-until-event]'),
                 eventNameEls: document.querySelectorAll('[event-name]'),
                 eventUrlEls: document.querySelectorAll('[event-url]'),
+                updateDataBtn: document.querySelector('[update-data]'),
 
                 postEditorEl: document.querySelector('#post-editor'),
                 postEditorClose: document.querySelector('#post-editor .close'),
 
-                updateDataBtn: document.querySelector('[update-data]'),
+                
             } 
         },
 
@@ -323,6 +325,12 @@
             });
             this.elements.postEditorClose.addEventListener('click',()=>{
                 this.elements.postEditorEl.classList.remove('open');
+            });
+
+
+            this.elements.updateDataBtn.addEventListener('click',(e)=>{
+                e.preventDefault();
+                this.updateEventData();
             });
 
 
@@ -432,6 +440,77 @@
         
             // Update state with the new data
             this.state.posts = response;
+        },
+
+        async getRemadePosts(){
+
+            let newData = {
+                eventData: this.state.eventData,
+                posts: this.state.posts;
+            }
+
+            newData.posts.forEach(post=>{
+                post.date = null;
+            })
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.url, 
+                                       request: 'posts_remake', 
+                                       webData: JSON.stringify(newData) })
+            });
+        
+            console.log("Remake Posts received:", response);
+        
+            // Update state with the new data
+            this.state.posts = response;
+        },
+
+
+
+        async updateEventData(){
+           this.state.tempPosts.push(this.state.posts);
+           
+           this.state.eventData.eventName = this.elements.eventName.value;
+           this.state.eventData.eventDate = this.elements.eventDate.value;
+           
+           this.showScreen('fetching-screen');
+
+           this.setLoadingProgress(2);
+        
+           try {
+                await this.getPosts();
+                this.setLoadingProgress(7);
+                
+                this.renderPosts();
+
+                console.log('posts rendered');
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                this.renderData();
+
+                setTimeout(() => {
+                    this.showScreen('posts-screen');
+                }, 1000);
+        
+            } catch (error) {
+                // --- Failure Path ---
+                console.error("Data fetch failed:", error.message);
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                this.renderData();
+
+                setTimeout(() => {
+                    this.showScreen('posts-screen');
+                }, 1000);
+            }
         },
 
 

@@ -10,6 +10,7 @@ require('dotenv').config();
 const { getWebData } = require('./analyzers/web_data');
 const { getEventData } = require('./analyzers/get_event_data');
 const { getPosts } = require('./analyzers/get_posts');
+const { getPostsRemade } = require('./analyzers/get_posts_remade');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -117,6 +118,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'posts':
             console.log('Starting analysis of web data...');
             response = await getPosts(webData);
+          break;
+          case 'posts_remake':
+            console.log('Starting analysis of web data...');
+            response = await getPostsRemade(webData);
           break;
         
         }
