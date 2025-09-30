@@ -556,10 +556,12 @@
             this.state.posts.forEach((post,key)=>{
                 html += `
                     <div class="post-card" post-card="${key}">
+                        <div class="img-holder">
+                           
+                        </div>
                         <div class="bar">
                             <p class="type" type="${post.type}">${post.type.replace('_',' ')}</p>
                             <p class="date">posting date: <span>${post.date}</span></p>
-                            
                         </div>
                         <h3 class="post-title">${post.title}</h3>
                         <p class="post-content">${post.content}</p>
@@ -573,8 +575,6 @@
             });
 
             this.elements.postsHolder.innerHTML = html;
-
-            
         },
 
 

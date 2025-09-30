@@ -337,6 +337,11 @@ p,h1,h2,h3,li{
 #posts-screen .post-card:hover{
    box-shadow: 1px 0px 5px 5px #baa9ea54;
 }
+#posts-screen .post-card .img-holder{
+	background-color: var(--color-gray-light);
+	aspect-ratio: 1;
+	width: 100%;
+}
 #posts-screen .post-card .bar{
 	display: flex;
 	gap: 10px;
