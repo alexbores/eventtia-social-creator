@@ -7,7 +7,7 @@ const { JSDOM } = require('jsdom');
 
 const { getAIFetch } = require('../modules/AI_fetcher');
 const { stripHtml } = require('../modules/html_stripper');
-const { getPromptDate, getPromptContent } = require('../modules/prompt_generator');
+const { getPromptDate, getPromptContent, getPromptName } = require('../modules/prompt_generator');
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
@@ -28,7 +28,7 @@ async function getEventData(html) {
     console.log('event date modified:'+eventDate);
 
 
-    let eventName = await getEventName(html);
+    let eventName = await getAiAnalysisEventName(html);
 
     console.log('event Name:'+eventName);
 
@@ -43,6 +43,33 @@ async function getEventData(html) {
 }
 
 
+async function getAiAnalysisEventName(html) {
+
+    const prompt = getPromptName();
+    
+    let srippedHtml = stripHtml(html);
+    let finalPrompt = `${prompt} 
+                       \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
+    
+    let aiSummary = '';
+    let cleanedString = '';
+
+
+    console.log('AI analyis started');
+
+    try {
+        aiSummary = await getAIFetch('chatgpt', finalPrompt, []);
+        console.log("AI says:", aiSummary);
+
+        cleanedString = aiSummary.trim().slice(1, -1);
+    
+    } catch (error) {
+        console.error('error in ai fetch: ',error);
+        aiSummary = error.message;
+    }
+
+    return cleanedString;
+}
 
 async function getAiAnalysisDate(html) {
 
@@ -177,17 +204,6 @@ function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
 
 
 
-function getEventName(html) {
-  const dom = new JSDOM(html);
-  const doc = dom.window.document;
 
-  const h1Element = doc.querySelector('h1');
-
-  if (h1Element) {
-    return h1Element.textContent.trim();
-  }
-
-  return '';
-}
 
 module.exports = { getEventData };

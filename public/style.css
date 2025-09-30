@@ -223,12 +223,19 @@ p,h1,h2,h3,li{
 	width: 100%;
 	margin-bottom: 40px;
 }
+#side-nav .event-url{
+	font-weight: 600;
+	font-size: var(--font-size-text-small);
+	margin-bottom: 10px;
+}
 #side-nav .title-holder .title{
 	font-size: var(--font-size-text);
 }
 #side-nav .info{
 	font-weight: 600;
 	font-size: var(--font-size-text-small);
+	margin-bottom: 5px;
+    margin-top: 20px;
 }
 #side-nav [event-date]{
   color: hsl(263 70% 50%);
@@ -240,16 +247,10 @@ p,h1,h2,h3,li{
 	width: 100%;
 	margin-top: 20px;
 }
-#side-nav form input{
-
-}
 #side-nav .info-holder{
   width: 100%;
 }
-#side-nav .info{
-  margin-bottom: 5px;
-}
-#side-nav [event-date]{
+#side-nav .input{
     width: 100%;
 }
 #side-nav .button{

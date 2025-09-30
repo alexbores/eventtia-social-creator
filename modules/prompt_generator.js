@@ -27,7 +27,7 @@ function getPromptPosts() {
     * **About the sponsors**
     * **Reminder with practical details: 1 day before event**
     * **Reminder: Event day**
-    * **1 day after the event: thank you post the day after the event, make a post thanking everyone for their participation**
+    * **1 day after the event: thank you post the day after the event, make a post thanking everyone for their participation, the type must be "announcement"**
 
 
 
@@ -146,4 +146,37 @@ Use the real information from the html provided.
     return prompt;
 }
 
-module.exports = { getPromptPosts, getPromptContent, getPromptDate };
+function getPromptName() {
+    const prompt = `You are a event name finder service. Your function is to find the event name of the HTML event web received.
+
+**Primary Directive:** Analyze the event html provided at the end of this prompt and find the name of the event.
+
+
+---
+### ### Example Output Format (only one item)
+
+\\\`\\\`\\\`
+Event Name
+\\\`\\\`\\\`
+
+Use the real information from the html provided.
+
+---
+### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
+
+* **NAME STRING ONLY:** Your entire output **MUST** be a single, string format.
+* **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the JSON array.
+* **START/END CHARACTERS:** The absolute first character of your response must be \`[\` and the absolute last character must be \`]\`.
+
+
+
+**Begin analysis. Process the following HTML content:**
+
+
+
+`;
+
+    return prompt;
+}
+
+module.exports = { getPromptPosts, getPromptContent, getPromptDate, getPromptName };

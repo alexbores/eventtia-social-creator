@@ -84,17 +84,21 @@
                </h2>
             </div>
             <div class="info-holder">
-               <h3 class="event-name" event-name=""></h3>
-               <a class="event-url link" event-url="" href="">Event Url</a>
+               <a class="event-url link" event-url="" href="" target="_blank">Event Url</a>
 
                <p class="text info">Days Until Event: <span days-until-event="">31</span></p>
 
                <!-- <p class="text info">Event Date: <span event-date="">2025-10-27</span></p> -->
                <form>
+                 <p class="text info">Event Name: </p>
+                 <input event-name type="date" class="input" value="">
+
                  <p class="text info">Event Date: </p>
                  <input event-date type="date" class="input" value="">
-                 <button analyze-url-btn class="button button-secondary">
-                   Update Date
+
+
+                 <button update-data class="button button-secondary">
+                   Update Data
                  </button>
                </form>
                
@@ -293,6 +297,8 @@
 
                 postEditorEl: document.querySelector('#post-editor'),
                 postEditorClose: document.querySelector('#post-editor .close'),
+
+                updateDataBtn: document.querySelector('[update-data]'),
             } 
         },
 
@@ -501,14 +507,15 @@
             this.elements.eventDateEls.forEach(el=>{
                el.value = this.state.eventData.eventDate;
             });
+            this.elements.eventNameEls.forEach(el=>{
+               el.value = this.state.eventData.eventName;
+            });
 
             this.elements.daysUntilEventEls.forEach(el=>{
                el.innerHTML = this.getDaysUntil(this.state.eventData.eventDate);
             });
 
-            this.elements.eventNameEls.forEach(el=>{
-               el.innerHTML = this.state.eventData.eventName;
-            });
+            
 
             this.elements.eventUrlEls.forEach(el=>{
                el.href = this.state.url;
