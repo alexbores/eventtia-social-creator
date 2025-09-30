@@ -291,9 +291,9 @@
 
 
                 postsGeneratedEls: document.querySelectorAll('[posts-generated]'),
-                eventDateEls: document.querySelectorAll('[event-date]'),
+                eventDate: document.querySelector('[event-date]'),
                 daysUntilEventEls: document.querySelectorAll('[days-until-event]'),
-                eventNameEls: document.querySelectorAll('[event-name]'),
+                eventName: document.querySelector('[event-name]'),
                 eventUrlEls: document.querySelectorAll('[event-url]'),
                 updateDataBtn: document.querySelector('[update-data]'),
 
@@ -577,18 +577,15 @@
             this.elements.postsHolder.innerHTML = html;
         },
 
-
         renderData(){
             this.elements.postsGeneratedEls.forEach(el=>{
                el.innerHTML = this.state.posts.length;
             });
 
-            this.elements.eventDateEls.forEach(el=>{
-               el.value = this.state.eventData.eventDate;
-            });
-            this.elements.eventNameEls.forEach(el=>{
-               el.value = this.state.eventData.eventName;
-            });
+            this.elements.eventDate.value = this.state.eventData.eventDate;
+            
+            this.elements.eventName.value = this.state.eventData.eventName;
+            
 
             this.elements.daysUntilEventEls.forEach(el=>{
                el.innerHTML = this.getDaysUntil(this.state.eventData.eventDate);
