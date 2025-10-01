@@ -298,8 +298,11 @@ p,h1,h2,h3,li{
 #side-nav .events-tab{
 
 }
-#side-nav .events-tab .event-holder{
-	
+#side-nav .events-tab .event-item{
+   margin-bottom: 5px;
+}
+#side-nav .events-tab .button{
+   margin-top: 30px;
 }
 
 
