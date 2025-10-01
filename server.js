@@ -120,7 +120,7 @@ app.post('/api/analyze', async (req, res) => {
             response = await getPosts(webData);
           break;
           case 'posts_remake':
-            console.log('Starting analysis of web data...');
+            console.log('Starting analysis of web data remake...');
             response = await getPostsRemade(webData);
           break;
         

@@ -459,7 +459,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'event_data', 
-                                       webData: this.state.webData })
+                                       webData: this.state.currentEvent.webData })
             });
         
             console.log("Event Data received:", response);
@@ -473,7 +473,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'posts', 
-                                       webData: JSON.stringify(this.state.eventData) })
+                                       webData: JSON.stringify(this.state.currentEvent.eventData) })
             });
         
             console.log("Posts received:", response);
