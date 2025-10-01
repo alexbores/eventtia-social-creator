@@ -443,7 +443,7 @@
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: this.state.url, 
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'web_data',
                                        webData: null })
             });
@@ -457,7 +457,7 @@
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: this.state.url, 
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'event_data', 
                                        webData: this.state.webData })
             });
@@ -471,7 +471,7 @@
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: this.state.url, 
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'posts', 
                                        webData: JSON.stringify(this.state.eventData) })
             });
@@ -496,7 +496,7 @@
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: this.state.url, 
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'posts_remake', 
                                        webData: JSON.stringify(newData) })
             });
@@ -644,7 +644,7 @@
             
 
             this.elements.eventUrlEls.forEach(el=>{
-               el.href = this.state.url;
+               el.href = this.state.currentEvent.url;
             });
         },
 
