@@ -219,6 +219,40 @@ p,h1,h2,h3,li{
 #side-nav.hide{
 	display: none;
 }
+
+#side-nav .tab-buttons-holder{
+   width: 100%;
+   display: flex;
+   gap: 10px;
+   margin-bottom: 20px;
+}
+#side-nav .tab-buttons-holder .button{
+   font-size: 12px;
+   padding: 3px 5px;
+   margin-top: 0;
+}
+#side-nav .tab-buttons-holder .button:not(.selected){
+  background-color: #6030d912;
+  border: solid 2px #6030d921;
+  color: #6030d9db;
+  box-shadow: unset;
+}
+#side-nav .tab-buttons-holder .button:not(.selected):hover{
+  background-color: var(--color-action);
+  border: solid 2px var(--color-action);
+  color: white;
+}
+#side-nav .tab{
+	width: 100%;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    display: none;
+}
+#side-nav .tab.selected{
+	display: block;
+}
 #side-nav .title-holder{
 	width: 100%;
 	margin-bottom: 40px;
@@ -261,7 +295,12 @@ p,h1,h2,h3,li{
 	margin-top: auto;
 }
 
+#side-nav .events-tab{
 
+}
+#side-nav .events-tab .event-holder{
+	
+}
 
 
 
@@ -339,7 +378,7 @@ p,h1,h2,h3,li{
 }
 #posts-screen .post-card .img-holder{
 	background-color: var(--color-gray-light);
-	aspect-ratio: 1;
+	aspect-ratio: 4/5;
 	width: 100%;
 	border-radius: 6px;
 	overflow: hidden;
@@ -365,27 +404,28 @@ p,h1,h2,h3,li{
    font-size: var(--font-size-text-xs);
    font-weight: 600;
 }
-#posts-screen .post-card .type[type="announcement"]{
+#posts-screen .type[type="announcement"],
+#posts-screen .type[type="thank_you"],{
    background-color: #3b82f633;
    color: rgb(96,165,250);
 }
-#posts-screen .post-card .type[type="speaker"],
-#posts-screen .post-card .type[type="activity"],
-#posts-screen .post-card .type[type="workshop"]{
+#posts-screen .type[type="speaker"],
+#posts-screen .type[type="activity"],
+#posts-screen .type[type="workshop"]{
    background-color: #a855f733;
    color: rgb(192, 132,252);
 }
-#posts-screen .post-card .type[type="reminder"],
-#posts-screen .post-card .type[type="venue"],
-#posts-screen .post-card .type[type="sponsors"]{
+#posts-screen .type[type="reminder"],
+#posts-screen .type[type="venue"],
+#posts-screen .type[type="sponsors"]{
    background-color: #f9731633;
    color: rgb(251,146,60);
 }
-#posts-screen .post-card .type[type="urgency"]{
+#posts-screen .type[type="urgency"]{
        background-color: #ef444433;
    color: rgb(248, 113, 113);
 }
-#posts-screen .post-card .type[type="event_day"]{
+#posts-screen .type[type="event_day"]{
     background-color: #22c55e33;
    color: rgb(74, 222, 128);
 }
@@ -443,7 +483,7 @@ p,h1,h2,h3,li{
 #post-editor .content{
    border-radius: var(--main-border);
    padding: 40px;
-   background-color: var(--color-white-sky);
+   background-color: var(--color-white);
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -484,30 +524,6 @@ p,h1,h2,h3,li{
    color: white;
    font-size: var(--font-size-text-xs);
    font-weight: 600;
-}
-#post-editor .type[type="announcement"]{
-   background-color: #3b82f633;
-   color: rgb(96,165,250);
-}
-#post-editor .type[type="speaker"],
-#post-editor .type[type="activity"],
-#post-editor .type[type="workshop"]{
-   background-color: #a855f733;
-   color: rgb(192, 132,252);
-}
-#post-editor .type[type="reminder"],
-#post-editor .type[type="venue"],
-#post-editor .type[type="sponsors"]{
-   background-color: #f9731633;
-   color: rgb(251,146,60);
-}
-#post-editor .type[type="urgency"]{
-       background-color: #ef444433;
-   color: rgb(248, 113, 113);
-}
-#post-editor .type[type="event_day"]{
-    background-color: #22c55e33;
-   color: rgb(74, 222, 128);
 }
 #post-editor .date{
 	color: var(--color-gray-dark);

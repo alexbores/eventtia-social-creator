@@ -34,6 +34,8 @@ async function getAiAnalysis(data) {
     let finalPrompt = `${prompt} 
                        \n\nHere is the current date ${data.webData.currentDate}. 
                        \n\nHere is the date of the event ${data.webData.eventDate}. 
+                       \n\nHere is the old name of the event ${data.webData.eventNameOld}. 
+                       \n\nHere is the new name of the event ${data.webData.eventName}. 
                        \n\nHere is the page's content:\n\`\`\`\n${data.webData.content}\n\`\`\`.
                        \n\nHere is the current posts json:\n\`\`\`\n${data.posts}\n\`\`\``;
     

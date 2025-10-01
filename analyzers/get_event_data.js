@@ -61,7 +61,7 @@ async function getAiAnalysisEventName(html) {
         aiSummary = await getAIFetch('chatgpt', finalPrompt, []);
         console.log("AI says:", aiSummary);
 
-        cleanedString = aiSummary.trim().slice(1, -1);
+        cleanedString = aiSummary.trim().slice(1, -1).replace(/^"|"$/g, '');
     
     } catch (error) {
         console.error('error in ai fetch: ',error);
