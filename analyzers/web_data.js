@@ -14,6 +14,7 @@ async function getWebData(page, config) {
     console.log('getting web data '+ config.screenSize);
     
     const viewport = config.screenSize.split('x').map(Number);
+    const [width, height] = viewport;
 
     const report = {
         html: null,
@@ -21,8 +22,8 @@ async function getWebData(page, config) {
     };
 
     try {
-        console.log(`Capturing screenshot for ${viewport.name} viewport...`);
-        await page.setViewport({ width: viewport.width, height: viewport.height });
+        console.log(`Capturing screenshot for viewport...`);
+        await page.setViewport({ width: width, height: height });
     
         await new Promise(r => setTimeout(r, 500));
 
