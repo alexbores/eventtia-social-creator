@@ -516,6 +516,10 @@
            this.elements.postEditorEl.classList.add('open');
            let inner = this.elements.postEditorEl.querySelector('.wrapper');
            inner.innerHTML = post.innerHTML;
+
+           let post = this.currentEvent.posts.filter(post.id === id);
+
+           this.currentEvent.currentPost = post;
         },
 
 

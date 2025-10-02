@@ -16,6 +16,8 @@ const { getPromptDate, getPromptContent, getPromptName } = require('../modules/p
  * @returns {Promise<object>} - The structured analysis report.
  */
 async function getEventData(html) {
+
+    console.log('html for data: '+html);
     
     let currentDate = getCurrentDate();
 

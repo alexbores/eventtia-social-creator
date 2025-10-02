@@ -29,9 +29,20 @@ async function getAiImage(data) {
 
     const prompt = getPromptImage();
     
-    let srippedHtml = stripHtml(html);
+    let content = `
+        Event date: ${eventDate},
+        Event Name: ${eventName},
+        Post Type: ${post.type},
+        Post Date: ${post.date},
+        Post Content: ${post.title},  ${post.content}
+
+    `;
+
+
     let finalPrompt = `${prompt} 
-                       \n\nHere is the page's HTML content:\n\`\`\`html\n${srippedHtml}\n\`\`\``;
+                       \n\nHere is the post event content:\n\`\`\`html\n${content}\n\`\`\`
+                       \n\nHere is the reference screenshot:\n\`\`\`html\n${reference}\n\`\`\`
+                   `;
     
     let aiSummary = '';
     let cleanedString = '';
