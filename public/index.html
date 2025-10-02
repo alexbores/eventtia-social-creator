@@ -393,7 +393,7 @@
 
             let postData = {
                 post: this.state.currentEvent.currentPost,
-                reference: this.state.currentEvent.webData.screenshot,
+                reference: this.encodeLocalImage(this.state.currentEvent.screenshot),
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
             }
@@ -674,6 +674,42 @@
          const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
        
          return daysRemaining;
+        },
+
+        encodeLocalImage(filePath) {
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`File not found at path: ${filePath}`);
+            }
+        
+            const fileExtension = path.extname(filePath).toLowerCase();
+            
+            // Simple mapping, adjust for more types if needed
+            let mimeType;
+            switch (fileExtension) {
+                case '.png':
+                    mimeType = 'image/png';
+                    break;
+                case '.jpg':
+                case '.jpeg':
+                    mimeType = 'image/jpeg';
+                    break;
+                case '.webp':
+                    mimeType = 'image/webp';
+                    break;
+                default:
+                    throw new Error(`Unsupported image type: ${fileExtension}`);
+            }
+        
+            // Read the file buffer
+            const imageBuffer = fs.readFileSync(filePath);
+            
+            // Convert the buffer to a Base64 string
+            const base64Data = imageBuffer.toString('base64');
+        
+            return {
+                data: base64Data,
+                mimeType: mimeType
+            };
         },
 
         
