@@ -142,6 +142,8 @@
     
     </div>
 
+    <img id="image-testing">
+
 </body>
 
 </html>
@@ -151,6 +153,7 @@
         state: {
             currentEvent:{
               webData: null,
+              screenshot: null,
               eventData: null,
               posts: [],
               tempPosts: [],
@@ -328,7 +331,8 @@
             console.log("Web Data received");
         
             // Update state with the new data
-            this.state.currentEvent.webData = response;
+            this.state.currentEvent.webData = response.html;
+            this.state.currentEvent.screenshot = response.screenshot;
         },
         async getEventData(){
             const response = await this.fetchApi('/api/analyze', {
@@ -336,7 +340,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: this.state.currentEvent.url, 
                                        request: 'event_data', 
-                                       webData: this.state.currentEvent.webData })
+                                       webData: this.state.currentEvent.webData.html })
             });
         
             console.log("Event Data received:", response);
@@ -384,6 +388,29 @@
             this.state.currentEvent.posts = response;
         },
 
+        
+        async getPostImage(){
+
+            let postData = {
+                post: this.state.currentEvent.currentPost,
+                reference: this.state.currentEvent.webData.screenshot,
+                eventName: this.state.currentEvent.eventData.eventName,
+                eventDate: this.state.currentEvent.eventData.eventDate,
+            }
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'post_image', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+            console.log("Image Received:", response);
+        
+            // Update state with the new data
+            this.state.currentEvent.posts = response;
+        }
 
 
         async updateEventData(){
@@ -1134,6 +1161,10 @@
            this.renderData();
            this.renderEvents();
         },
+
+        loadImageData(src){
+            document.querySelector('#image-testing').src = src;
+        }
 
     };
 

@@ -94,5 +94,80 @@ async function getAIFetch(modelType, promptText, imageBuffers = []) {
     }
 }
 
+
+
+async function generateImage(promptText, imageBuffer) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error('GEMINI_API_KEY is not configured in .env file.');
+    }
+
+    // Use the specific model for image generation/editing
+    const modelType = "gemini-2.5-flash-image-preview";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelType}:generateContent?key=${apiKey}`;
+
+    // Prepare image parts from the input buffers
+    const imageParts = imageBuffers.map(imgData => ({
+        inlineData: { 
+            mimeType: imgData.mimeType,
+            data: imgData.buffer.toString('base64')
+        }
+    }));
+    
+    // Ensure the promptText is always the first part, followed by images
+    const contentsParts = [{ text: promptText }, ...imageParts];
+
+    const requestBody = {
+        contents: [{ parts: contentsParts }]
+    };
+
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        console.log(`Sending request to ${modelType} API...`);
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            const errorBody = await response.json();
+            const errorMessage = errorBody.error;
+            console.error(`${modelType} API Error:`, errorMessage);
+            throw new Error(`${modelType} API responded with status: ${response.status} - ${errorMessage?.message || JSON.stringify(errorBody)}`);
+        }
+
+        const result = await response.json();
+
+        // The image generation model typically returns inlineData for the generated image
+        const generatedImagePart = result?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
+
+        if (generatedImagePart && generatedImagePart.inlineData) {
+            console.log(`✅ ${modelType} successfully generated an image.`);
+            return {
+                data: generatedImagePart.inlineData.data,
+                mimeType: generatedImagePart.inlineData.mimeType
+            };
+        } else {
+            console.warn(`Response was valid but contained no generated image data.`, JSON.stringify(result, null, 2));
+            // Log any text output if available, for debugging
+            const textOutput = result?.candidates?.[0]?.content?.parts?.find(part => part.text)?.text;
+            if (textOutput) {
+                console.warn("Model Text Output:", textOutput);
+            }
+            return null; // No image data found
+        }
+
+    } catch (error) {
+        console.error(`Failed to get image from ${modelType}:`, error);
+        throw error;
+    }
+}
+
+
+
 // Export the single, unified function
-module.exports = { getAIFetch };
+module.exports = { getAIFetch , generateImage};

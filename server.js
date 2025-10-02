@@ -11,12 +11,14 @@ const { getWebData } = require('./analyzers/web_data');
 const { getEventData } = require('./analyzers/get_event_data');
 const { getPosts } = require('./analyzers/get_posts');
 const { getPostsRemade } = require('./analyzers/get_posts_remade');
+const { getPostImage } = require('./analyzers/get_post_image');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- CONFIGURATION ---
 const config = {
+    screenSizes: ["1440x900"],
     imagePath: '/images/analysis/',
     imageDir: path.join(__dirname, 'public/images/analysis/')
 };
@@ -81,35 +83,34 @@ app.post('/api/analyze', async (req, res) => {
                 headless: chromium.headless,
                 ignoreHTTPSErrors: true,
             });
+            console.log('Browser launched successfully.');
 
             const page = await browser.newPage();
 
-            // 1. Enable request interception
+            // Enable request interception
             await page.setRequestInterception(true);
             
-            // 2. Listen for each request and decide whether to continue or abort it
+            // Listen for each request and decide whether to continue or abort it
             page.on('request', (req) => {
                 const resourceType = req.resourceType();
-                if (['stylesheet', 'font'].includes(resourceType)) {
-                    req.abort();
-                } else {
+                // if (['stylesheet', 'font'].includes(resourceType)) {
+                //     req.abort();
+                // } else {
                     req.continue();
-                }
+                // }
             });
-
 
             console.log(`going to the url`);
             await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 900000 });
             await autoScroll(page);
-            
 
             console.log('Gettign the web data.');
             response = await getWebData(page, config);
 
-            // --- Step 2: Close browser and release memory ---
+            // Close browser and release memory
             await browser.close();
             console.log('Browser closed. Memory released.');
-            browser = null; // Set to null to prevent re-closing in finally block
+            browser = null; 
           break;
           case 'event_data':
             console.log('Starting analysis of event data...');
@@ -122,6 +123,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'posts_remake':
             console.log('Starting analysis of web data remake...');
             response = await getPostsRemade(webData);
+          break;
+          case 'post_image':
+            console.log('Starting analysis of post image...');
+            response = await getPostImage(webData);
           break;
         
         }

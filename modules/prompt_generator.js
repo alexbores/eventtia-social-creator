@@ -215,4 +215,41 @@ Use the real information from the html provided.
     return prompt;
 }
 
-module.exports = { getPromptPosts, getPromptRemadePosts, getPromptContent, getPromptDate, getPromptName };
+
+function getPromptImage() {
+    const prompt = `You are an image generator service. Your function is to create a social image for my post based on the content provided.
+    
+    **Primary Directive:** Analyze the event post content and the screenshot of the landing page provided at the end of this prompt and generate an image based on that.
+    
+
+    ---
+    ### ### Social post generator logic:
+
+    1.  **Reference Image:** use the same design style, fonts, colors, and general tone from the image provided which is a screenshot of the event landing page.
+    2.  **Image Content:** use the content provided at the end of the prompt to generate the actual image information, consider including the following topics if they are relevant to the post content.
+        * ** Name of the event
+        * ** Date of the event
+        * ** Location of the event
+        * ** Image refering to the event activities
+        * ** Image with the same tone and style as the reference
+        * ** Messages that encourage action and registration or participation, depending of the content at the end of the prompt
+
+
+    
+    Use the real information from the content provided.
+    
+    ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than an image data
+    * **DATA ONLY:** Your entire output **MUST** be a single image data.
+    * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the image.
+
+    
+    **Begin analysis. Process the following content and image:**
+    
+    
+    
+    `;
+
+    return prompt;
+}
+
+module.exports = { getPromptPosts, getPromptRemadePosts, getPromptContent, getPromptDate, getPromptName, getPromptImage };
