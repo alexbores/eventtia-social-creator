@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 // --- CONFIGURATION ---
 const config = {
-    screenSizes: ["1440x900"],
+    screenSize: "1440x900",
     imagePath: '/images/analysis/',
     imageDir: path.join(__dirname, 'public/images/analysis/')
 };
