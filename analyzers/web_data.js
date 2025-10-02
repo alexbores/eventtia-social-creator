@@ -11,7 +11,7 @@ const crypto =require('crypto');
 async function getWebData(page, config) {
     const url = page.url();
 
-    console.log('getting web data');
+    console.log('getting web data '+ config.screenSize);
     
     const viewport = config.screenSize.split('x').map(Number);
 
