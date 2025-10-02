@@ -20,9 +20,18 @@
             <h1 class="nav-title">Event Social Creator</h1>
 
             <div class="options">
-                <!-- <a href="/" target="_blank" class="option button button-secondary">
-                   Analyze Other Event
-                </a> -->
+                <div class="event-list-wrapper">
+                  <p class="option-title">Your Events: </p>
+                  <select class="input" events-list>
+                    
+                  </select>
+                </div>
+               
+
+                <button analyze-new-event class="button button-glared">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                  <span>Analyze New Event</span>
+                </button>
             </div>
         </div>
     </section>
@@ -78,15 +87,6 @@
    <div class="section-wrapper">
         
         <div id="side-nav" class="hide">
-            <div class="tab-buttons-holder">
-                <button class="button selected" tab-btn="social-campaign">
-                   Social Plan
-                </button>
-                <button class="button" tab-btn="my-events">
-                   My Events
-                </button>
-            </div>
-            <div class="tab selected social-plan-tab" tab="social-campaign">
               <div class="title-holder">
                  <h2 class="title">
                    Your Social Campaign:
@@ -117,23 +117,6 @@
             </div>
 
 
-            <div class="tab events-tab" tab="my-events">
-                <div class="title-holder">
-                  <h2 class="title">
-                    All Events:
-                  </h2>
-                </div>
-                <div class="info-holder" events-list>
-                    
-                </div>
-
-                <button analyze-new-event class="button button-glared">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
-                     <span>Analyze New Event</span>
-                </button>
-            </div>
-
-            
         </div>
 
     <section id="posts-screen">
@@ -173,6 +156,7 @@
               tempPosts: [],
               currentPost: null,
               url: null,
+              uid: '',
             },
 
             events:[],
@@ -248,10 +232,8 @@
 
             
 
-            this.elements.tabButtonsEls.forEach(tabBtn=>{
-               tabBtn.addEventListener('click',()=>{
-                  this.openTab(tabBtn);
-               });
+            this.elements.eventsListEl.addEventListener('change',()=>{
+                  this.selectEvent();
             });
 
 
@@ -311,9 +293,13 @@
                 screen.classList.add('end-loading');
 
                 this.renderData();
+                
+                let uid = this.generateUniqueCode();
+                
+                this.state.currentEvent.uid = uid;
 
                 this.state.events.push({
-                  uid: this.generateUniqueCode(),
+                  uid: uid,
                   eventData: this.state.currentEvent,
                 });
 
@@ -455,6 +441,19 @@
         },
 
 
+        selectEvent(){
+          let eventUID = this.elements.eventsListEl.value;
+          let selectedEvent = this.state.events.filter(event => event.uid === eventUID); 
+          console.log(eventUID);
+          console.log(selectedEvent[0].eventData);
+
+          this.state.currentEvent = selectedEvent[0].eventData;
+
+          this.renderData();
+          this.renderPosts();
+        },
+
+
 
         analyzeNewEvent(){
             this.showScreen('url-screen');
@@ -507,12 +506,13 @@
             this.state.currentEvent.posts.forEach((post,key)=>{
                 html += `
                     <div class="post-card" post-card="${key}">
-                        <div class="img-holder">
-                           
-                        </div>
                         <div class="bar">
                             <p class="type" type="${post.type}">${post.type.replace('_',' ')}</p>
                             <p class="date">posting date: <span>${post.date}</span></p>
+                        </div>
+                    
+                        <div class="img-holder">
+                           
                         </div>
                         <h3 class="post-title">${post.title}</h3>
                         <p class="post-content">${post.content}</p>
@@ -549,47 +549,21 @@
             });
         },
 
-        getDaysUntil(futureDateStr) {
-         // Get today's date and set the time to the beginning of the day
-         const today = new Date();
-         today.setHours(0, 0, 0, 0);
-       
-         // Create a Date object for the future date
-         const futureDate = new Date(futureDateStr);
-       
-         // Calculate the difference in milliseconds
-         const timeDifference = futureDate.getTime() - today.getTime();
-       
-         // Convert milliseconds to days and round up
-         const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-       
-         return daysRemaining;
-        },
-    
-        
-
         renderEvents(){
             let events = '';
             this.state.events.forEach(event=>{
                  events += `
-                    <p class="event-item" 
-                       event="${event.uid}" >
+                    <option class="event-item" 
+                       value="${event.uid}" 
+                       ${(this.state.currentEvent.uid == event.uid)? ' selected' : ''} >
                          ${event.eventData.eventData.eventName}
-                    </p>
+                    </option>
                  `;
             });
             this.elements.eventsListEl.innerHTML = events;
         },
  
-        openTab(tabBtn){
-           document.querySelectorAll('[tab],[tab-btn]').forEach(tab=>{
-               tab.classList.remove('selected');
-           })
-           let tab = document.querySelector(`[tab="${tabBtn.getAttribute('tab-btn')}"]`);
-           tabBtn.classList.add('selected');
-           tab.classList.add('selected');
-        },
-
+       
 
         // saving and loading
         checkStorage(){
@@ -599,6 +573,10 @@
            }
            
            this.state = data;
+
+           if(!this.state.currentEvent.uid){
+             this.state.currentEvent = this.state.events[0];
+           }
 
            this.showScreen("posts-screen");
            this.renderPosts();
@@ -649,6 +627,512 @@
           
           // Combine time and a small random factor.
           return timeBase36 + randomComponent;
+        },
+        getDaysUntil(futureDateStr) {
+         // Get today's date and set the time to the beginning of the day
+         const today = new Date();
+         today.setHours(0, 0, 0, 0);
+       
+         // Create a Date object for the future date
+         const futureDate = new Date(futureDateStr);
+       
+         // Calculate the difference in milliseconds
+         const timeDifference = futureDate.getTime() - today.getTime();
+       
+         // Convert milliseconds to days and round up
+         const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+       
+         return daysRemaining;
+        },
+
+        
+        loadDummyData(){
+           let data = {
+   "currentEvent":{
+      "webData":"",
+      "eventData":{
+         "currentDate":"2025-10-01",
+         "eventDate":"2026-01-26",
+         "eventName":"Friday show! - The Villain Comedy - standup showcase in English",
+         "content":"[{\"event_name\":\"Friday show! - The Villain Comedy - standup showcase in English\",\"location\":{\"venue_name\":\"Xafarix\",\"address\":\"69 Avenida Dom Carlos I, 69, 1200-647 Lisboa, Portugal\"},\"organizer\":\"Standup Comedy Lisbon\",\"dates\":[{\"date\":\"2025-10-03\",\"start_time\":\"20:30\",\"end_time\":\"23:00\"}],\"entry_fee\":\"donation at the end, pay what you want\",\"description\":\"Let your laughters light up your weekend, in a gorgeous bar in the coolest area in town. Have a blast with a standup comedy showcase in English featuring the best acts from home and abroad!\",\"additional_info\":\"Doors open at 20:30, show starts at 21:00. RSVPs held until 20:45, first come first served!\"}]"
+      },
+      "posts":[
+         {
+            "id":1,
+            "date":"2025-10-08",
+            "title":"🎉 Announcing The Villain Comedy Night!",
+            "content":"Join us for an unforgettable evening with 'The Villain Comedy - standup showcase in English' at Xafarix, Lisbon. Laugh your heart out with the best acts from home and abroad on January 26, 2026. Secure your spot now!",
+            "image":"https://example.com/images/Xafarix.jpg",
+            "hashtags":[
+               "#TheVillainComedy",
+               " #StandupShowcase",
+               " #Lisbon"
+            ],
+            "type":"announcement",
+            "status":"schedule"
+         },
+         {
+            "id":2,
+            "date":"2025-10-22",
+            "title":"Venue Highlight: Xafarix Awaits!",
+            "content":"Experience comedy in the beautiful Xafarix located at Avenida Dom Carlos I, 69. Enjoy an evening filled with laughter in one of Lisbon's coolest bars. Don't miss out!",
+            "image":"https://example.com/images/Xafarix-Venue.jpg",
+            "hashtags":[
+               "#Xafarix",
+               " #ComedyVenue",
+               " #LisbonEvents"
+            ],
+            "type":"venue",
+            "status":"schedule"
+         },
+         {
+            "id":3,
+            "date":"2025-11-05",
+            "title":"⭐ Meet Our Comedic Stars",
+            "content":"Our lineup features top-notch comedians from both home and abroad, guaranteed to make you laugh till you drop! Keep an eye out for our next post introducing our stars.",
+            "image":"https://example.com/images/ComediansLineup.jpg",
+            "hashtags":[
+               "#ComedyStars",
+               " #StandupShowcase",
+               " #LisbonComedy"
+            ],
+            "type":"speaker",
+            "status":"schedule"
+         },
+         {
+            "id":4,
+            "date":"2025-11-19",
+            "title":"🎭 What To Expect: Comedy Gold!",
+            "content":"Be ready for an evening of unmatched humor and fun at 'The Villain Comedy' standup showcase. It's laughter and entertainment at its best!",
+            "image":"https://example.com/images/ComedyShowcase.jpg",
+            "hashtags":[
+               "#ComedyGold",
+               " #Standup",
+               " #TheVillainComedy"
+            ],
+            "type":"activity",
+            "status":"schedule"
+         },
+         {
+            "id":5,
+            "date":"2025-12-03",
+            "title":"⏰ Save The Date: January 26!",
+            "content":"Mark your calendars and get ready to join us at Xafarix for a night of laughter with 'The Villain Comedy' showcase. It's a first-come, first-served event, so arrive early!",
+            "image":"https://example.com/images/SaveTheDate.jpg",
+            "hashtags":[
+               "#SaveTheDate",
+               " #ComedyNights",
+               " #Lisbon"
+            ],
+            "type":"urgency",
+            "status":"schedule"
+         },
+         {
+            "id":6,
+            "date":"2025-12-17",
+            "title":"🎟️ Pay What You Want!",
+            "content":"Enjoy 'The Villain Comedy' and pay what you want. It's our way of saying everyone deserves a good laugh! Join us on January 26 and donate as you wish.",
+            "image":"https://example.com/images/PayWhatYouWant.jpg",
+            "hashtags":[
+               "#PayWhatYouWant",
+               " #StandupShowcase",
+               " #ComedyForAll"
+            ],
+            "type":"announcement",
+            "status":"schedule"
+         },
+         {
+            "id":7,
+            "date":"2026-01-10",
+            "title":"Get Ready for Comedy Night!",
+            "content":"Just a few weeks to go before 'The Villain Comedy' hits the stage at Xafarix. RSVP now and enjoy the best comedic acts! Doors open at 20:30.",
+            "image":"https://example.com/images/ComedyNightPrep.jpg",
+            "hashtags":[
+               "#ComedyNight",
+               " #RSVPNow",
+               " #StandupShowcase"
+            ],
+            "type":"urgency",
+            "status":"schedule"
+         },
+         {
+            "id":8,
+            "date":"2026-01-20",
+            "title":"Final Countdown to Laughter!",
+            "content":"We are just days away from 'The Villain Comedy' night. Join us at Xafarix for an unforgettable experience. Remember, first come, first served!",
+            "image":"https://example.com/images/FinalCountdown.jpg",
+            "hashtags":[
+               "#CountdownToLaughs",
+               " #StandupShowcase",
+               " #LisbonComedy"
+            ],
+            "type":"urgency",
+            "status":"schedule"
+         },
+         {
+            "id":9,
+            "date":"2026-01-25",
+            "title":"😄 Comedy Show Tomorrow!",
+            "content":"Get ready! Tomorrow is the big night at Xafarix. Make sure to arrive before 20:45 for the best seats. Can't wait to see you there!",
+            "image":"https://example.com/images/GetReady.jpg",
+            "hashtags":[
+               "#ComedyTomorrow",
+               " #TheVillainComedy",
+               " #Lisbon"
+            ],
+            "type":"reminder",
+            "status":"schedule"
+         },
+         {
+            "id":10,
+            "date":"2026-01-26",
+            "title":"🎤 It's Showtime!",
+            "content":"Tonight's the night for 'The Villain Comedy' standup showcase! Join us at Xafarix. Doors open at 20:30, with the show starting at 21:00. Let's laugh the night away!",
+            "image":"https://example.com/images/Showtime.jpg",
+            "hashtags":[
+               "#Showtime",
+               " #TheVillainComedy",
+               " #Xafarix"
+            ],
+            "type":"event_day",
+            "status":"schedule"
+         },
+         {
+            "id":11,
+            "date":"2026-01-27",
+            "title":"🙏 Thank You for Joining Us!",
+            "content":"A big thank you to everyone who attended 'The Villain Comedy' at Xafarix. We hope you had as much fun as we did. See you next time! 🎉",
+            "image":"https://example.com/images/ThankYou.jpg",
+            "hashtags":[
+               "#ThankYou",
+               " #TheVillainComedy",
+               " #Lisbon"
+            ],
+            "type":"thank_you",
+            "status":"schedule"
+         }
+      ],
+      "tempPosts":[
+         
+      ],
+      "currentPost":null,
+      "url":"https://www.eventbrite.pt/e/friday-show-the-villain-comedy-standup-showcase-in-english-tickets-773302106417",
+      "uid": "mg84p49gn",
+   },
+   "events":[
+      {
+         "uid":"mg7pjfmxr",
+         "eventData":{
+            "webData":"",
+            "eventData":{
+               "currentDate":"2025-10-01",
+               "eventDate":"2025-10-27",
+               "eventName":"RSRV x SOUL",
+               "content":"[{\"eventTitle\":\"An Evening with Paintvine\",\"organizers\":\"Liv Carter & The Mumm RSRV Club\",\"eventDetails\":\"Join us for our 5th Mumm RSRV Club event - an interactive evening to showcase your artistic flare whilst enjoying the best of RSRV. We will showcase the new vintage release of the Blanc de Noirs 2012 and the Blanc de Blancs 2015, along with the first view of the new bottle design.\",\"date\":\"Thursday 27th October\",\"time\":\"4pm – 8pm\",\"location\":\"The Boat Shed Ōrakei, 1 Ngapipi Rd, Ōrakei.\",\"newVintageAlert\":\"We'll be showcasing the new vintage RSRV Blanc de Noirs 2012 with aromas of apricots and toasted brioche, aged for six years in our Maison Mumm cellars. This cuvée is available on the Henry & Paul site with limited allocation. The new vintage RSRV Blanc de Blancs 2015 is expected by the end of the year for Christmas gifting, in the new clear glass bottle, showcasing the golden hue of this 100% Chardonnay cuvée.\",\"birthdayTreat\":\"Update your birthday and address on the RSRV Club Henry & Paul page for a birthday treat.\",\"rsvpLink\":\"RSVP below.\"}]"
+            },
+            "posts":[
+               {
+                  "id":1,
+                  "date":"2025-10-03",
+                  "title":"🎨 Join Us at Paintvine's Evening!",
+                  "content":"Don't miss our 5th Mumm RSRV Club event! Enjoy an interactive evening to showcase your artistic flair while sampling the finest RSRV vintages. Mark your calendars for October 27th! RSVP here: [RSVP link].",
+                  "image":"https://example.com/images/Paintvine_Event.jpg",
+                  "hashtags":[
+                     "#Paintvine2025",
+                     "#ArtAndWine",
+                     "#Orakei"
+                  ],
+                  "type":"announcement",
+                  "status":"schedule"
+               },
+               {
+                  "id":2,
+                  "date":"2025-10-10",
+                  "title":"🍇 Discover Our New Vintage!",
+                  "content":"Be among the first to taste the new RSRV Blanc de Noirs 2012 with aromas of apricots and toasted brioche. Aged to perfection, this wine promises a unique experience. Limited allocation available on Henry & Paul. RSVP now!",
+                  "image":"https://example.com/images/RSRV_BlancDeNoirs2012.jpg",
+                  "hashtags":[
+                     "#RSRVWine",
+                     "#LimitedEdition",
+                     "#WineLovers"
+                  ],
+                  "type":"announcement",
+                  "status":"schedule"
+               },
+               {
+                  "id":3,
+                  "date":"2025-10-17",
+                  "title":"🎉 Early Bird Reminder!",
+                  "content":"Our exclusive event is getting closer! Make sure you RSVP and update your details on the RSRV Club Henry & Paul page for a special birthday treat. Don’t miss out on this art and wine experience!",
+                  "image":"https://example.com/images/EarlyBird.jpg",
+                  "hashtags":[
+                     "#ExclusiveEvent",
+                     "#BirthdayTreat",
+                     "#RSRVClub"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":4,
+                  "date":"2025-10-20",
+                  "title":"Venue Spotlight: The Boat Shed Ōrakei",
+                  "content":"Join us at the stunning Boat Shed Ōrakei for our event. With picturesque views and an inspiring atmosphere, it’s the perfect backdrop for an unforgettable evening of art and wine. RSVP today!",
+                  "image":"https://example.com/images/BoatShedOrakei.jpg",
+                  "hashtags":[
+                     "#OrakeiVenue",
+                     "#EventSpotlight",
+                     "#ArtAndWine"
+                  ],
+                  "type":"venue",
+                  "status":"schedule"
+               },
+               {
+                  "id":5,
+                  "date":"2025-10-24",
+                  "title":"⏰ Final Reminder: 3 Days to Go!",
+                  "content":"The countdown is on! Only 3 days left until An Evening with Paintvine. Enjoy a celebration of art, wine, and community. Make sure you secure your spot before it's too late!",
+                  "image":"https://example.com/images/Countdown.jpg",
+                  "hashtags":[
+                     "#PaintvineCountdown",
+                     "#RSRVEvent",
+                     "#FinalCall"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":6,
+                  "date":"2025-10-26",
+                  "title":"🎨 Last Chance to RSVP!",
+                  "content":"Tomorrow's the day! Experience a blend of art and exquisite wines at our Mumm RSRV Club event. This is your final call to RSVP and be part of this exclusive gathering.",
+                  "image":"https://example.com/images/LastChance.jpg",
+                  "hashtags":[
+                     "#RSRVLastCall",
+                     "#ArtAndWineEvent",
+                     "#MustAttend"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":7,
+                  "date":"2025-10-27",
+                  "title":"🎈 It's Event Day!",
+                  "content":"The day is here! We’re excited to welcome you to The Boat Shed Ōrakei for an evening of creativity and fine wines. Let’s make memorable moments together. See you at 4 PM!",
+                  "image":"https://example.com/images/EventDay.jpg",
+                  "hashtags":[
+                     "#PaintvineHappening",
+                     "#CreativeEvening",
+                     "#OrakeiEvent"
+                  ],
+                  "type":"event_day",
+                  "status":"schedule"
+               },
+               {
+                  "id":8,
+                  "date":"2025-10-28",
+                  "title":"🙏 Thank You for Joining Us!",
+                  "content":"Thank you for being part of An Evening with Paintvine! We hope you enjoyed the art and wine experience as much as we did. Stay tuned for more events from Mumm RSRV Club!",
+                  "image":"https://example.com/images/ThankYou.jpg",
+                  "hashtags":[
+                     "#ThankYou",
+                     "#RSRVGratitude",
+                     "#ArtAndWineMemories"
+                  ],
+                  "type":"thank_you",
+                  "status":"schedule"
+               }
+            ],
+            "tempPosts":[
+               
+            ],
+            "currentPost":null,
+            "url":"https://live.eventtia.com/en/soulrsrv"
+         }
+      },
+      {
+         "uid":"mg84p49gn",
+         "eventData":{
+            "webData":"",
+            "eventData":{
+               "currentDate":"2025-10-01",
+               "eventDate":"2026-01-26",
+               "eventName":"Friday show! - The Villain Comedy - standup showcase in English",
+               "content":"[{\"event_name\":\"Friday show! - The Villain Comedy - standup showcase in English\",\"location\":{\"venue_name\":\"Xafarix\",\"address\":\"69 Avenida Dom Carlos I, 69, 1200-647 Lisboa, Portugal\"},\"organizer\":\"Standup Comedy Lisbon\",\"dates\":[{\"date\":\"2025-10-03\",\"start_time\":\"20:30\",\"end_time\":\"23:00\"}],\"entry_fee\":\"donation at the end, pay what you want\",\"description\":\"Let your laughters light up your weekend, in a gorgeous bar in the coolest area in town. Have a blast with a standup comedy showcase in English featuring the best acts from home and abroad!\",\"additional_info\":\"Doors open at 20:30, show starts at 21:00. RSVPs held until 20:45, first come first served!\"}]"
+            },
+            "posts":[
+               {
+                  "id":1,
+                  "date":"2025-10-08",
+                  "title":"🎉 Announcing The Villain Comedy Night!",
+                  "content":"Join us for an unforgettable evening with 'The Villain Comedy - standup showcase in English' at Xafarix, Lisbon. Laugh your heart out with the best acts from home and abroad on January 26, 2026. Secure your spot now!",
+                  "image":"https://example.com/images/Xafarix.jpg",
+                  "hashtags":[
+                     "#TheVillainComedy",
+                     " #StandupShowcase",
+                     " #Lisbon"
+                  ],
+                  "type":"announcement",
+                  "status":"schedule"
+               },
+               {
+                  "id":2,
+                  "date":"2025-10-22",
+                  "title":"Venue Highlight: Xafarix Awaits!",
+                  "content":"Experience comedy in the beautiful Xafarix located at Avenida Dom Carlos I, 69. Enjoy an evening filled with laughter in one of Lisbon's coolest bars. Don't miss out!",
+                  "image":"https://example.com/images/Xafarix-Venue.jpg",
+                  "hashtags":[
+                     "#Xafarix",
+                     " #ComedyVenue",
+                     " #LisbonEvents"
+                  ],
+                  "type":"venue",
+                  "status":"schedule"
+               },
+               {
+                  "id":3,
+                  "date":"2025-11-05",
+                  "title":"⭐ Meet Our Comedic Stars",
+                  "content":"Our lineup features top-notch comedians from both home and abroad, guaranteed to make you laugh till you drop! Keep an eye out for our next post introducing our stars.",
+                  "image":"https://example.com/images/ComediansLineup.jpg",
+                  "hashtags":[
+                     "#ComedyStars",
+                     " #StandupShowcase",
+                     " #LisbonComedy"
+                  ],
+                  "type":"speaker",
+                  "status":"schedule"
+               },
+               {
+                  "id":4,
+                  "date":"2025-11-19",
+                  "title":"🎭 What To Expect: Comedy Gold!",
+                  "content":"Be ready for an evening of unmatched humor and fun at 'The Villain Comedy' standup showcase. It's laughter and entertainment at its best!",
+                  "image":"https://example.com/images/ComedyShowcase.jpg",
+                  "hashtags":[
+                     "#ComedyGold",
+                     " #Standup",
+                     " #TheVillainComedy"
+                  ],
+                  "type":"activity",
+                  "status":"schedule"
+               },
+               {
+                  "id":5,
+                  "date":"2025-12-03",
+                  "title":"⏰ Save The Date: January 26!",
+                  "content":"Mark your calendars and get ready to join us at Xafarix for a night of laughter with 'The Villain Comedy' showcase. It's a first-come, first-served event, so arrive early!",
+                  "image":"https://example.com/images/SaveTheDate.jpg",
+                  "hashtags":[
+                     "#SaveTheDate",
+                     " #ComedyNights",
+                     " #Lisbon"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":6,
+                  "date":"2025-12-17",
+                  "title":"🎟️ Pay What You Want!",
+                  "content":"Enjoy 'The Villain Comedy' and pay what you want. It's our way of saying everyone deserves a good laugh! Join us on January 26 and donate as you wish.",
+                  "image":"https://example.com/images/PayWhatYouWant.jpg",
+                  "hashtags":[
+                     "#PayWhatYouWant",
+                     " #StandupShowcase",
+                     " #ComedyForAll"
+                  ],
+                  "type":"announcement",
+                  "status":"schedule"
+               },
+               {
+                  "id":7,
+                  "date":"2026-01-10",
+                  "title":"Get Ready for Comedy Night!",
+                  "content":"Just a few weeks to go before 'The Villain Comedy' hits the stage at Xafarix. RSVP now and enjoy the best comedic acts! Doors open at 20:30.",
+                  "image":"https://example.com/images/ComedyNightPrep.jpg",
+                  "hashtags":[
+                     "#ComedyNight",
+                     " #RSVPNow",
+                     " #StandupShowcase"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":8,
+                  "date":"2026-01-20",
+                  "title":"Final Countdown to Laughter!",
+                  "content":"We are just days away from 'The Villain Comedy' night. Join us at Xafarix for an unforgettable experience. Remember, first come, first served!",
+                  "image":"https://example.com/images/FinalCountdown.jpg",
+                  "hashtags":[
+                     "#CountdownToLaughs",
+                     " #StandupShowcase",
+                     " #LisbonComedy"
+                  ],
+                  "type":"urgency",
+                  "status":"schedule"
+               },
+               {
+                  "id":9,
+                  "date":"2026-01-25",
+                  "title":"😄 Comedy Show Tomorrow!",
+                  "content":"Get ready! Tomorrow is the big night at Xafarix. Make sure to arrive before 20:45 for the best seats. Can't wait to see you there!",
+                  "image":"https://example.com/images/GetReady.jpg",
+                  "hashtags":[
+                     "#ComedyTomorrow",
+                     " #TheVillainComedy",
+                     " #Lisbon"
+                  ],
+                  "type":"reminder",
+                  "status":"schedule"
+               },
+               {
+                  "id":10,
+                  "date":"2026-01-26",
+                  "title":"🎤 It's Showtime!",
+                  "content":"Tonight's the night for 'The Villain Comedy' standup showcase! Join us at Xafarix. Doors open at 20:30, with the show starting at 21:00. Let's laugh the night away!",
+                  "image":"https://example.com/images/Showtime.jpg",
+                  "hashtags":[
+                     "#Showtime",
+                     " #TheVillainComedy",
+                     " #Xafarix"
+                  ],
+                  "type":"event_day",
+                  "status":"schedule"
+               },
+               {
+                  "id":11,
+                  "date":"2026-01-27",
+                  "title":"🙏 Thank You for Joining Us!",
+                  "content":"A big thank you to everyone who attended 'The Villain Comedy' at Xafarix. We hope you had as much fun as we did. See you next time! 🎉",
+                  "image":"https://example.com/images/ThankYou.jpg",
+                  "hashtags":[
+                     "#ThankYou",
+                     " #TheVillainComedy",
+                     " #Lisbon"
+                  ],
+                  "type":"thank_you",
+                  "status":"schedule"
+               }
+            ],
+            "tempPosts":[
+               
+            ],
+            "currentPost":null,
+            "url":"https://www.eventbrite.pt/e/friday-show-the-villain-comedy-standup-showcase-in-english-tickets-773302106417"
+         }
+      }
+   ]
+           };
+
+           this.state = data;
+
+           this.showScreen("posts-screen");
+           this.renderPosts();
+           this.renderData();
+           this.renderEvents();
         },
 
     };
