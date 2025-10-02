@@ -510,7 +510,7 @@
                             <p class="type" type="${post.type}">${post.type.replace('_',' ')}</p>
                             <p class="date">posting date: <span>${post.date}</span></p>
                         </div>
-                    
+
                         <div class="img-holder">
                            
                         </div>
@@ -575,7 +575,7 @@
            this.state = data;
 
            if(!this.state.currentEvent.uid){
-             this.state.currentEvent = this.state.events[0];
+             this.state.currentEvent = this.state.events[0].eventData;
            }
 
            this.showScreen("posts-screen");
