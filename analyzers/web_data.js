@@ -31,7 +31,7 @@ async function getWebData(page, config) {
         const baseScreenshotBuffer = await page.screenshot({ type: 'webp', quality: 50, fullPage: true });
         const baseFileName = `base_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;
         fs.writeFileSync(path.join(config.imageDir, baseFileName), baseScreenshotBuffer);
-        report.screenshot[config.screenSize] = config.imagePath + baseFileName;
+        report.screenshot = config.imagePath + baseFileName;
 
     
         report.html = await page.content();
