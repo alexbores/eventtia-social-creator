@@ -390,9 +390,13 @@
 
         
         async getPostImage(){
+            
+            
 
             try {
-              let reference = await this.encodeLocalImage(this.state.currentEvent.screenshot);
+              let imageBlob = await urlStringToBlob(this.state.currentEvent.screenshot);
+
+              let reference = await this.encodeLocalImage(imageBlog);
             } catch (error) {
               console.error("Image processing error:", error);
               return;
@@ -698,10 +702,8 @@
 
                  // 2. Define what happens after the file is loaded
                  reader.onload = () => {
-                     const dataUrl = reader.result; // This is a full Data URL (e.g., "data:image/jpeg;base64,...")
-                     
-                     // 3. Extract the Base64 part from the Data URL
-                     // The format is: data:[<MIME type>][;charset=<charset>][;base64],<data>
+                     const dataUrl = reader.result; 
+
                      const base64Index = dataUrl.indexOf(',');
                      if (base64Index === -1) {
                          return reject(new Error("Could not parse file data URL."));
@@ -723,6 +725,31 @@
                  // 5. Start reading the file as a Data URL
                  reader.readAsDataURL(fileObject);
             });
+        },
+        async urlStringToBlob(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                throw new Error('Invalid URL string provided.');
+            }
+        
+            try {
+                console.log(`Fetching image from URL: ${imageUrl}`);
+                
+                // 1. Fetch the resource as a response stream
+                const response = await fetch(imageUrl);
+        
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch image: Status ${response.status}`);
+                }
+        
+               
+                const imageBlob = await response.blob();
+                
+                return imageBlob;
+        
+            } catch (error) {
+                console.error('Error converting URL to Blob:', error);
+                throw new Error(`Could not process image URL: ${error.message}`);
+            }
         },
 
         
