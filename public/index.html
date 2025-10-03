@@ -392,11 +392,11 @@
         async getPostImage(){
             
             
-
+            let reference = null;
             try {
               let imageBlob = await this.urlStringToBlob(this.state.currentEvent.screenshot);
 
-              let reference = await this.encodeLocalImage(imageBlog);
+              reference = await this.encodeLocalImage(imageBlob);
             } catch (error) {
               console.error("Image processing error:", error);
               return;
