@@ -394,7 +394,7 @@
             
 
             try {
-              let imageBlob = await urlStringToBlob(this.state.currentEvent.screenshot);
+              let imageBlob = await this.urlStringToBlob(this.state.currentEvent.screenshot);
 
               let reference = await this.encodeLocalImage(imageBlog);
             } catch (error) {
