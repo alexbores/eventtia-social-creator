@@ -391,9 +391,16 @@
         
         async getPostImage(){
 
+            try {
+              let reference = await this.encodeLocalImage(this.state.currentEvent.screenshot);
+            } catch (error) {
+              console.error("Image processing error:", error);
+              return;
+            }
+
             let postData = {
                 post: this.state.currentEvent.currentPost,
-                reference: this.encodeLocalImage(this.state.currentEvent.screenshot),
+                reference: reference, 
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
             }
@@ -516,8 +523,10 @@
            this.elements.postEditorEl.classList.add('open');
            let inner = this.elements.postEditorEl.querySelector('.wrapper');
            inner.innerHTML = post.innerHTML;
+           
 
-           let postData = this.currentEvent.posts.filter(post.id === id);
+           // PLACeHOLDER
+           let postData = this.currentEvent.posts[0];
 
            this.currentEvent.currentPost = postData;
         },
@@ -676,40 +685,49 @@
          return daysRemaining;
         },
 
-        encodeLocalImage(filePath) {
-            if (!fs.existsSync(filePath)) {
-                throw new Error(`File not found at path: ${filePath}`);
-            }
+        encodeLocalImage(fileObject) {
+            return new Promise((resolve, reject) => {
+                
+                if (!fileObject) {
+                    return reject(new Error("No file object provided."));
+                }
         
-            const fileExtension = path.extname(filePath).toLowerCase();
-            
-            // Simple mapping, adjust for more types if needed
-            let mimeType;
-            switch (fileExtension) {
-                case '.png':
-                    mimeType = 'image/png';
-                    break;
-                case '.jpg':
-                case '.jpeg':
-                    mimeType = 'image/jpeg';
-                    break;
-                case '.webp':
-                    mimeType = 'image/webp';
-                    break;
-                default:
-                    throw new Error(`Unsupported image type: ${fileExtension}`);
-            }
-        
-            // Read the file buffer
-            const imageBuffer = fs.readFileSync(filePath);
-            
-            // Convert the buffer to a Base64 string
-            const base64Data = imageBuffer.toString('base64');
-        
-            return {
-                data: base64Data,
-                mimeType: mimeType
-            };
+                const mimeType = fileObject.type;
+                
+                // 1. Basic MimeType Validation (optional but recommended)
+                if (!mimeType.startsWith('image/')) {
+                    return reject(new Error(`Unsupported file type: ${mimeType}`));
+                 }
+
+                 const reader = new FileReader();
+
+                 // 2. Define what happens after the file is loaded
+                 reader.onload = () => {
+                     const dataUrl = reader.result; // This is a full Data URL (e.g., "data:image/jpeg;base64,...")
+                     
+                     // 3. Extract the Base64 part from the Data URL
+                     // The format is: data:[<MIME type>][;charset=<charset>][;base64],<data>
+                     const base64Index = dataUrl.indexOf(',');
+                     if (base64Index === -1) {
+                         return reject(new Error("Could not parse file data URL."));
+                     }
+                     
+                     const base64Data = dataUrl.substring(base64Index + 1);
+
+                     resolve({
+                         data: base64Data,
+                         mimeType: mimeType
+                     });
+                 };
+
+                 // 4. Define what happens if an error occurs during reading
+                 reader.onerror = (error) => {
+                     reject(new Error(`Error reading file: ${error.target.error.name}`));
+                 };
+
+                 // 5. Start reading the file as a Data URL
+                 reader.readAsDataURL(fileObject);
+            });
         },
 
         
