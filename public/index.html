@@ -694,11 +694,6 @@
         
                 const mimeType = fileObject.type;
                 
-                // 1. Basic MimeType Validation (optional but recommended)
-                if (!mimeType.startsWith('image/')) {
-                    return reject(new Error(`Unsupported file type: ${mimeType}`));
-                 }
-
                  const reader = new FileReader();
 
                  // 2. Define what happens after the file is loaded
