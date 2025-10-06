@@ -7,7 +7,7 @@ import { JSDOM } from 'jsdom';
 
 import { getAIFetch } from '../modules/AI_fetcher.js';
 import { stripHtml } from '../modules/html_stripper.js';
-import { getPromptDate, getPromptContent, getPromptName } from '../modules/prompt_generator';
+import { getPromptDate, getPromptContent, getPromptName } from '../modules/prompt_generator.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
