@@ -2,7 +2,9 @@ const path = require('path');
 const fs = require('fs');
 
 const fetch = require('node-fetch');
-
+import { FormData } from 'form-data';
+import { FormDataEncoder } from 'form-data-encoder';
+import { Readable } from 'stream'; // Node.js built-in module
 
 async function saveImage(imageData) {
 
@@ -42,21 +44,25 @@ async function saveImage(imageData) {
     // The 'file' key must match in the PHP $_FILES['file'].
     formData.append('file', imageBlob, name); 
 
+
+    const encoder = new FormDataEncoder(formData);
+    const bodyStream = Readable.from(encoder);
+
     // --- 4. Send Request to WordPress API ---
     try {
         console.log(`Attempting to upload image: ${name} to WordPress.`);
         
-        const response = await fetch(apiURL, {
+        const response = await fetch(WORDPRESS_API_URL, {
             method: 'POST',
             headers: {
                 'X-Render-Secret': apiKey,
+                ...encoder.headers, 
             },
-            body: formData,
+            body: bodyStream,
         });
 
         if (!response.ok) {
             const errorBody = await response.json();
-            console.error('WordPress API Error:', errorBody);
             throw new Error(`Upload failed with status ${response.status}: ${errorBody.message || 'Server error.'}`);
         }
 
