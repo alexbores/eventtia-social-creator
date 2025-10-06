@@ -7,12 +7,12 @@ import cors from 'cors';
 import 'dotenv/config';
 
 // Import the analyzer modules
-import { getWebData } from '/analyzers/web_data';
-import { getEventData } from '/analyzers/get_event_data';
-import { getPosts } from '/analyzers/get_posts';
-import { getPostsRemade } from '/analyzers/get_posts_remade';
-import { getPostImage } from '/analyzers/get_post_image';
-import { saveImage } from '/analyzers/save_image';
+import { getWebData } from '../analyzers/web_data';
+import { getEventData } from '../analyzers/get_event_data';
+import { getPosts } from '../analyzers/get_posts';
+import { getPostsRemade } from '../analyzers/get_posts_remade';
+import { getPostImage } from '../analyzers/get_post_image';
+import { saveImage } from '../analyzers/save_image';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
