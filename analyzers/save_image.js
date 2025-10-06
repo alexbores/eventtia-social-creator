@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 
 async function saveImage(imageData) {
 
-    console.log(imageData);
+    
 
     const apiKey = process.env.MEDIA_STORAGE_KEY;
     if (!apiKey) {
@@ -14,7 +14,10 @@ async function saveImage(imageData) {
     }
     
     // --- 1. Validate and Deconstruct Input Data ---
-    const { data, mimeType, name} = imageData;
+    const { data, mimeType, name} = JSON.parse(imageData);
+
+    console.log(mimeType);
+    console.log(name);
 
     if (!data || !mimeType || !name) {
         throw new Error('Invalid imageData structure. Must contain data, mimeType, and name.');

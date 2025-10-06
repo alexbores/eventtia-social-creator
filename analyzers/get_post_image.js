@@ -23,7 +23,7 @@ async function getPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { eventDate, eventName, post, reference } = data;
+    const { eventDate, eventName, post, reference } = JSON.parse(data);
 
     console.log(reference);
     

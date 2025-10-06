@@ -314,9 +314,9 @@
 
                 let imageUrl = this.state.currentEvent.screenshot;
 
-                await saveImageByUrl(imageUrl);
+                await this.saveImageByUrl(imageUrl);
                 this.state.currentEvent = this.getImageName(imageUrl);
-                
+
                 this.saveData('full_state_data', this.state);
         
             } catch (error) {
