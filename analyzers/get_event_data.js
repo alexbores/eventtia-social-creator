@@ -5,8 +5,8 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
-import { getAIFetch } from '../modules/AI_fetcher';
-import { stripHtml } from '../modules/html_stripper';
+import { getAIFetch } from '../modules/AI_fetcher.js';
+import { stripHtml } from '../modules/html_stripper.js';
 import { getPromptDate, getPromptContent, getPromptName } from '../modules/prompt_generator';
 
 /**

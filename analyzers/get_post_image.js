@@ -5,8 +5,8 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
-import { generateImage } from '../modules/AI_fetcher';
-import { getPromptImage} from '../modules/prompt_generator';
+import { generateImage } from '../modules/AI_fetcher.js';
+import { getPromptImage} from '../modules/prompt_generator.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.

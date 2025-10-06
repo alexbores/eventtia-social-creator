@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import fetch from 'node-fetch';
-import { getAIFetch } from '../modules/AI_fetcher';
-import { stripHtml } from '../modules/html_stripper';
-import { getPromptPosts } from '../modules/prompt_generator';
+import { getAIFetch } from '../modules/AI_fetcher.js';
+import { stripHtml } from '../modules/html_stripper.js';
+import { getPromptPosts } from '../modules/prompt_generator.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
