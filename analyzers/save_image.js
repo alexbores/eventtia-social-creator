@@ -40,7 +40,7 @@ async function saveImage(imageData) {
     
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
-    formData.append('file', new File([imageBlob], name, { type: mimeType })); 
+    formData.append('file', imageBlob, imageName); 
 
     // --- 4. Send Request to WordPress API ---
     try {
