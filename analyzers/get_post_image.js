@@ -14,7 +14,7 @@ const { getPromptImage} = require('../modules/prompt_generator');
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getEventData(postData) {
+async function getPostImage(postData) {
 
     let postImage = await getAiImage(postData);
 
@@ -114,4 +114,4 @@ async function getAiImage(data) {
 
 
 
-module.exports = { getEventData };
+module.exports = { getPostImage };
