@@ -8,7 +8,7 @@ import crypto from 'crypto';
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - An object containing screenshots, HTML, and console logs.
  */
-async function getWebData(page, config) {
+export async function getWebData(page, config) {
     const url = page.url();
 
     console.log('getting web data '+ config.screenSize);
@@ -44,5 +44,3 @@ async function getWebData(page, config) {
     
     return report;
 }
-
-module.exports = { getWebData };

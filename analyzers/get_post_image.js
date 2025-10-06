@@ -14,7 +14,7 @@ import { getPromptImage} from '../modules/prompt_generator.js';
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getPostImage(postData) {
+export async function getPostImage(postData) {
 
     let postImage = await getAiImage(postData);
 
@@ -114,6 +114,3 @@ async function getAiImage(data) {
     }
 }
 
-
-
-module.exports = { getPostImage };

@@ -15,7 +15,7 @@ import { getPromptDate, getPromptContent, getPromptName } from '../modules/promp
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getEventData(html) {
+export async function getEventData(html) {
 
     console.log('html for data: '+html);
     
@@ -207,5 +207,3 @@ function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
 
 
 
-
-module.exports = { getEventData };

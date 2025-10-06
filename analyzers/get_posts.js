@@ -11,7 +11,7 @@ import { getPromptPosts } from '../modules/prompt_generator.js';
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-async function getPosts(data) {
+export async function getPosts(data) {
     
     let items = await getAiAnalysis(data);
 
@@ -73,5 +73,3 @@ async function getAiAnalysis(data) {
 }
 
 
-
-module.exports = { getPosts };

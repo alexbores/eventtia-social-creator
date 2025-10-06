@@ -73,7 +73,7 @@ Each object in the array **MUST** contain these seven keys:
 }
 
 
-function getPromptPosts() {
+export function getPromptPosts() {
     const prompt = `You are a JSON generation service. Your function is to convert the provided event CONTENT into a single, raw JSON array of social media posts.
 
 **Primary Directive:** Analyze the event html provided at the end of this prompt and generate a JSON array containing a social media posting schedule with generated content.
@@ -98,7 +98,7 @@ but use the real information from the html provided and generate the content bas
     return prompt;
 }
 
-function getPromptRemadePosts() {
+export function getPromptRemadePosts() {
     const prompt = `You are a JSON generation service. Your function is to convert the provided event CONTENT into a single, raw JSON array of social media posts.
 
 **Primary Directive:** Analyze the event information provided at the end of this prompt and generate a JSON array containing a social media posting schedule with generated content.
@@ -126,7 +126,7 @@ event name and event date those could be changed if needed and fill out null val
     return prompt;
 }
 
-function getPromptContent() {
+export function getPromptContent() {
     const prompt = `You are a content cleaning service. Your function is to convert the provided event website HTML and Content into a single string of readable information.
 
 **Primary Directive:** Analyze the event html and content provided at the end of this prompt and extract any valuable information in a single string.
@@ -149,7 +149,7 @@ Use the real information from the html and content provided do not invent or mak
     return prompt;
 }
 
-function getPromptDate() {
+export function getPromptDate() {
     const prompt = `You are a date finder service. Your function is to find the event date of the HTML event web received.
 
 **Primary Directive:** Analyze the event html provided at the end of this prompt and find the date of the event.
@@ -182,7 +182,7 @@ Use the real information from the html provided.
     return prompt;
 }
 
-function getPromptName() {
+export function getPromptName() {
     const prompt = `You are a event name finder service. Your function is to find the event name of the HTML event web received.
 
 **Primary Directive:** Analyze the event html provided at the end of this prompt and find the name of the event.
@@ -216,7 +216,7 @@ Use the real information from the html provided.
 }
 
 
-function getPromptImage() {
+export function getPromptImage() {
     const prompt = `You are an image generator service. Your function is to create a social image for my post based on the content provided.
     
     **Primary Directive:** Analyze the event post content and the screenshot of the landing page provided at the end of this prompt and generate an image based on that.
@@ -251,5 +251,3 @@ function getPromptImage() {
 
     return prompt;
 }
-
-module.exports = { getPromptPosts, getPromptRemadePosts, getPromptContent, getPromptDate, getPromptName, getPromptImage };

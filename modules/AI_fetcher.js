@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
  * @param {Array<object>} [imageBuffers=[]] - An array of objects with a 'buffer' property for image data.
  * @returns {Promise<string>} A promise that resolves to the AI's text summary.
  */
-async function getAIFetch(modelType, promptText, imageBuffers = []) {
+export async function getAIFetch(modelType, promptText, imageBuffers = []) {
     let apiKey, apiUrl, requestBody;
     let headers = { 'Content-Type': 'application/json' };
 
@@ -96,7 +96,7 @@ async function getAIFetch(modelType, promptText, imageBuffers = []) {
 
 
 
-async function generateImage(promptText, imageBuffer) {
+export async function generateImage(promptText, imageBuffer) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
         throw new Error('GEMINI_API_KEY is not configured in .env file.');
@@ -169,5 +169,3 @@ async function generateImage(promptText, imageBuffer) {
 
 
 
-// Export the single, unified function
-module.exports = { getAIFetch , generateImage};
