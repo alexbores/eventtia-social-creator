@@ -306,11 +306,18 @@
                   eventData: this.state.currentEvent,
                 });
 
-                this.saveData('full_state_data', this.state);
+                
 
                 setTimeout(() => {
                     this.showScreen('posts-screen');
                 }, 1000);
+
+                let imageUrl = this.state.currentEvent.screenshot;
+
+                await saveImageByUrl(imageUrl);
+                this.state.currentEvent = this.getImageName(imageUrl);
+                
+                this.saveData('full_state_data', this.state);
         
             } catch (error) {
                 // --- Failure Path ---
@@ -480,7 +487,6 @@
             }
         },
 
-
         selectEvent(){
           let eventUID = this.elements.eventsListEl.value;
           let selectedEvent = this.state.events.filter(event => event.uid === eventUID); 
@@ -493,6 +499,31 @@
           this.renderPosts();
         },
 
+        
+        async saveImageByUrl(imageUrl){
+
+            let newImageData = null;
+            try {
+              let imageBlob = await this.urlStringToBlob(imageUrl);
+
+              newImageData = await this.encodeLocalImage(imageBlob);
+            } catch (error) {
+              console.error("Image processing error:", error);
+              return;
+            }
+
+            newImageData['name'] = this.getImageName(imageUrl);
+
+            console.log(newImageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(newImageData) })
+            });
+        },
 
 
         analyzeNewEvent(){
@@ -752,6 +783,29 @@
                 console.error('Error converting URL to Blob:', error);
                 throw new Error(`Could not process image URL: ${error.message}`);
             }
+        },
+
+        getImageName(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                return '';
+            }
+        
+            const parts = imageUrl.split('/');
+            let fileNameWithExtensionAndQuery = parts.pop() || '';
+
+            if (fileNameWithExtensionAndQuery === '') {
+                fileNameWithExtensionAndQuery = parts.pop() || '';
+            }
+        
+            const fileWithExtension = fileNameWithExtensionAndQuery.split('?')[0];
+        
+            const lastDotIndex = fileWithExtension.lastIndexOf('.');
+        
+            if (lastDotIndex !== -1) {
+                return fileWithExtension.substring(0, lastDotIndex);
+            }
+            
+            return fileWithExtension;
         },
 
         

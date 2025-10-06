@@ -24,6 +24,8 @@ async function getPostImage(postData) {
 
 async function getAiImage(data) {
     const { eventDate, eventName, post, reference } = data;
+
+    console.log(reference);
     
     if (!reference || !reference.data || !reference.mimeType) {
         throw new Error("Missing valid Base64 image data (reference.data or reference.mimeType).");

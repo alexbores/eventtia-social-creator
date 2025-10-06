@@ -12,6 +12,7 @@ const { getEventData } = require('./analyzers/get_event_data');
 const { getPosts } = require('./analyzers/get_posts');
 const { getPostsRemade } = require('./analyzers/get_posts_remade');
 const { getPostImage } = require('./analyzers/get_post_image');
+const { saveImage } = require('./analyzers/save_image');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -127,6 +128,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'post_image':
             console.log('Starting analysis of post image...');
             response = await getPostImage(webData);
+          break;
+          case 'save_image':
+            console.log('Saving Image...');
+            response = await saveImage(webData);
           break;
         
         }
