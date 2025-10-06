@@ -1,13 +1,13 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 
-const fetch = require('node-fetch');
-const { JSDOM } = require('jsdom');
+import fetch from 'node-fetch';
+import { JSDOM } from 'jsdom';
 
-const { getAIFetch } = require('../modules/AI_fetcher');
-const { stripHtml } = require('../modules/html_stripper');
-const { getPromptDate, getPromptContent, getPromptName } = require('../modules/prompt_generator');
+import { getAIFetch } from '../modules/AI_fetcher';
+import { stripHtml } from '../modules/html_stripper';
+import { getPromptDate, getPromptContent, getPromptName } from '../modules/prompt_generator';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.

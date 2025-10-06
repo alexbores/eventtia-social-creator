@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 /**
  * Sends a prompt and optional images to the specified AI API (Gemini or ChatGPT).

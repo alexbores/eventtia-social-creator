@@ -1,18 +1,18 @@
-const express = require('express');
-const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
-const path = require('path');
-const fs = require('fs');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+import path from 'path';
+import fs from 'fs';
+import cors from 'cors';
+import 'dotenv/config';
 
 // Import the analyzer modules
-const { getWebData } = require('./analyzers/web_data');
-const { getEventData } = require('./analyzers/get_event_data');
-const { getPosts } = require('./analyzers/get_posts');
-const { getPostsRemade } = require('./analyzers/get_posts_remade');
-const { getPostImage } = require('./analyzers/get_post_image');
-const { saveImage } = require('./analyzers/save_image');
+import { getWebData } from './analyzers/web_data';
+import { getEventData } from './analyzers/get_event_data';
+import { getPosts } from './analyzers/get_posts';
+import { getPostsRemade } from './analyzers/get_posts_remade';
+import { getPostImage } from './analyzers/get_post_image';
+import { saveImage } from './analyzers/save_image';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

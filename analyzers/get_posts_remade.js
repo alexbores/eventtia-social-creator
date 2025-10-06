@@ -1,10 +1,9 @@
-const path = require('path');
-const fs = require('fs');
-// crypto is no longer needed in this file
-const fetch = require('node-fetch');
-const { getAIFetch } = require('../modules/AI_fetcher');
-const { stripHtml } = require('../modules/html_stripper');
-const { getPromptRemadePosts } = require('../modules/prompt_generator');
+import path from 'path';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import { getAIFetch } from '../modules/AI_fetcher';
+import { stripHtml } from '../modules/html_stripper';
+import { getPromptRemadePosts } from '../modules/prompt_generator';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.

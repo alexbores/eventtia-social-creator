@@ -1,12 +1,12 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 
-const fetch = require('node-fetch');
-const { JSDOM } = require('jsdom');
+import fetch from 'node-fetch';
+import { JSDOM } from 'jsdom';
 
-const { generateImage } = require('../modules/AI_fetcher');
-const { getPromptImage} = require('../modules/prompt_generator');
+import { generateImage } from '../modules/AI_fetcher';
+import { getPromptImage} from '../modules/prompt_generator';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.

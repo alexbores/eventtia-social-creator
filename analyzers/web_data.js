@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const crypto =require('crypto');
+import path from 'path';
+import fs from 'fs';
+import crypto from 'crypto';
 
 /**
  * Captures screenshots, HTML content, and console logs from a pre-loaded page.

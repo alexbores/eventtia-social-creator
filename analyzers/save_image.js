@@ -1,10 +1,10 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const fetch = require('node-fetch');
-const FormData = require('form-data');
-const FormDataEncoder = require('form-data-encoder');
-const Readable = require('stream');
+import fetch from 'node-fetch';
+import { FormData } from 'form-data';
+import { FormDataEncoder } from 'form-data-encoder';
+import { Readable } from 'stream';
 
 async function saveImage(imageData) {
 
