@@ -3,8 +3,8 @@ import fs from 'fs';
 
 import fetch from 'node-fetch';
 import FormData  from 'form-data';
-import FormDataEncoder  from 'form-data-encoder';
-import Readable  from 'stream';
+import { FormDataEncoder } from 'form-data-encoder';
+import { Readable } from 'stream';
 
 async function saveImage(imageData) {
 
