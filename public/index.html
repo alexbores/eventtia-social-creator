@@ -409,6 +409,8 @@
                 eventDate: this.state.currentEvent.eventData.eventDate,
             }
 
+            console.log(postData);
+
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -689,41 +691,41 @@
          return daysRemaining;
         },
 
-        encodeLocalImage(fileObject) {
+        async encodeLocalImage(fileObject) {
             return new Promise((resolve, reject) => {
                 
                 if (!fileObject) {
                     return reject(new Error("No file object provided."));
                 }
+                
+                if (!(fileObject instanceof Blob)) { 
+                     return reject(new TypeError("Invalid input: Expected a File or Blob object."));
+                }
         
                 const mimeType = fileObject.type;
-                
-                 const reader = new FileReader();
-
-                 // 2. Define what happens after the file is loaded
-                 reader.onload = () => {
-                     const dataUrl = reader.result; 
-
-                     const base64Index = dataUrl.indexOf(',');
-                     if (base64Index === -1) {
-                         return reject(new Error("Could not parse file data URL."));
-                     }
-                     
-                     const base64Data = dataUrl.substring(base64Index + 1);
-
-                     resolve({
-                         data: base64Data,
-                         mimeType: mimeType
-                     });
-                 };
-
-                 // 4. Define what happens if an error occurs during reading
-                 reader.onerror = (error) => {
-                     reject(new Error(`Error reading file: ${error.target.error.name}`));
-                 };
-
-                 // 5. Start reading the file as a Data URL
-                 reader.readAsDataURL(fileObject);
+                const reader = new FileReader();
+        
+                reader.onload = () => {
+                    const dataUrl = reader.result;
+        
+                    const base64Index = dataUrl.indexOf(',');
+                    if (base64Index === -1) {
+                        return reject(new Error("Could not parse file data URL."));
+                    }
+                    
+                    const base64Data = dataUrl.substring(base64Index + 1);
+        
+                    resolve({
+                        data: base64Data,
+                        mimeType: mimeType
+                    });
+                };
+        
+                reader.onerror = (error) => {
+                    reject(new Error(`Error reading file: ${error.target.error.name}`));
+                };
+        
+                reader.readAsDataURL(fileObject);
             });
         },
         async urlStringToBlob(imageUrl) {
