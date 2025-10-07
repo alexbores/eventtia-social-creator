@@ -88,16 +88,15 @@ async function getAiImage(data) {
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const requestBody = {
-        config: {
-            systemInstruction: systemPrompt // Use the dedicated field for instructions
+        generationConfig: {
+          systemInstruction: systemPrompt, 
+          aspectRatio: '4:5'
         },
         contents: [{
             parts: [
-                // Part 1: Detailed Text Context
                 {
                     text: `Based on the following context, ${contextText}. Now, generate a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of this post. The image should be a direct output (no descriptive text):`
                 },
-                // Part 2: The Reference Image Data
                 {
                     inlineData: {
                         mimeType: reference.mimeType,
