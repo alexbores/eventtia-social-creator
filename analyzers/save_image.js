@@ -47,7 +47,7 @@ export async function saveImage(imageData) {
     
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
-    formData.append('file', imageStream, name); 
+    formData.append('file', imageBuffer, name); 
 
 
     const encoder = new FormDataEncoder(formData);
