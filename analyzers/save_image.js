@@ -58,7 +58,7 @@ export async function saveImage(imageData) {
     try {
         console.log(`Attempting to upload image: ${name} to WordPress.`);
         
-        const response = await fetch(WORDPRESS_API_URL, {
+        const response = await fetch(apiURL, {
             method: 'POST',
             headers: {
                 'X-Render-Secret': apiKey,
