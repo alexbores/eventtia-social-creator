@@ -573,7 +573,7 @@
             this.elements.postsHolder.innerHTML = html;
 
             this.state.currentEvent.posts.forEach((post,key)=>{
-                let imageUrl = this.dataToUrl(data.image);
+                let imageUrl = this.dataToUrl(post.image);
                 html += `
                     <div class="post-card" post-card="${key}">
                         <div class="bar">
