@@ -11,7 +11,7 @@ import { getPromptRemadePosts } from '../modules/prompt_generator.js';
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-export async function getPosts(data) {
+export async function getPostsRemade(data) {
     
     let items = await getAiAnalysis(data);
 
