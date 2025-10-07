@@ -400,6 +400,12 @@ p,h1,h2,h3,li{
 	border-radius: 6px;
 	overflow: hidden;
 }
+#posts-screen .post-card .img-holder img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
 #posts-screen .post-card .bar{
 	display: flex;
 	gap: 10px;

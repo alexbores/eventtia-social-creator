@@ -86,10 +86,13 @@ async function getAiImage(data) {
     let fullPrompt = systemPrompt + ' ' + contextText;
 
     // --- 2. Construct the Gemini API Payload ---
-    const model = 'gemini-2.5-flash-image-preview';
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const model = 'gemini-2.5-flash-image';
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`;
 
     const requestBody = {
+        generationConfig: {
+          responseModalities: ["IMAGE", "TEXT", ],
+        },
         contents: [{
             parts: [
                 {
