@@ -49,13 +49,10 @@ export async function saveImage(imageData) {
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
     formData.append('file', imageBuffer, {
-        filename: imageName, 
+        filename: name, 
         contentType: mimeType 
     }); 
 
-
-    const encoder = new FormDataEncoder(formData);
-    const bodyStream = Readable.from(encoder);
 
     // --- 4. Send Request to WordPress API ---
     try {
