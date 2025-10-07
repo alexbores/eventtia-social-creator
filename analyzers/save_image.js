@@ -27,7 +27,8 @@ export async function saveImage(imageData) {
 
     const apiURL = 'https://t83dhdfndo-staging.onrocket.site/wp-json/image-api/v1/upload-custom';
 
-    
+    const extension = mimeType.split('/')[1]; // Extracts 'webp'
+    const imageNameWithExtension = name + '.' + extension; 
     
     // --- 2. Create Blob from Base64 Data --
     
@@ -49,7 +50,7 @@ export async function saveImage(imageData) {
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
     formData.append('file', imageBuffer, {
-        filename: name, 
+        filename: imageNameWithExtension, 
         contentType: mimeType 
     }); 
 
