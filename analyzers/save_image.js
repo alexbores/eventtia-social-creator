@@ -3,8 +3,8 @@ import fs from 'fs';
 
 import fetch from 'node-fetch';
 import FormData  from 'form-data';
-import { FormDataEncoder } from 'form-data-encoder';
-import { Readable } from 'stream';
+// import { FormDataEncoder } from 'form-data-encoder';
+// import { Readable } from 'stream';
 
 export async function saveImage(imageData) {
 
@@ -24,6 +24,10 @@ export async function saveImage(imageData) {
     if (!data || !mimeType || !name) {
         throw new Error('Invalid imageData structure. Must contain data, mimeType, and name.');
     }
+
+    const apiURL = 'https://t83dhdfndo-staging.onrocket.site/wp-json/image-api/v1/upload-custom';
+
+    
     
     // --- 2. Create Blob from Base64 Data --
     
@@ -37,17 +41,17 @@ export async function saveImage(imageData) {
     
 
     const arrayBuffer = await imageBlob.arrayBuffer(); 
-    
     const imageBuffer = Buffer.from(arrayBuffer); 
 
     // --- 3. Prepare Request Configuration ---
     const formData = new FormData();
-    const apiURL = 'https://t83dhdfndo-staging.onrocket.site/wp-json/image-api/v1/upload-custom';
-
     
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
-    formData.append('file', imageBuffer, name); 
+    formData.append('file', imageBuffer, {
+        filename: imageName, 
+        contentType: mimeType 
+    }); 
 
 
     const encoder = new FormDataEncoder(formData);
@@ -61,9 +65,9 @@ export async function saveImage(imageData) {
             method: 'POST',
             headers: {
                 'X-Render-Secret': apiKey,
-                ...encoder.headers, 
+                ...formData.getHeaders(),
             },
-            body: bodyStream,
+            body: formData,
         });
 
         if (!response.ok) {
