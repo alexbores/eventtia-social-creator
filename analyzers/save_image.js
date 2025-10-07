@@ -34,6 +34,8 @@ export async function saveImage(imageData) {
         array[i] = binary.charCodeAt(i);
     }
     const imageBlob = new Blob([array], { type: mimeType });
+    
+    const imageStream = imageBlob.stream();
 
     // --- 3. Prepare Request Configuration ---
     const formData = new FormData();
@@ -42,7 +44,7 @@ export async function saveImage(imageData) {
     
     // Append the Blob as a 'File' with its original name.
     // The 'file' key must match in the PHP $_FILES['file'].
-    formData.append('file', imageBlob, name); 
+    formData.append('file', imageStream, name); 
 
 
     const encoder = new FormDataEncoder(formData);
