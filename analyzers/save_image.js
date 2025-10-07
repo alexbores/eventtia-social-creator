@@ -35,7 +35,10 @@ export async function saveImage(imageData) {
     }
     const imageBlob = new Blob([array], { type: mimeType });
     
-    const imageStream = imageBlob.stream();
+
+    const arrayBuffer = await imageBlob.arrayBuffer(); 
+    
+    const imageBuffer = Buffer.from(arrayBuffer); 
 
     // --- 3. Prepare Request Configuration ---
     const formData = new FormData();
