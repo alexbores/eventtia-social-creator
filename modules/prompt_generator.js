@@ -217,7 +217,7 @@ Use the real information from the html provided.
 
 
 export function getPromptImage() {
-    const prompt = `You are an image generator service. Your function is to create a social image for my post based on the content provided.
+    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of this post.
     
     **Primary Directive:** Analyze the event post content and the screenshot of the landing page provided at the end of this prompt and generate an image based on that.
     
@@ -233,6 +233,7 @@ export function getPromptImage() {
         * ** Image refering to the event activities
         * ** Image with the same tone and style as the reference
         * ** Messages that encourage action and registration or participation, depending of the content at the end of the prompt
+        * ** Image ratio must be 4:5 
 
 
     

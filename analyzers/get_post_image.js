@@ -83,24 +83,22 @@ async function getAiImage(data) {
         Post Content: ${post.title}, ${post.content}
     `;
 
+    let fullPrompt = systemPrompt + ' ' + contextText;
+
     // --- 2. Construct the Gemini API Payload ---
     const model = 'gemini-2.5-flash-image-preview';
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const requestBody = {
-        generationConfig: {
-          systemInstruction: systemPrompt, 
-          aspectRatio: '4:5'
-        },
         contents: [{
             parts: [
                 {
-                    text: `Based on the following context, ${contextText}. Now, generate a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of this post. The image should be a direct output (no descriptive text):`
+                    text: fullPrompt
                 },
                 {
                     inlineData: {
                         mimeType: reference.mimeType,
-                        data: reference.data, // The Base64 string
+                        data: reference.data,
                     },
                 },
             ],
