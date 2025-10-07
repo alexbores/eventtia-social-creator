@@ -399,19 +399,9 @@
         async getPostImage(){
             
             
-            let reference = null;
-            try {
-              let imageBlob = await this.urlStringToBlob(this.state.currentEvent.screenshot);
-
-              reference = await this.encodeLocalImage(imageBlob);
-            } catch (error) {
-              console.error("Image processing error:", error);
-              return;
-            }
-
             let postData = {
                 post: this.state.currentEvent.currentPost,
-                reference: reference, 
+                imageUrl: this.state.currentEvent.screenshot, 
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
             }
