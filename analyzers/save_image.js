@@ -6,7 +6,7 @@ import FormData  from 'form-data';
 import { FormDataEncoder } from 'form-data-encoder';
 import { Readable } from 'stream';
 
-async function saveImage(imageData) {
+export async function saveImage(imageData) {
 
     
 
@@ -76,5 +76,3 @@ async function saveImage(imageData) {
     }
 }
 
-
-module.exports = { saveImage };
