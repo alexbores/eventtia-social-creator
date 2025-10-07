@@ -14,6 +14,11 @@ import { getPostsRemade } from './analyzers/get_posts_remade.js';
 import { getPostImage } from './analyzers/get_post_image.js';
 import { saveImage } from './analyzers/save_image.js';
 
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
