@@ -421,6 +421,12 @@
             // Update state with the new data
             this.state.currentEvent.currentPost.image = response;
 
+            this.state.currentEvent.posts.forEach(post => {
+              if(post.id == postData.post.id){
+                 post.image = response;                 
+              }
+            }
+
             this.renderPosts();
         },
 
@@ -516,7 +522,20 @@
                                        webData: JSON.stringify(newImageData) })
             });
         },
+        async saveImageByData(imageData,name){
 
+            imageData['name'] = name;
+
+            console.log(imageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(imageData) })
+            });
+        },
 
         analyzeNewEvent(){
             this.showScreen('url-screen');
@@ -779,13 +798,12 @@
         },
 
         dataToUrl(imageData) {
-            let {data, mymeType} = imageData;
 
-            if(!data || !mymeType){
+            if(imageData?.data == null || imageData?.mymeType == null){
                 return null;
             }
 
-            const dataUrl = `data:${mimeType};base64,${data}`;
+            const dataUrl = `data:${imageData?.mymeType};base64,${imageData?.data}`;
             
             return dataUrl;
         },

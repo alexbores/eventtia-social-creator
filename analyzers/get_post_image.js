@@ -133,8 +133,8 @@ async function getAiImage(data) {
         // Look for the part containing the inlineData (the generated image)
         console.log("AI Response");
         console.log(result);
-        console.log(result[0]?.candidates);
-        console.log(result[0]?.candidates?.[0]?.content?.parts);
+        // console.log(result[0]?.candidates);
+        // console.log(result[0]?.candidates?.[0]?.content?.parts);
 
         const generatedImagePart = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
 
