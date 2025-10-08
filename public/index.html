@@ -418,12 +418,16 @@
         
             console.log("Image Received:", response);
         
+            
+
+            let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
+
             // Update state with the new data
-            this.state.currentEvent.currentPost.image = response?.postImage;
+            this.state.currentEvent.currentPost.image = imageSaved.url;
 
             this.state.currentEvent.posts.forEach(post => {
               if(post.id == postData.post.id){
-                 post.image = response?.postImage;                 
+                 post.image = imageSaved.url;                 
               }
             });
 
@@ -535,6 +539,8 @@
                                        request: 'save_image', 
                                        webData: JSON.stringify(imageData) })
             });
+
+            return response;
         },
 
         analyzeNewEvent(){
@@ -592,7 +598,7 @@
             this.elements.postsHolder.innerHTML = html;
 
             this.state.currentEvent.posts.forEach((post,key)=>{
-                let imageUrl = this.dataToUrl(post.image);
+                let imageUrl = post.image;
                 html += `
                     <div class="post-card" post-card="${key}">
                         <div class="bar">
@@ -1323,7 +1329,23 @@
 
         loadImageData(src){
             document.querySelector('#image-testing').src = src;
-        }
+        },
+
+
+        getUUID() {
+            const timeNow = Date.now();
+            const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            const randomPart2 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            
+            const timeHex = timeNow.toString(16).padStart(12, '0');
+            const uuid = 
+                timeHex.substring(0, 8) + '-' + 
+                timeHex.substring(8, 12) + '-' + 
+                '4' + randomPart1.substring(0, 3) + '-' + 
+                'a' + randomPart1.substring(3, 6) + '-' + 
+            
+            return uuid;
+        },
 
     };
 

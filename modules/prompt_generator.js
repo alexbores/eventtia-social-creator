@@ -217,7 +217,7 @@ Use the real information from the html provided.
 
 
 export function getPromptImage() {
-    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of this post.
+    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of the following post.
     
     **Primary Directive:** Analyze the event post content and the screenshot of the landing page provided at the end of this prompt and generate an image based on that.
     
@@ -233,8 +233,10 @@ export function getPromptImage() {
         * ** Image refering to the event activities
         * ** Image with the same tone and style as the reference
         * ** Messages that encourage action and registration or participation, depending of the content at the end of the prompt
-        * ** Image ratio must be 4:5 
-
+    3.  **Image Configuration: ** is extremly important that you apply and follow the following rules
+        * ** Image ratio must absolutly be 4:5 aspect ratio, do not use any other aspect ratio than this one.
+        * ** The attached file is just to have a reference of colors, mood styles and font family, but you must create a new image on your own.
+        * ** You must focus on social media appeal including the content of the post shared in this prompt.
 
     
     Use the real information from the content provided.
@@ -244,7 +246,7 @@ export function getPromptImage() {
     * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the image.
 
     
-    **Begin analysis. Process the following content and image:**
+    **Begin creationg based on the following content and image:**
     
     
     
