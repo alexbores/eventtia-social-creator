@@ -111,6 +111,8 @@ async function getAiImage(data) {
 
     console.log('AI image generation started for:', eventName);
 
+    console.log(requestBody);
+
     // --- 3. Execute the API Call ---
     try {
         const response = await fetch(apiUrl, {
@@ -129,8 +131,10 @@ async function getAiImage(data) {
         
         // --- 4. Parse the Generated Image Output ---
         // Look for the part containing the inlineData (the generated image)
-
+        console.log("AI Response");
         console.log(result);
+        console.log(result?.candidates);
+        console.log(result?.candidates?.[0]?.content?.parts);
 
         const generatedImagePart = result?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
 
