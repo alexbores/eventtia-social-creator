@@ -129,6 +129,9 @@ async function getAiImage(data) {
         
         // --- 4. Parse the Generated Image Output ---
         // Look for the part containing the inlineData (the generated image)
+
+        console.log(result);
+
         const generatedImagePart = result?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
 
         if (generatedImagePart && generatedImagePart.inlineData) {
