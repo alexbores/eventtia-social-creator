@@ -133,10 +133,10 @@ async function getAiImage(data) {
         // Look for the part containing the inlineData (the generated image)
         console.log("AI Response");
         console.log(result);
-        console.log(result?.candidates);
-        console.log(result?.candidates?.[0]?.content?.parts);
+        console.log(result[0]?.candidates);
+        console.log(result[0]?.candidates?.[0]?.content?.parts);
 
-        const generatedImagePart = result?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
+        const generatedImagePart = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
 
         if (generatedImagePart && generatedImagePart.inlineData) {
             console.log("✅ AI image generated successfully.");
@@ -147,7 +147,7 @@ async function getAiImage(data) {
                 mimeType: generatedImagePart.inlineData.mimeType
             };
         } else {
-            const textOutput = result?.candidates?.[0]?.content?.parts?.find(part => part.text)?.text;
+            const textOutput = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.text)?.text;
             console.warn("API was successful but returned no image. Model Text:", textOutput);
             return null; // Explicitly return null if no image is generated
         }
