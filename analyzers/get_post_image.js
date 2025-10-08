@@ -76,11 +76,12 @@ async function getAiImage(data) {
     const systemPrompt = getPromptImage(); 
 
     const contextText = `
-        Event date: ${eventDate},
-        Event Name: ${eventName},
-        Post Type: ${post.type},
-        Post Date: ${post.date},
-        Post Content: ${post.title}, ${post.content}
+        **post context:**
+        * ** Event date: ${eventDate},
+        * ** Event Name: ${eventName},
+        * ** Post Type: ${post.type},
+        * ** Post Date: ${post.date},
+        * ** Post Content: ${post.title}, ${post.content}
     `;
 
     let fullPrompt = systemPrompt + ' ' + contextText;
@@ -91,7 +92,7 @@ async function getAiImage(data) {
 
     const requestBody = {
         generationConfig: {
-          responseModalities: ["IMAGE", "TEXT", ],
+          responseModalities: ["IMAGE"],
         },
         contents: [{
             parts: [
