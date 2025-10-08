@@ -419,11 +419,11 @@
             console.log("Image Received:", response);
         
             // Update state with the new data
-            this.state.currentEvent.currentPost.image = response;
+            this.state.currentEvent.currentPost.image = response?.imageData;
 
             this.state.currentEvent.posts.forEach(post => {
               if(post.id == postData.post.id){
-                 post.image = response;                 
+                 post.image = response?.imageData;                 
               }
             });
 
