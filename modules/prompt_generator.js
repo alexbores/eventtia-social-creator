@@ -217,42 +217,49 @@ Use the real information from the html provided.
 
 
 export function getPromptImage() {
-    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content provided.
-    
-    **Primary Directive:** Analyze the event post content and the landing page provided at the end of this prompt and generate an image based on that.
-    
-    **Goal:** Promote the event on the event organizer's Instagram's page, in order to invite followers to discover the event and to register to it.
-
-
-    ---
-    ### ### Social post generator logic:
-
-    1.  **Reference Image:** use the same design style, fonts, colors, and general tone from the image provided which is a screenshot of the event landing page.
-    2.  **Image Content:** use the content provided at the end of the prompt to generate the actual image information, consider including the following topics if they are relevant to the post content.
-        * ** Name of the event
-        * ** Date of the event
-        * ** Location of the event
-        * ** Image refering to the event activities
-        * ** Image with the same tone and style as the reference
-        * ** Messages that encourage action and registration or participation, depending of the content at the end of the prompt
-        * ** Mention event name, event date, event location using the exact information provided on the provided event page
-        * ** Add CTA: "Register Now"
-        * ** Integrate the event organizer's logo used on the provided event page
-        * ** Use same style, colours, visual elements and fonts as on the provided event page
-    3.  **Image Configuration: ** is extremly important that you apply and follow the following rules
-        * ** Image ratio must absolutly be 1080 x 1350 pixels aspect ratio, do not use any other aspect ratio than this one.
-        * ** The attached file is just to have a reference of colors, mood styles and font family, but you must create a new image on your own.
-        * ** You must focus on social media appeal including the content of the post shared in this prompt.
-
-    
-    ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than an image data
-    * **DATA ONLY:** Your entire output **MUST** be a single image data.
-    * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the image.
-
-    
-    **This are the content and the event page**
-    
-    
+    const prompt = `
+       You are a senior social media graphic designer tasked with creating a compelling promotional image for an event to be posted on Instagram.
+       
+       **Objective:**
+       Generate a high-quality, professional image with a 4:5 aspect ratio. The image must attract attention, convey key event details, and encourage followers to register. It will be based on provided text content and a stylistic reference image (a screenshot of the event's landing page).
+       
+       ---
+       ### ### Generation Logic (Follow these steps precisely):
+       
+       **Step 1: Analyze Style Reference**
+       First, meticulously analyze the provided reference image. Your goal is to extract its aesthetic DNA. Identify the following stylistic elements:
+       - **Color Palette:** The primary and secondary colors used.
+       - **Typography:** Font families, styles (e.g., serif, sans-serif), weights (e.g., bold, regular), and casing.
+       - **Visual Elements:** Any recurring shapes, patterns, textures, or graphic motifs.
+       - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
+       
+       **Step 2: Extract Core Content**
+       Next, analyze the provided text content to identify the essential information that must be included in the new image:
+       - Event Name
+       - Event Date
+       - Event Location
+       - Key promotional message or theme.
+       
+       **Step 3: Create a New Composition**
+       This is the most critical step. You must **completely disregard the layout, subject matter, and composition** of the reference image. Your task is to generate a **brand new, original image from scratch**. This is a style transfer task, NOT an image editing task.
+       
+       **Step 4: Synthesize and Generate the New Image**
+       Now, combine the **style** from Step 1 with the **content** from Step 2 to create the new image. The new image must include:
+       - The **Event Name**, **Date**, and **Location** rendered clearly and legibly. [1]
+       - A prominent Call-to-Action (CTA): **"Register Now"**.
+       - The **event organizer's logo** as seen on the reference page.
+       - A dynamic and engaging composition that is visually appealing for a social media feed.
+       - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
+       
+       ---
+       ### ### Strict Output Rules (Adhere Absolutely):
+       
+       1.  **Aspect Ratio:** The final image's aspect ratio **MUST be 4:5**. Do not use any other ratio. [2, 1]
+       2.  **Originality:** The reference image is for **style inspiration ONLY**. Do not edit, alter, or use the layout of the reference image. You must create a completely new visual. [3]
+       3.  **DATA ONLY:** Your entire output **MUST** be a single image data object.
+       4.  **NO EXTRA TEXT:** Do **NOT** include any text, explanations, comments, or markdown formatting (like \`\`\`json\`\`\`) before or after the image data.
+       
+       **This is the content and the event page**
     
     `;
 
