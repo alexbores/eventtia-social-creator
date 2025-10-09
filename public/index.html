@@ -507,6 +507,9 @@
 
               this.saveData('full_state_data',this.state);
 
+
+              this.elements.editorMainImageEl.src = this.state.currentEvent.currentPost.image;
+
               this.renderPosts();
             }
             catch(error){
