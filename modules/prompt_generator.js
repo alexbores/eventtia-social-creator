@@ -246,7 +246,7 @@ export function getPromptImage() {
     * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the image.
 
     
-    **Begin creationg based on the following content and image:**
+    **This are the content and image reference, remember to not use the image just copy the style:**
     
     
     
