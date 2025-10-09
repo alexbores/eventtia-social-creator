@@ -15,6 +15,8 @@
 
 <body>
     
+    <div id="soft-loading"></div>
+
     <section id="nav" class="hide">
         <div class="content main-nav">
             <h1 class="nav-title">Event Social Creator</h1>
@@ -80,6 +82,9 @@
            <button class="close button button-secondary" close>X</button>
            <div class="wrapper">
                
+           </div>
+           <div class="tools">
+               <button class="button button-secondary" generate-image>Generate Image</button>
            </div>
        </div>
    </section>
@@ -201,6 +206,10 @@
                 eventsListEl: document.querySelector('[events-list]'),
 
                 newEventBtn: document.querySelector('[analyze-new-event]'),
+
+                genImgBtn: document.querySelector('[generate-image]'),
+
+                softLoadScreen: document.querySelector('#soft-loading'),
             } 
         },
 
@@ -242,6 +251,11 @@
 
             this.elements.newEventBtn.addEventListener('click',()=>{
                  this.analyzeNewEvent();
+            });
+
+
+            this.elements.genImgBtn.addEventListener('click',()=>{
+                 this.initPostImageGeneration();
             });
             
             // window.addEventListener('beforeunload', () => {
@@ -429,10 +443,15 @@
               if(post.id == postData.post.id){
                  post.image = imageSaved.url;                 
               }
-            });
+            });     
+        },
+        async initPostImageGeneration(){
+            await this.getPostImage();
+
+            this.saveData('full_state_data',this.state);
 
             this.renderPosts();
-        },
+        }
 
 
         async updateEventData(){
@@ -571,6 +590,14 @@
                  document.querySelector('#side-nav').classList.remove('hide');
             }
         },
+        softLoading(toggle){
+           if(toggle){
+             this.softLoadScreen.classList.add('show');
+           }
+           else{
+             this.softLoadScreen.classList.remove('show');
+           }
+        },
 
         openPost(id){
            let post = document.querySelector(`[post-card="${id}"]`);
@@ -579,8 +606,8 @@
            inner.innerHTML = post.innerHTML;
            
 
-           // PLACeHOLDER
-           let postData = this.currentEvent.posts[0];
+           // PLACEHOLDER
+           let postData = this.currentEvent.posts.filter(post => post.id === id);
 
            this.currentEvent.currentPost = postData;
         },
