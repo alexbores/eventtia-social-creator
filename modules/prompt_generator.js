@@ -217,10 +217,12 @@ Use the real information from the html provided.
 
 
 export function getPromptImage() {
-    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content of the following post.
+    const prompt = `You are an expert image generation AI. Create a high-quality, professional image of 4:5 aspect ratio that creatively represents the mood and content provided.
     
-    **Primary Directive:** Analyze the event post content and the screenshot of the landing page provided at the end of this prompt and generate an image based on that.
+    **Primary Directive:** Analyze the event post content and the landing page provided at the end of this prompt and generate an image based on that.
     
+    **Goal:** Promote the event on the event organizer's Instagram's page, in order to invite followers to discover the event and to register to it.
+
 
     ---
     ### ### Social post generator logic:
@@ -233,20 +235,22 @@ export function getPromptImage() {
         * ** Image refering to the event activities
         * ** Image with the same tone and style as the reference
         * ** Messages that encourage action and registration or participation, depending of the content at the end of the prompt
+        * ** Mention event name, event date, event location using the exact information provided on the provided event page
+        * ** Add CTA: "Register Now"
+        * ** Integrate the event organizer's logo used on the provided event page
+        * ** Use same style, colours, visual elements and fonts as on the provided event page
     3.  **Image Configuration: ** is extremly important that you apply and follow the following rules
-        * ** Image ratio must absolutly be 4:5 aspect ratio, do not use any other aspect ratio than this one.
+        * ** Image ratio must absolutly be 1080 x 1350 pixels aspect ratio, do not use any other aspect ratio than this one.
         * ** The attached file is just to have a reference of colors, mood styles and font family, but you must create a new image on your own.
         * ** You must focus on social media appeal including the content of the post shared in this prompt.
 
-    
-    Use the real information from the content provided.
     
     ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than an image data
     * **DATA ONLY:** Your entire output **MUST** be a single image data.
     * **NO EXTRA TEXT:** Do **NOT** include any text, explanation, comments, or markdown formatting (like \\\`\\\`\\\`json\\\`\\\`\\\`) before or after the image.
 
     
-    **This are the content and image reference, remember to not use the image just copy the style:**
+    **This are the content and the event page**
     
     
     
