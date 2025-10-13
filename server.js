@@ -107,7 +107,7 @@ app.post('/api/analyze', async (req, res) => {
             });
 
             console.log(`going to the url`);
-            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 900000 });
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 1000000 });
             await autoScroll(page);
 
             console.log('Gettign the web data.');

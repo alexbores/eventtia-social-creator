@@ -382,8 +382,8 @@
 
                 let imageUrl = this.state.currentEvent.screenshot;
 
-                await this.saveImageByUrl(imageUrl);
-                this.state.currentEvent.screenshot = this.getImageName(imageUrl);
+                let imageSaved = await this.saveImageByUrl(imageUrl);
+                this.state.currentEvent.screenshot = imageSaved.url;
 
                 this.saveData('full_state_data', this.state);
         
@@ -610,6 +610,8 @@
                                        request: 'save_image', 
                                        webData: JSON.stringify(newImageData) })
             });
+
+            return response;
         },
         async saveImageByData(imageData,name){
 
