@@ -321,7 +321,7 @@
 
                 newEventBtn: document.querySelector('[analyze-new-event]'),
 
-                genImgBtn: document.querySelector('[generate-image]'),
+                genImgBtns: document.querySelectorAll('[generate-image]'),
 
                 savePostBtn: document.querySelector('[save-post]'),
 
@@ -396,8 +396,10 @@
 
 
 
-            this.elements.genImgBtn.addEventListener('click',()=>{
-                 this.initPostImageGeneration();
+            this.elements.genImgBtns.forEach(btn => {
+                btn.addEventListener('click',()=>{
+                   this.initPostImageGeneration();
+                }
             });
             
             // window.addEventListener('beforeunload', () => {
@@ -637,9 +639,9 @@
               if(!currentImageIndex){
                 currentImageIndex = 0;
               }
-              let imagesCountText = `${currentImageIndex} / ${imagesCount}`;
+              let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
               this.elements.editorImagesCountEl.innerHTML = imagesCountText;
-              
+
 
               this.renderPosts();
             }
@@ -887,7 +889,7 @@
            if(!currentImageIndex){
              currentImageIndex = 0;
            }
-           let imagesCountText = `${currentImageIndex} / ${imagesCount}`;
+           let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
 
            this.elements.editorMainImageEl.src = postImage;
            this.elements.editorImagesCountEl.innerHTML = imagesCountText;
