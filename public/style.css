@@ -7,7 +7,7 @@
     --color-gray-light: #f0f0f0;
     --color-gray-dark: #2e3031;
 	--color-white: #fff;
-	--color-white-opac: #ffffffa6;
+	--color-white-opac: #ebeaeaeb;
     --color-white-sky: #e9ebf3;
     --color-black: #090909;
 
@@ -684,7 +684,7 @@ p,h1,h2,h3,li{
 #post-editor .input-holder:hover,
 #post-editor .input-holder:has(textarea:focus){
 	background-color: var(--color-gray-light);
-	padding-bottom: 30px;
+	padding-bottom: 40px;
 	margin-bottom: 20px;
 }
 #post-editor .input-holder .icon-holder{
