@@ -12,6 +12,7 @@ import { getEventData } from './analyzers/get_event_data.js';
 import { getPosts } from './analyzers/get_posts.js';
 import { getPostsRemade } from './analyzers/get_posts_remade.js';
 import { getPostImage } from './analyzers/get_post_image.js';
+import { getEditPostImage } from './analyzers/get_edit_post_image.js';
 import { saveImage } from './analyzers/save_image.js';
 
 import { fileURLToPath } from 'url';
@@ -131,8 +132,12 @@ app.post('/api/analyze', async (req, res) => {
             response = await getPostsRemade(webData);
           break;
           case 'post_image':
-            console.log('Starting analysis of post image...');
+            console.log('Starting creation of post image...');
             response = await getPostImage(webData);
+          break;
+      case 'post_edit_image':
+            console.log('Starting edition of post image...');
+            response = await getEditPostImage(webData);
           break;
           case 'save_image':
             console.log('Saving Image...');

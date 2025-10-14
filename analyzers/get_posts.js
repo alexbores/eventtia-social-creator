@@ -16,7 +16,9 @@ export async function getPosts(data) {
     let items = await getAiAnalysis(data);
 
     items.map(item => {
-      item.status = 'schedule'
+      item.status = 'schedule';
+      item.images = [];
+      item.selectedImage = null
     });
 
     return items;
