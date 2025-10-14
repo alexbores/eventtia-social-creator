@@ -405,6 +405,17 @@ p,h1,h2,h3,li{
 	width: 100%;
 	border-radius: 6px;
 	overflow: hidden;
+	position: relative;
+}
+#posts-screen .post-card  .img-holder .button{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 20px;
+	right: 20px;
+	margin: auto;
+	display: none;
+	max-width: 200px;
 }
 #posts-screen .post-card .img-holder img{
 	width: 100%;
@@ -652,6 +663,7 @@ p,h1,h2,h3,li{
 #post-editor .input-holder{
 	width: 100%;
 	padding: 10px;
+	padding-right: 30px;
 	transition: all 0.2s ease;
 	background-color: rgba(0,0,0,0);
 	/*border: 2px solid var(--color-white);*/
@@ -784,6 +796,7 @@ p,h1,h2,h3,li{
 	height: 100%;
     justify-content: flex-start;
     flex-direction: column;
+    align-items: start;
 }
 #post-editor .image-editor.show{
 	display: flex;

@@ -600,7 +600,6 @@
         
             console.log("Image Received:", response);
         
-            
 
             let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
 
@@ -622,9 +621,25 @@
               await this.getPostImage();
 
               this.saveData('full_state_data',this.state);
+              
+              let postData = this.state.currentEvent.currentPost;
 
+              let imageIndex = postData.selectedImage;
+              let image = postData.images[imageIndex];
 
-              this.elements.editorMainImageEl.src = this.state.currentEvent.currentPost.image;
+              this.elements.editorMainImageEl.src = image;
+
+              let imagesCount = postData.images.length;
+              if(!imagesCount){
+                 imagesCount = 0;
+              }
+              let currentImageIndex = postData.selectedImage;
+              if(!currentImageIndex){
+                currentImageIndex = 0;
+              }
+              let imagesCountText = `${currentImageIndex} / ${imagesCount}`;
+              this.elements.editorImagesCountEl.innerHTML = imagesCountText;
+              
 
               this.renderPosts();
             }
