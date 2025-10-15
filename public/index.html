@@ -177,7 +177,12 @@
                           <button edit-text-open class="button button-secondary">
                             <span>Back</span>
                           </button>
-
+                          
+                          <!-- <div class="input-holder">
+                              
+                              <input id="remove-text-edit" type="checkbox" post-edit-remove-text>
+                              <label for="remove-text-edit">Remove text from image</label>
+                          </div> -->
                           <div class="input-holder">
                             <div class="icon-holder">
                               <svg class="edit-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -683,11 +688,6 @@
         async initPostImageEdit(){
             this.softLoading(true);
             
-            if(this.elements.editorImagesEditorAreaEl.value.length <= 0){
-                this.softLoading(false);
-                return;
-            }
-
             try{
               await this.getEditImage();
               
