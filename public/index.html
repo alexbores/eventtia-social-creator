@@ -649,12 +649,12 @@
             this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
             this.state.currentEvent.currentPost.selectedImage = 0;
 
-            this.state.currentEvent.posts.forEach(post => {
-              if(post.id == postData.post.id){
-                 post.images.unshift(imageSaved.url);                
-                 post.selectedImage = 0;
-              }
-            });     
+            // this.state.currentEvent.posts.forEach(post => {
+            //   if(post.id == postData.post.id){
+            //      post.images.unshift(imageSaved.url);                
+            //      post.selectedImage = 0;
+            //   }
+            // });     
         },
         async initPostImageGeneration(){
             this.softLoading(true);
