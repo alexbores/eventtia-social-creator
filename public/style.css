@@ -430,6 +430,7 @@ p,h1,h2,h3,li{
 	top: 0;
 	bottom: 0;
 	margin: auto;
+  display: inline-flex;
 }
 #posts-screen .post-card .bar{
 	display: flex;
