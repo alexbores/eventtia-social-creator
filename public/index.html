@@ -421,10 +421,10 @@
             });
 
             this.elements.editorImageUndoEl.addEventListener('click',(e)=>{
-
+               this.selectImage(-1);
             });
             this.elements.editorImageRedoEl.addEventListener('click',(e)=>{
-
+               this.selectImage(1);
             });
             
             this.elements.editorTextEditOpenEl.addEventListener('click',(e)=>{
@@ -511,6 +511,11 @@
                 this.state.currentEvent.screenshot = imageSaved.url;
 
                 this.saveData('full_state_data', this.state);
+
+
+                await this.initAllPostImageGeneration();
+
+                this.renderPosts();
         
             } catch (error) {
                 // --- Failure Path ---
@@ -588,6 +593,34 @@
             this.state.currentEvent.posts = response;
         },
 
+
+        async initAllPostImageGeneration() {
+            this.softLoading(true);
+            
+            const maxCount = 6;
+            let iterationCount = 0; // Initialize the counter
+
+            try {
+                for (const post of this.state.posts) {
+                    this.state.currentEvent.currentPost = post;
+        
+                    await this.getPostImage();
+        
+                    this.saveData('full_state_data', this.state);
+
+                    iterationCount++; 
+
+                    if(iterationCount > maxCount){
+                        break;
+                    }
+                }
+            } catch(error) {
+                console.error("Error during image generation process:", error);
+            }
+        
+            this.softLoading(false);
+        }
+
         
         async getPostImage(){
             let postData = {
@@ -613,12 +646,12 @@
             let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
 
             // Update state with the new data
-            this.state.currentEvent.currentPost.images.push(imageSaved.url);
+            this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
             this.state.currentEvent.currentPost.selectedImage = 0;
 
             this.state.currentEvent.posts.forEach(post => {
               if(post.id == postData.post.id){
-                 post.images.push(imageSaved.url);                
+                 post.images.unshift(imageSaved.url);                
                  post.selectedImage = 0;
               }
             });     
@@ -684,7 +717,7 @@
             let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
 
             // Update state with the new data
-            this.state.currentEvent.currentPost.images.push(imageSaved.url);
+            this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
             this.state.currentEvent.currentPost.selectedImage = 0;
         },
         async initPostImageEdit(){
@@ -921,8 +954,22 @@
 
            this.renderPosts();
         },
+        selectImage(direction){
+            let images = this.state.currentEvent.currentPost.images;
+            let imageIndex = this.state.currentEvent.currentPost.selectedImage;
+            
+            imageIndex += direction;
 
+            if(imageIndex > images.length ||
+               imageIndex < 0){
+                return
+            }
 
+            this.state.currentEvent.currentPost.selectedImage = imageIndex;
+
+            this.elements.editorMainImageEl.src = images[imageIndex];
+        }
+         
 
         setLoadingProgress(val){
            this.elements.fetchingScreen.setAttribute('progress',val);

@@ -215,6 +215,46 @@ Use the real information from the html provided.
 
 export function getPromptImage() {
     const prompt = `
+       You are a senior social media graphic designer tasked with creating a compelling promotional image template for an event to be posted on Instagram with no text.
+       
+       **Objective:**
+       Generate a high-quality, professional image with a 4:5 aspect ratio. The image must attract attention, It will be based on provided text content and a stylistic reference image (a screenshot of the event's landing page).
+       
+       ---
+       ### ### Generation Logic (Follow these steps precisely):
+       
+       **Step 1: Analyze Style Reference**
+       First, meticulously analyze the provided reference image. Your goal is to extract its aesthetic DNA. Identify the following stylistic elements:
+       - **Color Palette:** The primary and secondary colors used.
+       - **Texts:** do not use text in this image.
+       - **Visual Elements:** Any recurring shapes, patterns, textures, or graphic motifs.
+       - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
+       
+       **Step 2: Create a New Composition**
+       This is the most critical step. You must **completely disregard the layout, subject matter, and composition** of the reference image. Your task is to generate a **brand new, original image from scratch**. This is a style transfer task, NOT an image editing task.
+       
+       **Step 3: Synthesize and Generate the New Image**
+       Now, apply the **style** from Step 1 to create the new image. The new image must include:
+       - A dynamic and engaging composition that is visually appealing for a social media feed but with no text.
+       - All visual elements (colors, graphics) must strictly adhere to the style identified in Step 1.
+       
+       ---
+       ### ### Strict Output Rules (Adhere Absolutely):
+       
+       1.  **Aspect Ratio:** The final image's aspect ratio **MUST be 4:5**. Do not use any other ratio. [2, 1]
+       2.  **Originality:** The reference image is for **style inspiration ONLY**. Do not edit, alter, or use the layout of the reference image. You must create a completely new visual. [3]
+       3.  **DATA ONLY:** Your entire output **MUST** be a single image data object.
+       4.  **NO EXTRA TEXT:** Do **NOT** include any text, explanations, comments, or markdown formatting (like \`\`\`json\`\`\`) before or after the image data.
+       
+       **This is the content and the event page**
+    
+    `;
+
+    return prompt;
+}
+
+export function getPromptTextImage() {
+    const prompt = `
        You are a senior social media graphic designer tasked with creating a compelling promotional image for an event to be posted on Instagram.
        
        **Objective:**
