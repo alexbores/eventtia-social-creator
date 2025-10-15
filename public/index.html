@@ -968,6 +968,11 @@
             this.state.currentEvent.currentPost.selectedImage = imageIndex;
 
             this.elements.editorMainImageEl.src = images[imageIndex];
+
+           
+            let imagesCountText = `${imageIndex+1} / ${images.length}`;
+
+            this.elements.editorImagesCountEl.innerHTML = imagesCountText;
         }
          
 

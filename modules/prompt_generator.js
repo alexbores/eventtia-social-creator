@@ -237,6 +237,8 @@ export function getPromptImage() {
        Now, apply the **style** from Step 1 to create the new image. The new image must include:
        - A dynamic and engaging composition that is visually appealing for a social media feed but with no text.
        - All visual elements (colors, graphics) must strictly adhere to the style identified in Step 1.
+       - If the content is about speakers then use the real photo of the persons from the reference.
+       - use the same logo as in the reference with no edits.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
@@ -276,6 +278,7 @@ export function getPromptTextImage() {
        - Event Date
        - Event Location
        - Key promotional message or theme.
+       - Speakers if any.
        
        **Step 3: Create a New Composition**
        This is the most critical step. You must **completely disregard the layout, subject matter, and composition** of the reference image. Your task is to generate a **brand new, original image from scratch**. This is a style transfer task, NOT an image editing task.
@@ -287,6 +290,8 @@ export function getPromptTextImage() {
        - The **event organizer's logo** as seen on the reference page.
        - A dynamic and engaging composition that is visually appealing for a social media feed.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
+       - If the content is about speakers then use the real photo of the persons from the reference.
+       - use the same logo as in the reference with no edits.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
@@ -324,7 +329,7 @@ export function getPromptEditImage() {
        Next, analyze the provided prompt at the end to identify the essential information that must be included or edited in the new image:
        
        **Step 3: Create a New Composition**
-       This is the most critical step. You must apply the new indications to the image wiht out changing any further information, This is a an image editing task.
+       This is the most critical step. You must apply the new indications to the image with out changing any further information, This is a an image editing task, but only the small image not the screenshot that is only for reference.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
