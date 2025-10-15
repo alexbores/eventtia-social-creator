@@ -109,7 +109,7 @@ async function getAiImage(data) {
         }],
     };
 
-    console.log('AI image generation started for:', eventName);
+    console.log('AI image edition started for');
 
     console.log(requestBody);
 
