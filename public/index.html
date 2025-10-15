@@ -350,6 +350,8 @@
                 editorTextEditOpenEl: document.querySelector('[edit-text-open]'),
                 editorImagesEditorAreaEl: document.querySelector('[image-editor]'),
                 editorTextEditorAreaEl: document.querySelector('[text-editor]'),
+
+                editorImagePromptEl: document.querySelector('[post-edit-prompt] '),
             } 
         },
 
@@ -662,7 +664,7 @@
             let image = this.state.currentEvent.currentPost.images[imageIndex];
 
             let postData = {
-                prompt: this.elements.editorImagesEditorAreaEl.value,
+                prompt: this.elements.editorImagePromptEl.value,
                 imageUrl: image, 
             }
 
