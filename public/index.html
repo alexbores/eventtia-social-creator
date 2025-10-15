@@ -695,10 +695,12 @@
 
             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
             let image = this.state.currentEvent.currentPost.images[imageIndex];
+            let screenshot: this.state.currentEvent.screenshot;
 
             let postData = {
                 prompt: this.elements.editorImagePromptEl.value,
                 imageUrl: image, 
+                screenshotUrl: screenshot,
             }
 
             console.log(postData);
