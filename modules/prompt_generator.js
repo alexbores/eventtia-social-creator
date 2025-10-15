@@ -262,3 +262,41 @@ export function getPromptImage() {
 
     return prompt;
 }
+
+export function getPromptEditImage() {
+    const prompt = `
+       You are a senior social media graphic designer tasked with editing a compelling promotional image for an event to be posted on Instagram.
+       
+       **Objective:**
+       Edit a high-quality, professional image with a 4:5 aspect ratio. The image must attract attention, convey key event details, and encourage followers to register. It will be based on provided text content and a reference image.
+       
+       ---
+       ### ### Generation Logic (Follow these steps precisely):
+       
+       **Step 1: Analyze Style Reference**
+       First, meticulously analyze the provided reference image. Your goal is to extract its aesthetic DNA. Identify the following stylistic elements:
+       - **Color Palette:** The primary and secondary colors used.
+       - **Typography:** Font families, styles (e.g., serif, sans-serif), weights (e.g., bold, regular), and casing.
+       - **Visual Elements:** Any recurring shapes, patterns, textures, or graphic motifs.
+       - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
+       
+       **Step 2: Analyze the prompt**
+       Next, analyze the provided prompt at the end to identify the essential information that must be included or edited in the new image:
+       
+       **Step 3: Create a New Composition**
+       This is the most critical step. You must apply the new indications to the image wiht out changing any further information, This is a an image editing task.
+       
+       ---
+       ### ### Strict Output Rules (Adhere Absolutely):
+       
+       1.  **Aspect Ratio:** The final image's aspect ratio **MUST be 4:5**. Do not use any other ratio. [2, 1]
+       2.  **Editing:** The reference image is for editing. You must apply the rules provided at the end without changing any more of the image. [3]
+       3.  **DATA ONLY:** Your entire output **MUST** be a single image data object.
+       4.  **NO EXTRA TEXT:** Do **NOT** include any text, explanations, comments, or markdown formatting (like \`\`\`json\`\`\`) before or after the image data.
+       
+       **This is the prompt and the reference image:**
+    
+    `;
+
+    return prompt;
+}

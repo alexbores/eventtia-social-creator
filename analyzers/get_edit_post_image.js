@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
 import { generateImage } from '../modules/AI_fetcher.js';
-import { getPromptImage} from '../modules/prompt_generator.js';
+import { getPromptEditImage} from '../modules/prompt_generator.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
@@ -23,7 +23,7 @@ export async function getEditPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { eventDate, eventName, post, imageUrl } = JSON.parse(data);
+    const { prompt, imageUrl } = JSON.parse(data);
     
     let reference = null;
 
@@ -73,15 +73,11 @@ async function getAiImage(data) {
     }
     
     
-    const systemPrompt = getPromptImage(); 
+    const systemPrompt = getPromptEditImage(); 
 
     const contextText = `
-        **post context:**
-        * ** Event date: ${eventDate},
-        * ** Event Name: ${eventName},
-        * ** Post Type: ${post.type},
-        * ** Post Date: ${post.date},
-        * ** Post Content: ${post.title}, ${post.content}
+        **post prompt:**
+        ${prompt}
     `;
 
     let fullPrompt = systemPrompt + ' ' + contextText;
@@ -93,7 +89,7 @@ async function getAiImage(data) {
     const requestBody = {
         generationConfig: {
           responseModalities: ["IMAGE"],
-          temperature: 0.5,
+          temperature: 1,
           imageConfig: {
             aspectRatio: "4:5"
           },

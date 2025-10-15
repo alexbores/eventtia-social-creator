@@ -135,7 +135,7 @@ app.post('/api/analyze', async (req, res) => {
             console.log('Starting creation of post image...');
             response = await getPostImage(webData);
           break;
-      case 'post_edit_image':
+          case 'edit_post_image':
             console.log('Starting edition of post image...');
             response = await getEditPostImage(webData);
           break;
