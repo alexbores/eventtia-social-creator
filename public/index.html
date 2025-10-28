@@ -601,13 +601,10 @@
             let iterationCount = 0;
 
             try {
-                for (const post of this.state.posts) {
+                for (const post of this.state.currentEvent.posts) {
                     this.state.currentEvent.currentPost = post;
         
                     await this.getPostImage(true);
-                    
-                    let imageIndex = this.state.currentEvent.currentPost.images.length-1;
-                    this.state.currentEvent.currentPost.selectedImage = imageIndex;
 
                     await this.getEditImage(`
                         Remove all text from the reference image without changing the image layout or any other visual element.
@@ -661,14 +658,25 @@
             this.softLoading(true);
             
             try{
-              await this.getPostImage();
-
-              this.saveData('full_state_data',this.state);
               
               let postData = this.state.currentEvent.currentPost;
 
-              let imageIndex = postData.selectedImage;
-              let image = postData.images[imageIndex];
+              if(postData?.images?.length && postData.images.length > 0){
+                  await this.getPostImage();
+              }
+              else{
+                  await this.getPostImage(true);
+
+                  await this.getEditImage(`
+                     Remove all text from the reference image without changing the image layout or any other visual element.
+                  `);
+              }
+
+              let image = postData.images[0];
+              
+
+              this.saveData('full_state_data',this.state);
+              
 
               this.elements.editorMainImageEl.src = image;
 
