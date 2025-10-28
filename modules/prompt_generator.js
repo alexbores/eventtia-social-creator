@@ -292,6 +292,7 @@ export function getPromptTextImage() {
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
        - If the content is about speakers then use the real photo of the persons from the reference.
        - use the same logo as in the reference with no edits.
+       - do not add icons and layout of a webpage, this is an advertisment post image for social media.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
@@ -326,11 +327,12 @@ export function getPromptEditImage() {
        - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
        
        **Step 2: Analyze the prompt**
-       Next, analyze the provided prompt at the end to identify the essential information that must be included or edited in the new image:
+       Next, analyze the provided prompt at the end to identify the essential information that must be included or edited in the new image.
        
        **Step 3: Create a New Composition**
        This is the most critical step. You must apply the new indications to the image with out changing any further information, This is a an image editing task, but only the small image not the screenshot that is only for reference.
-       
+       there is also context included if needed for reference but give priprity to the prompt indications at the end.
+
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
        
@@ -339,7 +341,7 @@ export function getPromptEditImage() {
        3.  **DATA ONLY:** Your entire output **MUST** be a single image data object.
        4.  **NO EXTRA TEXT:** Do **NOT** include any text, explanations, comments, or markdown formatting (like \`\`\`json\`\`\`) before or after the image data.
        
-       **This is the prompt and the reference image:**
+       **This is the prompt the context the reference image and the screenshot of the webpage for visual styles:**
     
     `;
 

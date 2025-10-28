@@ -24,7 +24,7 @@ export async function getPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { eventDate, eventName, post, imageUrl } = JSON.parse(data);
+    const { eventDate, eventName, post, imageUrl, includeText } = JSON.parse(data);
     
     let reference = null;
     
@@ -46,7 +46,13 @@ async function getAiImage(data) {
     }
     
     
-    const systemPrompt = getPromptImage(); 
+    let systemPrompt = ''; 
+    if(includeText){
+        systemPrompt = getPromptTextImage(); 
+    }
+    else{
+        systemPrompt = getPromptImage(); 
+    }
 
     const contextText = `
         **post context:**

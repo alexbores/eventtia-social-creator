@@ -598,13 +598,20 @@
             this.softLoading(true);
             
             const maxCount = 6;
-            let iterationCount = 0; // Initialize the counter
+            let iterationCount = 0;
 
             try {
                 for (const post of this.state.posts) {
                     this.state.currentEvent.currentPost = post;
         
-                    await this.getPostImage();
+                    await this.getPostImage(true);
+                    
+                    let imageIndex = this.state.currentEvent.currentPost.images.length-1;
+                    this.state.currentEvent.currentPost.selectedImage = imageIndex;
+
+                    await this.getEditImage(`
+                        Remove all text from the reference image without changing the image layout or any other visual element.
+                    `);
         
                     this.saveData('full_state_data', this.state);
 
@@ -622,12 +629,13 @@
         },
 
         
-        async getPostImage(){
+        async getPostImage(includeText = false){
             let postData = {
                 post: this.state.currentEvent.currentPost,
                 imageUrl: this.state.currentEvent.screenshot, 
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
+                includeText: includeText,
             }
 
             console.log(postData);
@@ -647,14 +655,7 @@
 
             // Update state with the new data
             this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
-            this.state.currentEvent.currentPost.selectedImage = 0;
-
-            // this.state.currentEvent.posts.forEach(post => {
-            //   if(post.id == postData.post.id){
-            //      post.images.unshift(imageSaved.url);                
-            //      post.selectedImage = 0;
-            //   }
-            // });     
+            this.state.currentEvent.currentPost.selectedImage = 0;       
         },
         async initPostImageGeneration(){
             this.softLoading(true);
@@ -691,14 +692,23 @@
 
             this.softLoading(false);
         },
-        async getEditImage(){
+
+        async getEditImage(promptRules = null){
 
             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
             let image = this.state.currentEvent.currentPost.images[imageIndex];
             let screenshot = this.state.currentEvent.screenshot;
 
+            let prompt = '';
+            if(promptRules == null){
+               prompt = this.elements.editorImagePromptEl.value;
+            }
+            else{
+               prompt = promptRules;
+            }
+
             let postData = {
-                prompt: this.elements.editorImagePromptEl.value,
+                prompt: prompt,
                 imageUrl: image, 
                 screenshotUrl: screenshot,
             }

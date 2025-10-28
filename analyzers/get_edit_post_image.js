@@ -24,7 +24,7 @@ export async function getEditPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { prompt, imageUrl, screenshotUrl } = JSON.parse(data);
+    const { prompt, eventDate, eventName, post, imageUrl, screenshotUrl } = JSON.parse(data);
     
 
     let original = null;
@@ -55,8 +55,14 @@ async function getAiImage(data) {
     const systemPrompt = getPromptEditImage(); 
 
     const contextText = `
-        **post prompt:**
+        **post edition prompt instructions:**
         ${prompt}
+        **post context for reference if needed:**
+        * ** Event date: ${eventDate},
+        * ** Event Name: ${eventName},
+        * ** Post Type: ${post.type},
+        * ** Post Date: ${post.date},
+        * ** Post Content: ${post.title}, ${post.content}
     `;
 
     let fullPrompt = systemPrompt + ' ' + contextText;
