@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
 import { generateImage } from '../modules/AI_fetcher.js';
-import { getPromptImage} from '../modules/prompt_generator.js';
+import { getPromptImage, getPromptTextImage} from '../modules/prompt_generator.js';
 import { getImageName,formatImage} from '../modules/image_handlers.js';
 
 /**
