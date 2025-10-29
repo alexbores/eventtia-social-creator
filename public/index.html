@@ -717,6 +717,9 @@
 
             let postData = {
                 prompt: prompt,
+                eventName: this.state.currentEvent.eventData.eventName,
+                eventDate: this.state.currentEvent.eventData.eventDate,
+                post: this.state.currentEvent.currentPost,
                 imageUrl: image, 
                 screenshotUrl: screenshot,
             }
