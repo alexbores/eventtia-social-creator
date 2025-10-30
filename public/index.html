@@ -603,12 +603,20 @@
             try {
                 for (const post of this.state.currentEvent.posts) {
                     this.state.currentEvent.currentPost = post;
+
+
         
                     await this.getPostImage(true);
 
                     await this.getEditImage(`
                         Remove all text from the reference image without changing the image layout or any other visual element.
                     `);
+
+                    let postData = this.state.currentEvent.currentPost;
+
+                    let temp = postData.images[1];
+                    postData.images[1] = postData.images[0];
+                    postData.images[0] = temp;
         
                     this.saveData('full_state_data', this.state);
 
@@ -668,8 +676,12 @@
                   await this.getPostImage(true);
 
                   await this.getEditImage(`
-                     Remove all text from the reference image without changing the image layout or any other visual element.
+                     Remove all text from the reference image without changing the image layout or any other visual element, leave the logos, if the image has speakers also remove those images but leave the space to add them later.
                   `);
+
+                  let temp = postData.images[1];
+                  postData.images[1] = postData.images[0];
+                  postData.images[0] = temp;
               }
 
               let image = postData.images[0];
