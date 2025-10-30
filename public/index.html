@@ -291,6 +291,11 @@
 
         elements: {}, 
 
+
+        prompts: {
+            removeText: 'Remove all text from the reference image without changing the image layout or any other visual element, leave the logos, if the image has speakers also remove those images but leave the space to add them later, do not add anything new.'
+        },
+
         async init() {
             this.showScreen('url-screen');
             this.setElements();
@@ -608,9 +613,7 @@
         
                     await this.getPostImage(true);
 
-                    await this.getEditImage(`
-                        Remove all text from the reference image without changing the image layout or any other visual element.
-                    `);
+                    await this.getEditImage(this.prompts.removeText);
 
                     let postData = this.state.currentEvent.currentPost;
 
@@ -675,9 +678,7 @@
               else{
                   await this.getPostImage(true);
 
-                  await this.getEditImage(`
-                     Remove all text from the reference image without changing the image layout or any other visual element, leave the logos, if the image has speakers also remove those images but leave the space to add them later.
-                  `);
+                  await this.getEditImage(this.prompts.removeText);
 
                   let temp = postData.images[1];
                   postData.images[1] = postData.images[0];
