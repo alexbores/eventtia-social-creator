@@ -114,10 +114,7 @@ app.post('/api/analyze', async (req, res) => {
             console.log('Gettign the web data.');
             response = await getWebData(page, config);
 
-            console.log('closing browser');
-            await browser.close();
-            console.log('Browser closed. Memory released.');
-            browser = null; 
+            
           break;
           case 'event_data':
             console.log('Starting analysis of event data...');
@@ -150,7 +147,6 @@ app.post('/api/analyze', async (req, res) => {
         // --- Step 4: Send the final response ---
         res.status(200).json(response);
 
-        process.exit(0);
 
     } catch (error) {
         console.error(`Error during analysis for ${url}:`, error);
@@ -158,8 +154,10 @@ app.post('/api/analyze', async (req, res) => {
     } finally {
         // Safety net: ensures browser is closed if an error occurs before the explicit close call
         if (browser) {
-            await browser.close();
-            console.log('Browser closed due to an error. All resources released.');
+            console.log('closing browser');
+            await browser.close(); 
+            console.log('Browser closed. Memory released.');
+            browser = null;
         }
     }
 });
