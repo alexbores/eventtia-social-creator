@@ -145,9 +145,12 @@ app.post('/api/analyze', async (req, res) => {
           break;
         
         }
-
+        
+        console.log('sending response');
         // --- Step 4: Send the final response ---
         res.status(200).json(response);
+
+        process.exit(0);
 
     } catch (error) {
         console.error(`Error during analysis for ${url}:`, error);
