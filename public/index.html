@@ -845,21 +845,18 @@
          
              // Get the final extension from the image URL to create a complete filename
              const urlParts = image.split('.');
-             const extension = urlParts.pop().split('?')[0] || 'png';
+             const extension = urlParts.pop().split('?')[0] || 'jpg';
              const finalFileName = `${sanitizedBaseName}.${extension}`;
          
              // --- 3. Initiate Server-Side Proxy Download ---
              try {
-                 let data = {
-                    url: image
-                 }
 
                  const response = await this.fetchApi('/api/analyze', {
                      method: 'POST',
                      headers: { 'Content-Type': 'application/json' },
                      body: JSON.stringify({ url: this.state.currentEvent.url, 
                                             request: 'download_image', 
-                                            webData: JSON.stringify(data) })
+                                            webData: image })
                  });
          
                  if (!response.ok) {

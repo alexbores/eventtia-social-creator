@@ -3,7 +3,9 @@ import fetch from 'node-fetch';
 
 export async function downloadImage(data) {
     
-    let {url} = data
+    let url = data
+
+
 
     try {
         console.log(`Proxying download request for: ${url}`);
