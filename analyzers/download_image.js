@@ -1,10 +1,9 @@
 import fetch from 'node-fetch'; 
 
 
-export async function downloadImage(url, fileName) {
-    if (!url || !fileName) {
-        throw new Error("URL and filename are required for proxy download.");
-    }
+export async function downloadImage(data) {
+    
+    let {url} = data
 
     try {
         console.log(`Proxying download request for: ${url}`);

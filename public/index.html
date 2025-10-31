@@ -851,8 +851,7 @@
              // --- 3. Initiate Server-Side Proxy Download ---
              try {
                  let data = {
-                    url: image, 
-                    fileName: finalFileName 
+                    url: image
                  }
 
                  const response = await this.fetchApi('/api/analyze', {
@@ -884,7 +883,7 @@
                  
                  document.body.removeChild(link);
                  URL.revokeObjectURL(blobUrl);
-                 
+
 
                  console.log(`Proxy download request sent for ${finalFileName}.`);
          
