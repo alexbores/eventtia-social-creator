@@ -858,10 +858,11 @@
                                             request: 'download_image', 
                                             webData: image })
                  });
+
+                 console.log(response);
          
                  if (!response.ok) {
                      // If the server returns a 4xx or 5xx, the proxy failed.
-                     const errorBody = await response.json().catch(() => ({ message: "Non-JSON error response." }));
                      throw new Error(`Proxy failed: Status ${response.status}. Details: ${errorBody.message || errorBody.error}`);
                  }
                  
