@@ -294,7 +294,7 @@ export function getPromptTextImage() {
        - use the same logo as in the reference with no edits.
        - do not add icons and layout of a webpage, this is an advertisment post image for social media.
        - The mayority of the text must come from the post context shared at the end.
-       - all texts must be valid real texts. 
+       - all texts must be valid real texts and do not add small texts, must be readable for instagram posting. 
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):

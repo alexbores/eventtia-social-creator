@@ -126,7 +126,11 @@
                             </svg>
                           </button>
                       </div>
-
+                      
+                      <button post-img-download class="button button-secondary">
+                          <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 15V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18L4 15M8 11L12 15M12 15L16 11M12 15V3" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <span>Download</span>
+                      </button>
                       <button edit-image-open class="button button-secondary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
                         <span>Edit Image</span>
@@ -134,7 +138,7 @@
 
                       <button generate-image class="button button-secondary">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
-                          <span>Generate New Image</span>
+                          <span>New Image</span>
                         </button>
 
                      </div>
@@ -370,6 +374,8 @@
                 editorTextEditorAreaEl: document.querySelector('[text-editor]'),
 
                 editorImagePromptEl: document.querySelector('[post-edit-prompt] '),
+
+                downloadImgEl: document.querySelector('[post-img-download] '),
             } 
         },
 
@@ -392,13 +398,14 @@
                 //     this.openPost(id);
                 // }
 
-                if (this.elements.postsHolder.classList.contains('img-loading')) {
-                    return;
-                }
+                // if (this.elements.postsHolder.classList.contains('img-loading')) {
+                //     return;
+                // }
 
                 const post = e.target.closest('[post-card]');
                 if (post) {
                     let id = post.getAttribute('post-card');
+
                     this.openPost(id);
                     this.openTextEditor();
                 }
@@ -459,6 +466,9 @@
             this.elements.editorImageEditEl.addEventListener('click',(e)=>{
                this.initPostImageEdit();
             });
+            this.elements.downloadImgEl.addEventListener('click',(e)=>{
+               this.downloadCurrentImage();
+            });
 
             this.elements.savePostBtn.addEventListener('click',()=>{
                this.saveCurrentPostChanges();
@@ -518,7 +528,8 @@
                 await this.getEventData();
                 this.setLoadingProgress(7);
 
-                await new Promise(r => setTimeout(r, 1200));
+                await new Promise(r => setTimeout(r, 3200));
+
                 // Transition the UI to the results screen
                 const screen = document.querySelector('#fetching-screen');
                 screen.classList.add('end-loading');
@@ -815,6 +826,32 @@
 
             this.softLoading(false);
         },
+
+
+        downloadCurrentImage(){
+            let imageIndex = this.state.currentEvent.currentPost.selectedImage;
+            let image = this.state.currentEvent.currentPost.images[imageIndex];
+            let date = this.state.currentEvent.currentPost.date;
+            let name = this.state.currentEvent.eventData.eventName;
+
+            let fileName = name+' '+date;
+
+            let sanitized = fileName.trim();
+            
+            sanitized = sanitized.toLowerCase();
+            sanitized = sanitized.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
+            sanitized = sanitized.replace(/\s+/g, '-');
+            sanitized = sanitized.replace(/-+/g, '-');
+            sanitized = sanitized.replace(/^-|-$/g, '');
+
+            if (sanitized.length === 0) {
+                return 'unnamed_file';
+            }
+            
+            sanitizedName = sanitized;
+
+            this.downloadImageFromUrl(image, sanitizedName);
+        },
         
 
 
@@ -926,6 +963,40 @@
             });
 
             return response;
+        },
+
+        async downloadImageFromUrl(url, fileName) {
+          try {
+              const response = await fetch(url);
+              
+              if (!response.ok) {
+                  throw new Error(`Failed to fetch image: Status ${response.status}`);
+              }
+
+              // 1. Get the image data as a Blob
+              const imageBlob = await response.blob();
+              
+              // 2. Create a temporary URL for the Blob
+              const blobUrl = URL.createObjectURL(imageBlob);
+
+              // 3. Create a temporary anchor element and click it
+              const link = document.createElement('a');
+              link.href = blobUrl;
+              link.download = fileName;
+              
+              // Trigger the download
+              document.body.appendChild(link);
+              link.click();
+              
+              // Clean up the temporary elements and object URL
+              document.body.removeChild(link);
+              URL.revokeObjectURL(blobUrl);
+
+              console.log(`Download initiated for ${fileName}.`);
+
+          } catch (error) {
+              console.error("Download failed:", error);
+          }
         },
 
         analyzeNewEvent(){

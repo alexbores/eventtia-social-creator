@@ -1044,19 +1044,15 @@ p,h1,h2,h3,li{
 }
 
 #fetching-screen .screenshot-holder{
-  width: 200px;
-  aspect-ratio: 6/9;
-  overflow: hidden;
-  position: relative;
+  width: 100%;
+  height: auto;
   margin-top: 20px;
 }
 #fetching-screen .screenshot-holder img{
-  position: absolute;
   width: 100%;
   height: auto;
-  top: 0;
-  left: 0;
-  object-fit: contain;
+  max-height: 400px;
+  object-fit: cover;
 }
 
 
