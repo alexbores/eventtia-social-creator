@@ -544,7 +544,7 @@
 
                 await this.initAllPostImageGeneration();
 
-                this.renderPosts();
+                // this.renderPosts();
 
         
             } catch (error) {
@@ -650,8 +650,6 @@
                 for (const post of this.state.currentEvent.posts) {
                     this.state.currentEvent.currentPost = post;
 
-
-        
                     await this.getPostImage(true);
 
                     await this.getEditImage(this.prompts.removeText);
@@ -663,6 +661,8 @@
                     postData.images[0] = temp;
         
                     this.saveData('full_state_data', this.state);
+
+                    this.renderPosts();
 
                     iterationCount++; 
 
@@ -713,10 +713,10 @@
               
               let postData = this.state.currentEvent.currentPost;
 
-              if(postData?.images?.length && postData.images.length > 0){
-                  await this.getPostImage();
-              }
-              else{
+              // if(postData?.images?.length && postData.images.length > 0){
+              //     await this.getPostImage();
+              // }
+              // else{
                   await this.getPostImage(true);
 
                   await this.getEditImage(this.prompts.removeText);
@@ -724,7 +724,7 @@
                   let temp = postData.images[1];
                   postData.images[1] = postData.images[0];
                   postData.images[0] = temp;
-              }
+              // }
 
               let image = postData.images[0];
               

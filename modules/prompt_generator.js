@@ -231,13 +231,13 @@ export function getPromptImage() {
        - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
        
        **Step 2: Create a New Composition**
-       This is the most critical step. You must **completely disregard the layout, subject matter, and composition** of the reference image. Your task is to generate a **brand new, original image from scratch**. This is a style transfer task, NOT an image editing task.
+       This is the most critical step. You must **completely disregard the layout, subject matter, and composition** of the reference image. Your task is to generate a **brand new, original image from scratch**. This is a style transfer task that includes the real logos and people images, NOT an image editing task.
        
        **Step 3: Synthesize and Generate the New Image**
        Now, apply the **style** from Step 1 to create the new image. The new image must include:
        - A dynamic and engaging composition that is visually appealing for a social media feed but with no text.
        - All visual elements (colors, graphics) must strictly adhere to the style identified in Step 1.
-       - If the content is about speakers then use the real photo of the persons from the reference.
+       - If the content is about speakers then use the real photo of the persons from the screenshot.
        - use the same logo as in the reference with no edits.
        
        ---
