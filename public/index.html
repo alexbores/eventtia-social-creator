@@ -558,14 +558,14 @@
                                        webData: null })
             });
         
-            console.log("Web Data received");
+            console.log("Web Data received", response);
         
             // Update state with the new data
             this.state.currentEvent.webData = response.html;
             this.state.currentEvent.screenshot = response.screenshot;
         },
         async saveScreenshot(){
-            let imageUrl = this.state.currentEvent.response.screenshot;
+            let imageUrl = this.state.currentEvent.screenshot;
             let imageSaved = await this.saveImageByUrl(imageUrl);
 
             this.state.currentEvent.screenshot = imageSaved.url;
