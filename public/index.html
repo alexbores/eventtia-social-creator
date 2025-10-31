@@ -81,7 +81,7 @@
 
                 </div>
                 
-                <div class="screenhot-holder">
+                <div class="screenshot-holder">
                   <img webpage-screenshot >
                 </div>
             </div>
@@ -400,6 +400,7 @@
                 if (post) {
                     let id = post.getAttribute('post-card');
                     this.openPost(id);
+                    this.openTextEditor();
                 }
             });
             this.elements.postEditorClose.addEventListener('click',()=>{
