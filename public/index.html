@@ -493,6 +493,26 @@
                 throw error;
             }
         },
+        async fetchBinaryApi(endpoint, options = {}) {
+           try {
+               options.credentials = 'include'; 
+
+               const response = await fetch(endpoint, options);
+               
+               if (!response.ok) {
+                   const errorData = await response.json().catch(() => ({
+                       error: 'Server responded with a non-JSON error format.'
+                   }));
+                   
+                   throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+               }
+               return response;
+
+           } catch (error) {
+               console.error(`Failed to fetch ${endpoint} (Binary Call):`, error);
+               throw error;
+           }
+        },
 
 
         async fetchAllData(url) {
@@ -851,7 +871,7 @@
              // --- 3. Initiate Server-Side Proxy Download ---
              try {
 
-                 const response = await this.fetchApi('/api/analyze', {
+                 const response = await this.fetchBinaryApi('/api/analyze', {
                      method: 'POST',
                      headers: { 'Content-Type': 'application/json' },
                      body: JSON.stringify({ url: this.state.currentEvent.url, 
