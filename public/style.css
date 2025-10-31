@@ -124,9 +124,10 @@ p,h1,h2,h3,li{
   background-color: #eeeeee;
   color: var(--color-black);
   height: 25px;
-  padding: 0 10px;
+  padding: 0 5px;
   font-size: 9px;
   font-weight: 600;
+  gap: 5px;
 }
 .button.button-secondary:hover{
   background-color: var(--color-gray-white);
@@ -614,7 +615,7 @@ p,h1,h2,h3,li{
 	margin-top: 10px;
 	width: 100%;
 	display: flex;
-	gap: 20px;
+	gap: 10px;
     align-items: center;
 	justify-content: space-between;
 }

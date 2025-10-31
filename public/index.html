@@ -828,7 +828,7 @@
         },
 
 
-        downloadCurrentImage(){
+        async downloadCurrentImage(){
             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
             let image = this.state.currentEvent.currentPost.images[imageIndex];
             let date = this.state.currentEvent.currentPost.date;
@@ -850,7 +850,49 @@
             
             sanitizedName = sanitized;
 
-            this.downloadImageFromUrl(image, sanitizedName);
+            let imgElement = this.elements.editorMainImageEl;
+
+            if (!imgElement || imgElement.tagName !== 'IMG') {
+                console.error(`Error: Element with ID "${imgElementId}" not found or is not an <img> tag.`);
+                return;
+            }
+
+            let url = imgElement.src;
+
+            if (!url) {
+                console.error("Error: Image element does not have a source (src) URL.");
+                return;
+            }
+            
+            try {
+                // Fetch the image data using the existing URL
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch image: Status ${response.status}`);
+                }
+
+                const imageBlob = await response.blob();
+                
+                // --- Trigger Download (Same logic as before) ---
+                const blobUrl = URL.createObjectURL(imageBlob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = fileName;
+                
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+
+                console.log(`Download initiated for ${fileName} from element source.`);
+
+            } catch (error) {
+                // This will catch CORS errors if the image is on a different domain
+                console.error("Download failed:", error);
+            }
+
         },
         
 
