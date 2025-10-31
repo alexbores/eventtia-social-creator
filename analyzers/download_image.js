@@ -25,7 +25,8 @@ export async function downloadImage(url) {
             // Throw an error that includes the bad HTTP status code
             throw new Error(`Source server returned status ${proxyResponse.status}.`);
         }
-
+        
+        console.log(`Proxying download request successful`);
         // 3. Return the raw Response object containing the stream.
         return proxyResponse;
 
