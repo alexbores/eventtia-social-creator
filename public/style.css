@@ -425,10 +425,10 @@ p,h1,h2,h3,li{
 	left: 20px;
 	right: 20px;
 	margin: auto;
-	display: none;
+	display: inline-flex;
 	max-width: 200px;
 }
-#posts-screen .posts-wrapper.img-loading .button{
+#posts-screen .posts-wrapper.img-loading .post-card .img-holder .button{
   display: none;
 }
 #posts-screen .post-card .img-holder img{
@@ -436,15 +436,6 @@ p,h1,h2,h3,li{
 	height: 100%;
 	object-fit: cover;
 	display: block;
-}
-#posts-screen .post-card .img-holder .button{
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	margin: auto;
-  display: inline-flex;
 }
 #posts-screen .post-card .bar{
 	display: flex;
