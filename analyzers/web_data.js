@@ -27,15 +27,75 @@ export async function getWebData(page, config) {
     
         await new Promise(r => setTimeout(r, 500));
 
-        console.log(`Viewport correctly setted, saving screenshot...`);
-
-        // Changed back to fullPage screenshot as the timeout cause was the reload, not this.
-        const baseScreenshotBuffer = await page.screenshot({ type: 'webp', quality: 50, fullPage: true });
-        const baseFileName = `base_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;
-        fs.writeFileSync(path.join(config.imageDir, baseFileName), baseScreenshotBuffer);
-        report.screenshot = config.imagePath + baseFileName;
+        console.log(`Viewport correctly setted, stabilicing web...`);
         
-        console.log(`screenshot correctly saved, getting page content...`);
+        await page.evaluate(async () => {
+          // Wait for 1 second of inactivity in scroll height to confirm page has finished loading content
+          await new Promise(resolve => {
+            let lastHeight = 0;
+            const checkHeight = () => {
+                const currentHeight = document.body.scrollHeight;
+                if (currentHeight === lastHeight) {
+                    // Height hasn't changed since the last check, page is stable
+                    resolve();
+                } else {
+                    lastHeight = currentHeight;
+                    setTimeout(checkHeight, 500); // Check again in 500ms
+                }
+            };
+            checkHeight();
+          });
+        });
+
+
+        // const baseScreenshotBuffer = await page.screenshot({ type: 'webp', quality: 50, fullPage: true });
+        
+        const HARD_TIMEOUT = 20000; // 20 seconds maximum for the full attempt
+
+        // Initialize the buffer variable outside the try block
+        let baseScreenshotBuffer = null;
+        let fallbackFileName = null;
+    
+        // --- 1. Attempt Robust Screenshot (with stabilization and timeout) ---
+        try {
+            console.log(`Viewport set. Attempting full-page screenshot with ${HARD_TIMEOUT / 1000}s timeout...`);
+
+            // This is the core operation that may fail due to timeout
+            baseScreenshotBuffer = await page.screenshot({ 
+                type: 'webp', 
+                quality: 50, 
+                fullPage: true,
+                timeout: HARD_TIMEOUT 
+            });
+            
+        } catch (error) {
+            console.warn(`⚠️ Screenshot failed after ${HARD_TIMEOUT / 1000}s (Timeout/Hang). Falling back to viewport screenshot.`);
+
+            // --- 2. Fallback Capture: Take a quick viewport shot ---
+            try {
+                // Remove the fullPage option to guarantee a quick, non-hanging shot of the visible area
+                baseScreenshotBuffer = await page.screenshot({ 
+                    type: 'webp', 
+                    quality: 50, 
+                    fullPage: false 
+                });
+                fallbackFileName = `fallback_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;
+                
+            } catch (fallbackError) {
+                console.error("CRITICAL: Fallback screenshot also failed. Skipping image capture.");
+                return null; 
+            }
+        }
+
+        if (baseScreenshotBuffer) {
+          console.log(`saving screenshot...`);
+
+          const baseFileName = fallbackFileName || `base_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;
+          fs.writeFileSync(path.join(config.imageDir, baseFileName), baseScreenshotBuffer);
+          report.screenshot = config.imagePath + baseFileName;
+        }
+        
+        console.log(`getting page content...`);
     
         report.html = await page.content();
 
