@@ -491,7 +491,9 @@
                 
                 await this.getWebData();
                 this.setLoadingProgress(4);
-
+                
+                await saveScreenshot();
+                this.setLoadingProgress(5);
 
                 await this.getEventData();
                 this.setLoadingProgress(7);
@@ -544,6 +546,7 @@
                 console.error("Data fetch failed:", error.message);
             }
         },
+        
 
 
         async getWebData(){
@@ -559,17 +562,16 @@
         
             // Update state with the new data
             this.state.currentEvent.webData = response.html;
+            this.state.currentEvent.screenshot = response.screenshot;
+        },
+        async saveScreenshot(){
+            let imageUrl = this.state.currentEvent.response.screenshot;
+            let imageSaved = await this.saveImageByUrl(imageUrl);
 
-            try{
-                let imageUrl = this.state.currentEvent.response.screenshot;
-                let imageSaved = await this.saveImageByUrl(imageUrl);
-                this.state.currentEvent.screenshot = imageSaved.url;
-                this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
-            }
-            catch (error){
-                console.log('screenshot could not be saved: ', error);
-            }
+            this.state.currentEvent.screenshot = imageSaved.url;
+            this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
 
+            console.log("screenshot saved");
         },
         async getEventData(){
             const response = await this.fetchApi('/api/analyze', {
@@ -1043,6 +1045,9 @@
 
             this.elements.editorImagesCountEl.innerHTML = imagesCountText;
         },
+
+
+
          
 
         setLoadingProgress(val){
