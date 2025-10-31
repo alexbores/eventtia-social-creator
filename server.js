@@ -143,7 +143,20 @@ app.post('/api/analyze', async (req, res) => {
           break;
           case 'download_image':
             console.log('Downloading Image...');
-            response = await downloadImage(webData);
+            const imageUrl = webData; // The image URL string
+
+            // 1. Call the download function to get the raw stream response
+            const proxyResponse = await downloadImage(imageUrl); 
+
+            // 2. Set headers on the Express response object (res)
+            const filename = 'download.bin'; // (You should derive this filename properly)
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.setHeader('Content-Type', proxyResponse.headers.get('content-type') || 'application/octet-stream');
+
+            proxyResponse.body.pipe(res);
+            
+            // 4. STOP EXECUTION: We cannot continue to the res.json() line.
+            return;
           break;
         
         }

@@ -860,12 +860,6 @@
                  });
 
                  console.log(response);
-         
-                 if (!response.ok) {
-                     // If the server returns a 4xx or 5xx, the proxy failed.
-                     throw new Error(`Proxy failed: Status ${response.status}. Details: ${errorBody.message || errorBody.error}`);
-                 }
-                 
                  
                  const imageBlob = await response.blob();
                  
