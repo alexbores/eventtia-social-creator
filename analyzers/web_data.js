@@ -27,6 +27,8 @@ export async function getWebData(page, config) {
     
         await new Promise(r => setTimeout(r, 500));
 
+        console.log(`Viewport correctly setted, saving screenshot...`);
+
         // Changed back to fullPage screenshot as the timeout cause was the reload, not this.
         const baseScreenshotBuffer = await page.screenshot({ type: 'webp', quality: 50, fullPage: true });
         const baseFileName = `base_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;

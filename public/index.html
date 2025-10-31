@@ -76,7 +76,17 @@
                 <div class="progress-bar">
                   <div class="progress-bar-inner"></div>
                 </div>
+
+                <div class="text-holder" event-data-found>
+
+                </div>
+                
+                <div class="screenhot-holder">
+                  <img webpage-screenshot >
+                </div>
             </div>
+
+            
         </div>
     </section>
    
@@ -312,6 +322,9 @@
                 analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
 
                 fetchingScreen: document.querySelector('#fetching-screen'),
+
+                eventScreenshot: document.querySelector('[webpage-screenshot]'),
+                eventDataFound: document.querySelector('[event-data-found]'),
                 
                 postsHolder: document.querySelector('#posts-screen .posts-wrapper'),
 
@@ -479,19 +492,28 @@
                 await this.getWebData();
                 this.setLoadingProgress(4);
 
+
                 await this.getEventData();
                 this.setLoadingProgress(7);
 
+                await new Promise(r => setTimeout(r, 1200));
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                await new Promise(r => setTimeout((r) => {
+                    this.showScreen('posts-screen');
+                    return r;
+                }, 1000));
+
+                this.softLoading(true);
+
                 await this.getPosts();
 
-                
                 this.renderPosts();
 
                 console.log('posts rendered');
 
-                // Transition the UI to the results screen
-                const screen = document.querySelector('#fetching-screen');
-                screen.classList.add('end-loading');
 
                 this.renderData();
                 
@@ -505,15 +527,10 @@
                 });
 
                 
+                // setTimeout(() => {
+                //     this.showScreen('posts-screen');
+                // }, 1000);
 
-                setTimeout(() => {
-                    this.showScreen('posts-screen');
-                }, 1000);
-
-                let imageUrl = this.state.currentEvent.screenshot;
-
-                let imageSaved = await this.saveImageByUrl(imageUrl);
-                this.state.currentEvent.screenshot = imageSaved.url;
 
                 this.saveData('full_state_data', this.state);
 
@@ -542,7 +559,17 @@
         
             // Update state with the new data
             this.state.currentEvent.webData = response.html;
-            this.state.currentEvent.screenshot = response.screenshot;
+
+            try{
+                let imageUrl = this.state.currentEvent.response.screenshot;
+                let imageSaved = await this.saveImageByUrl(imageUrl);
+                this.state.currentEvent.screenshot = imageSaved.url;
+                this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
+            }
+            catch (error){
+                console.log('screenshot could not be saved');
+            }
+
         },
         async getEventData(){
             const response = await this.fetchApi('/api/analyze', {
@@ -557,6 +584,12 @@
         
             // Update state with the new data
             this.state.currentEvent.eventData = response;
+
+            this.elements.eventDataFound.innerHTML = `
+                <p>Generating posts for your event:</p>
+                <h3>${eventName}</h3>
+                <p>Starting on: ${eventDate}</p>
+            `;
         },
         async getPosts(){
             const response = await this.fetchApi('/api/analyze', {
