@@ -253,22 +253,22 @@
 
         </div>
 
-    <section id="posts-screen">
-        <div class="content">
-            <div class="top-bar">
-                <div class="title-holder">
-                   <h3 class="posts-content-title">
-                     AI Generated Posts List (<span posts-generated="">8</span>): 
-                   </h3>
+        <section id="posts-screen">
+            <div class="content">
+                <div class="top-bar">
+                    <div class="title-holder">
+                       <h3 class="posts-content-title">
+                         AI Generated Posts List (<span posts-generated="">8</span>): 
+                       </h3>
+                    </div>
+                </div>
+                <div class="posts-content">
+                  <div class="posts-wrapper">
+                    
+                  </div>
                 </div>
             </div>
-            <div class="posts-content">
-              <div class="posts-wrapper">
-                
-              </div>
-            </div>
-        </div>
-    </section>
+        </section>
     
 
       
@@ -392,6 +392,10 @@
                 //     this.openPost(id);
                 // }
 
+                if(this.elements.postsHolder.classList.includes('img-loading')){
+                  return;
+                }
+
                 const post = e.target.closest('[post-card]');
                 if (post) {
                     let id = post.getAttribute('post-card');
@@ -497,6 +501,8 @@
                 eventData: this.state.currentEvent,
             });
 
+            this.state.currentEvent.posts = [];
+
             this.state.currentEvent.url = url;
         
             try {
@@ -517,10 +523,8 @@
 
                 await new Promise(r => setTimeout(r, 1200));
 
-
                 this.showScreen('posts-screen');
                 this.softLoading(true);
-
 
                 await this.getPosts();
 
@@ -530,8 +534,10 @@
 
                 this.renderData();
 
-
+                
                 this.saveData('full_state_data', this.state);
+                
+                this.softLoading(false);
 
 
                 await this.initAllPostImageGeneration();
@@ -633,8 +639,8 @@
 
 
         async initAllPostImageGeneration() {
-            this.softLoading(true);
-            
+            this.softPostLoading(true);
+
             const maxCount = 6;
             let iterationCount = 0;
 
@@ -666,7 +672,7 @@
                 console.error("Error during image generation process:", error);
             }
         
-            this.softLoading(false);
+            this.softPostLoading(false);
         },
 
         
@@ -956,6 +962,14 @@
              this.elements.softLoadScreen.classList.remove('show');
            }
         },
+        softPostsLoading(toggle){
+           if(toggle){
+             this.elements.postsHolder.classList.add('img-loading');
+           }
+           else{
+             this.elements.postsHolder.classList.remove('img-loading');
+           }
+        },
         
         openTextEditor(){
            this.elements.editorImagesEditorAreaEl.classList.remove('show');
@@ -1079,8 +1093,8 @@
                                 `:
                                `<img src="${imageUrl}" width="100%" height="100%">`
                            }
-                           
                         </div>
+
                         <h3 class="post-title">${post.title}</h3>
                         <p class="post-content">${post.content}</p>
                         <div class="hashtags">

@@ -302,11 +302,14 @@ p,h1,h2,h3,li{
   width: 100%;
 }
 #side-nav .input{
-    width: 100%;
+  width: 100%;
 }
 #side-nav .button{
 	margin-top: 10px;
-    width: 100%;
+  width: 100%;
+}
+.section-wrapper:has(.posts-wrapper.img-loading) #side-nav .button{
+  display: none;
 }
 #side-nav .analyze-again-form{
 	margin-top: auto;
@@ -407,6 +410,14 @@ p,h1,h2,h3,li{
 	overflow: hidden;
 	position: relative;
 }
+
+#posts-screen .posts-wrapper.img-loading .post-card  .img-holder{
+  transition: width 8s ease-out;
+  animation-name: pulse;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
 #posts-screen .post-card  .img-holder .button{
 	position: absolute;
 	top: 0;
@@ -416,6 +427,9 @@ p,h1,h2,h3,li{
 	margin: auto;
 	display: none;
 	max-width: 200px;
+}
+#posts-screen .posts-wrapper.img-loading .button{
+  display: none;
 }
 #posts-screen .post-card .img-holder img{
 	width: 100%;
