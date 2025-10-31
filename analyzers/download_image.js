@@ -13,13 +13,7 @@ export async function downloadImage(data) {
         // 1. Fetch the image from the source (Server-to-Server bypasses CORS)
         const proxyResponse = await fetch(url);
         
-        if (!proxyResponse.ok) {
-            // Throw an error if the source image server fails (e.g., 404, 500)
-            throw new Error(`Source server returned status ${proxyResponse.status}`);
-        }
-
-        // We return the raw Response object. The Express wrapper will handle
-        // setting Content-Disposition and piping the body to the client response (res).
+        
         return proxyResponse;
 
     } catch (error) {
