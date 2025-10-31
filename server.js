@@ -114,7 +114,7 @@ app.post('/api/analyze', async (req, res) => {
             console.log('Gettign the web data.');
             response = await getWebData(page, config);
 
-            // Close browser and release memory
+            console.log('closing browser');
             await browser.close();
             console.log('Browser closed. Memory released.');
             browser = null; 
