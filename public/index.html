@@ -503,6 +503,7 @@
             });
 
             this.state.currentEvent.posts = [];
+            this.renderPosts();
 
             this.state.currentEvent.url = url;
         
@@ -640,7 +641,7 @@
 
 
         async initAllPostImageGeneration() {
-            this.softPostLoading(true);
+            this.imgPostLoading(true);
 
             const maxCount = 6;
             let iterationCount = 0;
@@ -673,7 +674,7 @@
                 console.error("Error during image generation process:", error);
             }
         
-            this.softPostLoading(false);
+            this.imgPostLoading(false);
         },
 
         
@@ -963,7 +964,7 @@
              this.elements.softLoadScreen.classList.remove('show');
            }
         },
-        softPostLoading(toggle){
+        imgPostLoading(toggle){
            if(toggle){
              this.elements.postsHolder.classList.add('img-loading');
            }
