@@ -95,6 +95,35 @@ export async function getWebData(page, config) {
           report.screenshot = config.imagePath + baseFileName;
         }
         
+        console.log(`cleaning html page content...`);
+        await page.evaluate(() => {
+            // 1. Remove all <style> blocks (Inline CSS)
+            const styleTags = document.querySelectorAll('style');
+            styleTags.forEach(el => el.remove());
+        
+            // 2. Remove all <script> blocks (External/Inline JS code)
+            const scriptTags = document.querySelectorAll('script');
+            scriptTags.forEach(el => {
+                const typeAttribute = el.getAttribute('type');
+
+                // Check if the script tag is NOT JSON-LD
+                // We want to keep: <script type="application/ld+json">
+                if (typeAttribute && typeAttribute.includes('application/ld+json')) {
+                    return;
+                }
+                if (el.src || !typeAttribute || typeAttribute.includes('javascript')) {
+                    el.remove();
+                }
+            });
+        
+            // 3. Remove all <link> tags that load CSS files
+            const linkCssTags = document.querySelectorAll('link[rel="stylesheet"]');
+            linkCssTags.forEach(el => el.remove());
+        
+            const hiddenElements = document.querySelectorAll('[style*="display: none"], [style*="visibility: hidden"]');
+            hiddenElements.forEach(el => el.remove()); 
+            
+        });
         console.log(`getting page content...`);
     
         report.html = await page.content();
