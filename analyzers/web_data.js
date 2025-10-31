@@ -99,6 +99,8 @@ export async function getWebData(page, config) {
     
         report.html = await page.content();
 
+        console.log(`page content retrival succesfull...`);
+
     } catch (error) {
         console.error(`Error during getWebData for ${url}:`, error);
         throw error;
