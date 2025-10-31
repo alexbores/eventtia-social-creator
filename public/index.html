@@ -392,8 +392,8 @@
                 //     this.openPost(id);
                 // }
 
-                if(this.elements.postsHolder.classList.includes('img-loading')){
-                  return;
+                if (this.elements.postsHolder.classList.contains('img-loading')) {
+                    return;
                 }
 
                 const post = e.target.closest('[post-card]');
