@@ -482,10 +482,22 @@
 
         async fetchAllData(url) {
             this.showScreen('fetching-screen');
-            this.state.currentEvent.url = url;
+            
             console.log(`Fetching data for: ${url}`);
 
             this.setLoadingProgress(2);
+
+
+            let uid = this.generateUniqueCode();
+                
+            this.state.currentEvent.uid = uid;
+
+            this.state.events.push({
+                uid: uid,
+                eventData: this.state.currentEvent,
+            });
+
+            this.state.currentEvent.url = url;
         
             try {
                 
@@ -503,12 +515,12 @@
                 const screen = document.querySelector('#fetching-screen');
                 screen.classList.add('end-loading');
 
-                await new Promise(r => setTimeout((r) => {
-                    this.showScreen('posts-screen');
-                    return r;
-                }, 1000));
+                await new Promise(r => setTimeout(r, 1200));
 
+
+                this.showScreen('posts-screen');
                 this.softLoading(true);
+
 
                 await this.getPosts();
 
@@ -516,22 +528,7 @@
 
                 console.log('posts rendered');
 
-
                 this.renderData();
-                
-                let uid = this.generateUniqueCode();
-                
-                this.state.currentEvent.uid = uid;
-
-                this.state.events.push({
-                  uid: uid,
-                  eventData: this.state.currentEvent,
-                });
-
-                
-                // setTimeout(() => {
-                //     this.showScreen('posts-screen');
-                // }, 1000);
 
 
                 this.saveData('full_state_data', this.state);
@@ -540,6 +537,7 @@
                 await this.initAllPostImageGeneration();
 
                 this.renderPosts();
+
         
             } catch (error) {
                 // --- Failure Path ---
