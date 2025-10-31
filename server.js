@@ -14,6 +14,7 @@ import { getPostsRemade } from './analyzers/get_posts_remade.js';
 import { getPostImage } from './analyzers/get_post_image.js';
 import { getEditPostImage } from './analyzers/get_edit_post_image.js';
 import { saveImage } from './analyzers/save_image.js';
+import { downloadImage } from './analyzers/download_image.js';
 
 import { fileURLToPath } from 'url';
 
@@ -139,6 +140,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'save_image':
             console.log('Saving Image...');
             response = await saveImage(webData);
+          break;
+          case 'download_image':
+            console.log('Downloading Image...');
+            response = await downloadImage(webData);
           break;
         
         }

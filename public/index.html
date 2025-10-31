@@ -828,52 +828,70 @@
         },
 
 
-        async downloadCurrentImage(){
-            let imageIndex = this.state.currentEvent.currentPost.selectedImage;
-            let image = this.state.currentEvent.currentPost.images[imageIndex];
-            let date = this.state.currentEvent.currentPost.date;
-            let name = this.state.currentEvent.eventData.eventName;
+        async downloadCurrentImage() {
+             // --- 1. Retrieve Data and URL ---
+             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
+             let image = this.state.currentEvent.currentPost.images[imageIndex];
+             let date = this.state.currentEvent.currentPost.date;
+             let name = this.state.currentEvent.eventData.eventName;
+         
+             // --- 2. Sanitize and Format Filename ---
+             let combinedName = `${name} ${date}`;
+             let sanitizedBaseName = combinedName.trim().toLowerCase();
+             sanitizedBaseName = sanitizedBaseName.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/\s+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/-+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/^-|-$/g, '');
+         
+             // Get the final extension from the image URL to create a complete filename
+             const urlParts = image.split('.');
+             const extension = urlParts.pop().split('?')[0] || 'png';
+             const finalFileName = `${sanitizedBaseName}.${extension}`;
+         
+             // --- 3. Initiate Server-Side Proxy Download ---
+             try {
+                 let data = {
+                    url: image, 
+                    fileName: finalFileName 
+                 }
 
-            let fileName = name+' '+date;
+                 const response = await this.fetchApi('/api/analyze', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                            request: 'download_image', 
+                                            webData: JSON.stringify(data) })
+                 });
+         
+                 if (!response.ok) {
+                     // If the server returns a 4xx or 5xx, the proxy failed.
+                     const errorBody = await response.json().catch(() => ({ message: "Non-JSON error response." }));
+                     throw new Error(`Proxy failed: Status ${response.status}. Details: ${errorBody.message || errorBody.error}`);
+                 }
+                 
+                 
+                 const imageBlob = await response.blob();
+                 
+                 
+                 const blobUrl = URL.createObjectURL(imageBlob);
+                 const link = document.createElement('a');
+                 
+                 link.href = blobUrl;
+                 link.download = fileName;
+                 
+                 document.body.appendChild(link);
+                 link.click();
+                 
+                 document.body.removeChild(link);
+                 URL.revokeObjectURL(blobUrl);
+                 
 
-            let sanitized = fileName.trim();
-            
-            sanitized = sanitized.toLowerCase();
-            sanitized = sanitized.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
-            sanitized = sanitized.replace(/\s+/g, '-');
-            sanitized = sanitized.replace(/-+/g, '-');
-            sanitized = sanitized.replace(/^-|-$/g, '');
-
-            if (sanitized.length === 0) {
-                return 'unnamed_file';
-            }
-            
-            sanitizedName = sanitized;
-            
-            try {
-                let imageBlob = await this.urlStringToBlob(image);
-                
-                
-                // --- Trigger Download (Same logic as before) ---
-                const blobUrl = URL.createObjectURL(imageBlob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = fileName;
-                
-                document.body.appendChild(link);
-                link.click();
-                
-                document.body.removeChild(link);
-                URL.revokeObjectURL(blobUrl);
-
-                console.log(`Download initiated for ${sanitizedName} from element source.`);
-
-            } catch (error) {
-                // This will catch CORS errors if the image is on a different domain
-                console.error("Download failed:", error);
-            }
-
-        },
+                 console.log(`Proxy download request sent for ${finalFileName}.`);
+         
+             } catch (error) {
+                 console.error("Client-side download initiation failed:", error);
+             }
+         },
         
 
 
