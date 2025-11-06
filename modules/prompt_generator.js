@@ -1,5 +1,7 @@
 
 function generalPostText(){
+
+
   const text = `
     
     ---
@@ -41,7 +43,7 @@ Each object in the array **MUST** contain these seven keys:
 4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
-8.  **\`small-phrases\`** (string): A collection of 3 small catchy phrases resuming all the content and title and date to use in small spaces.
+8.  **\`smallPhrases\`** (string): A collection of 3 small catchy phrases resuming all the content and title and date to use in small spaces.
 
 ---
 ### ### Example Output Format
@@ -55,7 +57,7 @@ Each object in the array **MUST** contain these seven keys:
     "content": "[Engaging 2-5 sentence description of the event, what it is, and for whom.]",
     "hashtags": ["[#EventNameYYYY]", "#[PrimaryTopic]", "#[City]"],
     "type": "announcement",
-    "small-phrases": "[catchy small relevant phrases]",
+    "smallPhrases": "[catchy small relevant phrases]",
   },
   {
     "id": 2,
@@ -64,7 +66,7 @@ Each object in the array **MUST** contain these seven keys:
     "content": "[Exciting 2-5 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
     "hashtags": ["[#SpecificTopic]", "#[FeatureType]", "#[EventName]"],
     "type": "speaker",
-    "small-phrases": "[catchy small relevant phrases]",
+    "smallPhrases": "[catchy small relevant phrases]",
   }
 ]
 \\\`\\\`\\\`
@@ -219,7 +221,9 @@ Use the real information from the html provided.
 }
 
 
-export function getPromptImage() {
+export function getPromptImage(data) {
+    const {eventDate, eventName, postText} = data;
+
     const prompt = `
        You are a senior social media graphic designer tasked with creating a compelling promotional image template for an event to be posted on Instagram with no text.
        
@@ -254,19 +258,27 @@ export function getPromptImage() {
        3.  **DATA ONLY:** Your entire output **MUST** be a single image data object.
        4.  **NO EXTRA TEXT:** Do **NOT** include any text, explanations, comments, or markdown formatting (like \`\`\`json\`\`\`) before or after the image data.
        
-       **This is the content and the event page**
-    
+       **This is the content and the event page screenshot**
+
+        **post context for reference if needed:**
+        * ** Event date: ${eventDate},
+        * ** Event Name: ${eventName},
+        * ** Post Content: ${postText}
     `;
 
     return prompt;
 }
 
-export function getPromptTextImage() {
+export function getPromptTextImage(data) {
+
+
+    const {eventDate, eventName, postText} = data;
+
     const prompt = `
        You are a senior social media graphic designer tasked with creating a compelling promotional image for an event to be posted on Instagram.
        
        **Objective:**
-       Generate a high-quality, professional image with a 4:5 aspect ratio. The image must attract attention, convey key event details, and encourage followers to register. It will be based on provided text content and a stylistic reference image (a screenshot of the event's landing page).
+       Generate a high-quality, professional image with a 4:5 aspect ratio. The image must attract attention, convey key event details, and encourage followers to register. It will be based on a stylistic reference image (a screenshot of the event's landing page).
        
        ---
        ### ### Generation Logic (Follow these steps precisely):
@@ -293,14 +305,15 @@ export function getPromptTextImage() {
        Now, combine the **style** from Step 1 with the **content** from Step 2 to create the new image. The new image must include:
        - The **Event Name**, **Date**, and **Location** rendered clearly and legibly. [1]
        - A prominent Call-to-Action (CTA) text: convey action to register or go to the event, the language must match the content language.
-       - The **event organizer's logo** as seen on the reference page.
+       - Do not add logos of any kind.
        - A dynamic and engaging composition that is visually appealing for a social media feed.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
-       - If the content is about speakers then use the real photo of the persons from the reference do not invent images for speakers.
-       - do not add icons and layout like a webpage, this is an advertisment post image for social media.
-       - Use text exactly as there are in the post context shared at the end without modifications, do not invent new texts.
-       - Be very creative an bold for the design of this advertisment, it must be powerfull.
-
+       - If the content is about speakers then use the real photo of the persons from the reference do not create fake people for speakers.
+       - do not add icons and layout like a webpage, this is an advertisment post image for social media so no icons needed.
+       - Use exactly this texts "${postText}" with no modifications for the information.
+       - Use exactly this text to show the date "${eventDate}".
+       - Use exactly this text to show the event name "${eventName}"
+ 
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
        

@@ -718,10 +718,11 @@
         
         async getPostImage(includeText = false){
             let postData = {
-                post: this.state.currentEvent.currentPost,
+                
                 imageUrl: this.state.currentEvent.screenshot, 
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
+                postText: this.state.currentEvent.currentPost.shortPhrases,
                 includeText: includeText,
             }
 

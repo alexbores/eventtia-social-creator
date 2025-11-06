@@ -24,7 +24,7 @@ export async function getPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { eventDate, eventName, post, imageUrl, includeText } = JSON.parse(data);
+    const { eventDate, eventName, postText, imageUrl, includeText  } = JSON.parse(data);
     
     let reference = null;
     
@@ -45,25 +45,24 @@ async function getAiImage(data) {
         throw new Error('GEMINI_API_KEY environment variable is not set.');
     }
     
+
+    let postPromptData = {
+        eventDate
+        eventName 
+        postText
+    }
+
     
     let systemPrompt = ''; 
     if(includeText){
-        systemPrompt = getPromptTextImage(); 
+        systemPrompt = getPromptTextImage(postPromptData); 
     }
     else{
         systemPrompt = getPromptImage(); 
     }
 
-    const contextText = `
-        **post context:**
-        * ** Event date: ${eventDate},
-        * ** Event Name: ${eventName},
-        * ** Post Type: ${post.type},
-        * ** Post Date: ${post.date},
-        * ** Post Content: ${post.title}, ${post.content}
-    `;
 
-    let fullPrompt = systemPrompt + ' ' + contextText;
+    let fullPrompt = systemPrompt;
 
     // --- 2. Construct the Gemini API Payload ---
     const model = 'gemini-2.5-flash-image';
