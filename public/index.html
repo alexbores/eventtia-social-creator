@@ -1076,6 +1076,7 @@
 
             let screen = document.querySelector(`#${screenName}`);
             screen.classList.remove('hide');
+            this.elements.urlScreen.classList.remove('modal');
 
             if(screenName == 'fetching-screen'){
                 screen.classList.add('loading');
