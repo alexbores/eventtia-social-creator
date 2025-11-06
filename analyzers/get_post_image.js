@@ -47,8 +47,8 @@ async function getAiImage(data) {
     
 
     let postPromptData = {
-        eventDate
-        eventName 
+        eventDate,
+        eventName,
         postText
     }
 
