@@ -292,7 +292,7 @@ export function getPromptTextImage() {
        **Step 4: Synthesize and Generate the New Image**
        Now, combine the **style** from Step 1 with the **content** from Step 2 to create the new image. The new image must include:
        - The **Event Name**, **Date**, and **Location** rendered clearly and legibly. [1]
-       - A prominent Call-to-Action (CTA) text: **"Register Now"**, the style and language must be identical to the one on the website wihtout resembling a button.
+       - A prominent Call-to-Action (CTA) text: convey action to register or go to the event, the language must match the content language.
        - The **event organizer's logo** as seen on the reference page.
        - A dynamic and engaging composition that is visually appealing for a social media feed.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
@@ -300,8 +300,7 @@ export function getPromptTextImage() {
        - do not add icons and layout like a webpage, this is an advertisment post image for social media.
        - Use text exactly as there are in the post context shared at the end without modifications, do not invent new texts.
        - Be very creative an bold for the design of this advertisment, it must be powerfull.
-       - Leave a padding around the image so the elements do not get to close to the border, except for the background image, that one has to be full width and height.
-       
+
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
        
