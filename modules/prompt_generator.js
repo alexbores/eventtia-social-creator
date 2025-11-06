@@ -295,9 +295,9 @@ export function getPromptTextImage() {
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
        - If the content is about speakers then use the real photo of the persons from the reference do not invent images for speakers.
        - do not add icons and layout like a webpage, this is an advertisment post image for social media.
-       - All text must come exactly from the post context shared at the end, do not invent new texts.
+       - All text must be exactly from the post context shared at the end without modifications, do not invent new texts, just copy and paste what you need.
        - Be very creative an bold for the design of this advertisment, it must be powerfull.
-       - Leave a padding around the image so the elements do not get to close to the border, expect for the background image.
+       - Leave a padding around the image so the elements do not get to close to the border, except for the background image, that one has to be full width and height.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
