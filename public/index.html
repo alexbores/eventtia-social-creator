@@ -41,7 +41,7 @@
     <section id="url-screen">
         <img src="./back.png" class="back">
         <div class="content">
-
+            <button class="close button button-secondary" close-url-screen>X</button>
             <h2 class="title">
                Transform Your Event into Viral Posts
             </h2>
@@ -325,6 +325,9 @@
                 urlInput: document.querySelector('#event-url-input'),
                 analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
 
+                closeUrlScreen: document.querySelector('[close-url-screen]');
+
+
                 fetchingScreen: document.querySelector('#fetching-screen'),
 
                 eventScreenshot: document.querySelector('[webpage-screenshot]'),
@@ -412,6 +415,10 @@
             });
             this.elements.postEditorClose.addEventListener('click',()=>{
                 this.elements.postEditorEl.classList.remove('open');
+            });
+
+            this.elements.closeUrlScreen.addEventListener('click',()=>{
+                this.elements.urlScreen.classList.remove('modal');
             });
 
 
@@ -624,11 +631,11 @@
             // Update state with the new data
             this.state.currentEvent.eventData = response;
 
-            this.elements.eventDataFound.innerHTML = `
-                <p>Generating posts for your event:</p>
-                <h3>${response.eventName}</h3>
-                <p>Starting on: ${response.eventDate}</p>
-            `;
+            // this.elements.eventDataFound.innerHTML = `
+            //     <p>Generating posts for your event:</p>
+            //     <h3>${response.eventName}</h3>
+            //     <p>Starting on: ${response.eventDate}</p>
+            // `;
         },
         async getPosts(){
             const response = await this.fetchApi('/api/analyze', {
@@ -1051,11 +1058,12 @@
         },
 
         analyzeNewEvent(){
-            this.showScreen('url-screen');
+            // this.showScreen('url-screen');
+            this.elements.urlScreen.classList.add('modal');
+
             const screen = document.querySelector('#fetching-screen');
             screen.classList.remove('end-loading');
 
-            // this.openTab(document.querySelector('[tab-btn="social-campaign"]'));
         },
 
 
