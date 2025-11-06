@@ -41,6 +41,7 @@ Each object in the array **MUST** contain these seven keys:
 4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
+8.  **\`small-phrases\`** (string): A collection of 3 small catchy phrases resuming all the content and title and date to use in small spaces.
 
 ---
 ### ### Example Output Format
@@ -53,7 +54,8 @@ Each object in the array **MUST** contain these seven keys:
     "title": "🎉 [Catchy Announcement Title]!",
     "content": "[Engaging 2-5 sentence description of the event, what it is, and for whom.]",
     "hashtags": ["[#EventNameYYYY]", "#[PrimaryTopic]", "#[City]"],
-    "type": "announcement"
+    "type": "announcement",
+    "small-phrases": "[catchy small relevant phrases]",
   },
   {
     "id": 2,
@@ -61,7 +63,8 @@ Each object in the array **MUST** contain these seven keys:
     "title": "[Post Type] Spotlight: Meet [Name]",
     "content": "[Exciting 2-5 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
     "hashtags": ["[#SpecificTopic]", "#[FeatureType]", "#[EventName]"],
-    "type": "speaker"
+    "type": "speaker",
+    "small-phrases": "[catchy small relevant phrases]",
   }
 ]
 \\\`\\\`\\\`
@@ -289,7 +292,7 @@ export function getPromptTextImage() {
        **Step 4: Synthesize and Generate the New Image**
        Now, combine the **style** from Step 1 with the **content** from Step 2 to create the new image. The new image must include:
        - The **Event Name**, **Date**, and **Location** rendered clearly and legibly. [1]
-       - A prominent Call-to-Action (CTA): **"Register Now"**, the style must be identical to the one on the website.
+       - A prominent Call-to-Action (CTA) text: **"Register Now"**, the style and language must be identical to the one on the website wihtout resembling a button.
        - The **event organizer's logo** as seen on the reference page.
        - A dynamic and engaging composition that is visually appealing for a social media feed.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
