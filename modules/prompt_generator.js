@@ -26,6 +26,7 @@ function generalPostText(){
     * **Reminder with practical details: 1 day before event**
     * **Reminder: Event day**
     * **1 day after the event: thank you post the day after the event, make a post thanking everyone for their participation, the type must be "thank_you"**
+5.  ** language: ** the content generated must have the same language used in the content provided.
 
 
 
@@ -130,6 +131,8 @@ export function getPromptContent() {
 
 Use the real information from the html and content provided do not invent or make up anything.
 
+The text generated must match the language of the provided content html.
+
 ---
 ### ### Output Rules (Strictly Adhere), only adhere to this rules for absolutly no reason you should add more than a json
 
@@ -226,7 +229,7 @@ export function getPromptImage() {
        **Step 1: Analyze Style Reference**
        First, meticulously analyze the provided reference image. Your goal is to extract its aesthetic DNA. Identify the following stylistic elements:
        - **Color Palette:** The primary and secondary colors used.
-       - **Texts:** do not use text in this image.
+       - **Texts:** do not use any text in this image.
        - **Visual Elements:** Any recurring shapes, patterns, textures, or graphic motifs.
        - **Overall Mood:** The general tone and feeling (e.g., professional, energetic, minimalist).
        
@@ -291,10 +294,10 @@ export function getPromptTextImage() {
        - A dynamic and engaging composition that is visually appealing for a social media feed.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
        - If the content is about speakers then use the real photo of the persons from the reference do not invent images for speakers.
-       - use the same logo as in the reference with no edits.
-       - do not add icons and layout of a webpage, this is an advertisment post image for social media.
-       - The mayority of the text must come from the post context shared at the end.
-       - all texts must be valid real texts and do not add small texts, must be readable for instagram posting. 
+       - do not add icons and layout like a webpage, this is an advertisment post image for social media.
+       - All text must come exactly from the post context shared at the end, do not invent new texts.
+       - Be very creative an bold for the design of this advertisment, it must be powerfull.
+       - Leave a padding around the image so the elements do not get to close to the border, expect for the background image.
        
        ---
        ### ### Strict Output Rules (Adhere Absolutely):

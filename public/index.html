@@ -405,9 +405,9 @@
                 const post = e.target.closest('[post-card]');
                 if (post) {
                     let id = post.getAttribute('post-card');
-
-                    this.openPost(id);
+                    
                     this.openTextEditor();
+                    this.openPost(id);
                 }
             });
             this.elements.postEditorClose.addEventListener('click',()=>{
@@ -1095,6 +1095,7 @@
            }
         },
         
+
         openTextEditor(){
            this.elements.editorImagesEditorAreaEl.classList.remove('show');
            this.elements.editorTextEditorAreaEl.classList.add('show');

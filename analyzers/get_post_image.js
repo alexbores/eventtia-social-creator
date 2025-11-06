@@ -72,7 +72,7 @@ async function getAiImage(data) {
     const requestBody = {
         generationConfig: {
           responseModalities: ["IMAGE"],
-          temperature: 0.8,
+          temperature: 1,
           imageConfig: {
             aspectRatio: "4:5"
           },
@@ -113,11 +113,8 @@ async function getAiImage(data) {
         const result = await response.json();
         
         // --- 4. Parse the Generated Image Output ---
-        // Look for the part containing the inlineData (the generated image)
         console.log("AI Response");
         console.log(result);
-        // console.log(result[0]?.candidates);
-        // console.log(result[0]?.candidates?.[0]?.content?.parts);
 
         const generatedImagePart = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
 
