@@ -438,6 +438,33 @@ p,h1,h2,h3,li{
 	object-fit: cover;
 	display: block;
 }
+#posts-screen .post-card .img-holder .loader{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 3;
+  display: none;
+}
+#posts-screen .posts-wrapper.img-loading .img-holder .loader{
+   display: block;
+}
+#posts-screen .post-card .img-holder .dot {
+    fill: rgb(48, 209, 107);
+    animation: bounce 0.6s cubic-bezier(0.6, 0.04, 0.98, 0.335) infinite alternate;
+}
+#posts-screen .post-card .img-holder .dot:nth-child(1) { animation-delay: 0.1s; }
+#posts-screen .post-card .img-holder .dot:nth-child(2) { animation-delay: 0.2s; }
+#posts-screen .post-card .img-holder .dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bounce {
+    to {
+        transform: translate3d(0, -12px, 0);
+        opacity: 0.5;
+    }
+}
 #posts-screen .post-card .bar{
 	display: flex;
 	gap: 10px;
