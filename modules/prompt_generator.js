@@ -306,13 +306,13 @@ export function getPromptTextImage(data) {
        - The **Event Name**, **Date**, and **Location** rendered clearly and legibly. [1]
        - A prominent Call-to-Action (CTA) text: convey action to register or go to the event, the language must match the content language.
        - Do not add logos of any kind.
-       - A dynamic and engaging composition that is visually appealing for a social media feed.
+       - A dynamic and engaging composition that is visually appealing for a social media advertisment.
        - All visual elements (fonts, colors, graphics) must strictly adhere to the style identified in Step 1.
-       - If the content is about speakers then use the real photo of the persons from the reference do not create fake people for speakers.
+       - If and only if the content text is about speakers then use the real photo of the persons from the reference do not create fake people for speakers.
        - do not add icons and layout like a webpage, this is an advertisment post image for social media so no icons needed.
-       - Use exactly this texts "${postText}" with no modifications for the information.
-       - Use exactly this text to show the date "${eventDate}".
-       - Use exactly this text to show the event name "${eventName}"
+       - Use EXACTLY this texts "${postText}" with no modifications for the information.
+       - Use EXACTLY this text to show the date "${eventDate}" and do not add more text.
+       - Use EXACTLY this text to show the event name "${eventName}"
  
        ---
        ### ### Strict Output Rules (Adhere Absolutely):
