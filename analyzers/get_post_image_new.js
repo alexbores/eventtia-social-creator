@@ -64,7 +64,7 @@ async function getAiImage(data) {
         contents: [{
             parts: [
                 {
-                    text: fullPrompt
+                    text: prompt
                 },
                 {
                     inlineData: {
