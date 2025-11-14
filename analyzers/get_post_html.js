@@ -62,19 +62,12 @@ async function getAiAnalysis(data) {
         throw new Error('GEMINI_API_KEY environment variable is not set.');
     }
 
-    // --- 2. Construct the Gemini API Payload ---
-    // ⭐️ We use YOUR original model
     const model = 'gemini-2.5-flash-image';
-    
-    // ⭐️⭐️⭐️ THE FIX ⭐️⭐️⭐️
-    // We use the NON-streaming endpoint
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`;
 
     const requestBody = {
         generationConfig: {
             temperature: 1,
-            // We don't need responseModalities here, as text is the default
-            // for generateContent.
         },
         contents: [{
             parts: [
@@ -111,19 +104,14 @@ async function getAiAnalysis(data) {
             throw new Error(`Gemini API responded with status: ${response.status} - ${errorBody.error?.message || 'Unknown error'}`);
         }
 
-        console.log("reading response json");
-
-        // ⭐️ This will now work perfectly, as the response is a single JSON object
         const result = await response.json();
         
         console.log("AI Response (Complete)");
+        console.log(result);
 
-        const generatedHTML = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-        if (!generatedHTML) {
-            console.error("Failed to extract HTML from AI response:", result);
-            throw new Error("AI generated an empty or invalid response.");
-        }
+        const generatedHTML = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.text)?.text;
+
         
         return generatedHTML;
 
