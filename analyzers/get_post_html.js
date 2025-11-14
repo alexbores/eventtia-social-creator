@@ -1,3 +1,25 @@
+import path from 'path';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import { getAIFetch } from '../modules/AI_fetcher.js';
+import { stripHtml } from '../modules/html_stripper.js';
+import { getPromptPostHTML } from '../modules/prompt_generator.js';
+import { getImageName,formatImage} from '../modules/image_handlers.js';
+
+/**
+ * Runs an AI-powered analysis using data previously captured by getWebData.
+ * @param {object} webData - The data object from getWebData, containing screenshot paths and HTML.
+ * @param {object} config - The centralized server configuration object.
+ * @returns {Promise<object>} - The structured analysis report.
+ */
+export async function getPostHTML(data) {
+    
+    let html = await getAiAnalysis(data);
+
+
+    return {html};
+}
+
 async function getAiAnalysis(data) {
 
     const { eventDate, eventName, postText, imageUrl, postImageUrl  } = JSON.parse(data);
@@ -29,7 +51,7 @@ async function getAiAnalysis(data) {
         eventDate,
         eventName,
         postText,
-        postImageUrl 
+        postImageUrl // Passed as a string for the final CSS
     }
 
     const prompt = getPromptPostHTML(postPromptData);
@@ -41,8 +63,10 @@ async function getAiAnalysis(data) {
         throw new Error('GEMINI_API_KEY environment variable is not set.');
     }
 
+    // --- 4. Construct the Gemini API Payload ---
     const model = 'gemini-1.5-flash'; 
     
+    // ⭐️ THE FIX: Change to the NON-streaming 'generateContent' endpoint
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const requestBody = {
@@ -107,3 +131,5 @@ async function getAiAnalysis(data) {
         throw error;
     }
 }
+
+
