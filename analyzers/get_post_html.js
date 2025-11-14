@@ -128,21 +128,9 @@ async function getAiAnalysis(data) {
         console.log("AI Response");
         console.log(result);
 
-        const generatedImagePart = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
-
-        if (generatedImagePart && generatedImagePart.inlineData) {
-            console.log("✅ AI image generated successfully.");
-            
-            // Return the necessary data for the client/server to save or display
-            return {
-                data: generatedImagePart.inlineData.data,
-                mimeType: generatedImagePart.inlineData.mimeType
-            };
-        } else {
-            const textOutput = result[0]?.candidates?.[0]?.content?.parts?.find(part => part.text)?.text;
-            console.warn("API was successful but returned no image. Model Text:", textOutput);
-            return null; // Explicitly return null if no image is generated
-        }
+        const generatedHTML = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        return generatedHTML;
 
     } catch (error) {
         console.error('Error during AI image generation:', error);
