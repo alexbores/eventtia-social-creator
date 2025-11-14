@@ -22,7 +22,8 @@ export async function getPostHTML(data) {
 
 async function getAiAnalysis(data) {
 
-    const { eventDate, eventName, postText, imageUrl, postImageUrl  } = JSON.parse(data);
+    const parsedData = (typeof data === 'string') ? JSON.parse(data) : data;
+    const { eventDate, eventName, postText, imageUrl, postImageUrl } = parsedData;
     
     // --- All your image formatting code is correct ---
     let reference = null;
