@@ -111,6 +111,8 @@ async function getAiAnalysis(data) {
             throw new Error(`Gemini API responded with status: ${response.status} - ${errorBody.error?.message || 'Unknown error'}`);
         }
 
+        console.log("reading response json");
+
         // ⭐️ This will now work perfectly, as the response is a single JSON object
         const result = await response.json();
         
