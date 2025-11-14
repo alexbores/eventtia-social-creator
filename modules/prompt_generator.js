@@ -461,7 +461,7 @@ Your task is to generate a single HTML file.
 </DESIGN_REQUIREMENTS>
 
 <STRICT_OUTPUT_RULES>
-1.  **FILE_FORMAT:** SINGLE, valid HTML file ONLY.
+1.  **FILE_FORMAT:** SINGLE, valid HTML string ONLY.
 2.  **CSS_METHOD:** ALL CSS MUST be embedded in a single \`<style>\` tag inside the \`<head>\`.
 3.  **NO_EXTRA_TEXT:** NO markdown (e.g., \`\`\`html\`), NO comments, NO explanations.
 4.  **START_TOKEN:** The response MUST start *exactly* with \`<!DOCTYPE html>\`.
