@@ -72,6 +72,11 @@ async function getAiAnalysis(data) {
 
     console.log('AI analyis started');
 
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error('GEMINI_API_KEY environment variable is not set.');
+    }
+
     // --- 2. Construct the Gemini API Payload ---
     const model = 'gemini-2.5-flash-image';
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`;
