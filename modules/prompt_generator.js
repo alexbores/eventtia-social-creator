@@ -416,7 +416,7 @@ GENERATE_IMAGE.
     return prompt;
 }
 
-export function getPromptPostsHTML(data) {
+export function getPromptPostHTML(data) {
 
     const {eventDate, eventName, postText, postImageUrl} = data;
 

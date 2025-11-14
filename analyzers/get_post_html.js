@@ -3,7 +3,7 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import { getAIFetch } from '../modules/AI_fetcher.js';
 import { stripHtml } from '../modules/html_stripper.js';
-import { getPromptHTML } from '../modules/prompt_generator.js';
+import { getPromptPostHTML } from '../modules/prompt_generator.js';
 import { getImageName,formatImage} from '../modules/image_handlers.js';
 
 /**
