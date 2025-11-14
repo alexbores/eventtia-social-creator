@@ -367,3 +367,117 @@ export function getPromptEditImage() {
 
     return prompt;
 }
+
+
+
+
+export function getPromptImageNew() {
+
+    const prompt = `
+<SYSTEM_ROLE>
+You are an advanced image generation service.
+Your task is to create a versatile, reusable, and compelling background image.
+This image will be used as a background for a social media HTML post.
+</SYSTEM_ROLE>
+
+<IMAGE_GENERATION_TASK>
+1.  **INPUT_ANALYSIS:**
+    * **PRIMARY:** Analyze <INPUT_IMAGE: style-reference-screenshot> for aesthetic elements:
+        * <ELEMENT: color_palette> (primary, secondary)
+        * <ELEMENT: mood_tone> (e.g., professional, energetic, minimalist, vibrant)
+    * **SECONDARY:** Analyze <INPUT_TEXT: event_content> for contextual hints, but DO NOT include directly.
+2.  **COMPOSITION_STRATEGY:**
+    * **MANDATORY:** Create a **brand new, original composition**.
+    * **MANDATORY:** Completely disregard and do NOT replicate layout, subject matter, or objects from the <INPUT_IMAGE: style-reference-screenshot>.
+    * **MANDATORY:** This is a **style-transfer-ONLY** task, NOT an image-editing task.
+3.  **OUTPUT_IMAGE_CONTENT:**
+    * **MAIN_FOCUS:** Dynamic, engaging, and visually appealing abstract or semi-abstract composition.
+    * **STYLE_ADHERENCE:** All visual elements (colors, abstract shapes, textures, lighting) MUST strictly adhere to the <ELEMENT: color_palette> and <ELEMENT: mood_tone> identified from the <INPUT_IMAGE: style-reference-screenshot>.
+    * **NO_TEXT:** Absolutely NO text, words, or typography.
+    * **NO_LOGOS_ICONS:** Absolutely NO logos, icons, or brand marks.
+    * **REUSABILITY:** Design the background to be versatile enough to accommodate various text overlays later.
+</IMAGE_GENERATION_TASK>
+
+<STRICT_OUTPUT_RULES>
+1.  **OUTPUT_FORMAT:** Generate a single image.
+2.  **ASPECT_RATIO:** The final image aspect ratio MUST be **4:5**. No other ratio.
+3.  **ORIGINALITY_CONSTRAINT:** Reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.
+4.  **NO_TEXT_OUTPUT:** DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`) before or after the image generation.
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+* Event_Content_Text: [text describing the event if provided separately]
+* Style_Reference_Screenshot: [Image provided via API input]
+</INPUT_DATA>
+
+GENERATE_IMAGE.
+`;
+
+    return prompt;
+}
+
+export function getPromptPostsHTML(data) {
+
+    const {eventDate, eventName, postText, postImageUrl} = data;
+
+
+    const prompt = `
+<SYSTEM_ROLE>
+You are an expert front-end developer and creative digital designer.
+Your task is to generate a single HTML file.
+</SYSTEM_ROLE>
+
+<TASK_DEFINITION>
+1.  **Analyze** the provided <INPUT_DATA> (text and background URL).
+2.  **Analyze** the provided input <style-reference-image> (the screenshot).
+3.  **Synthesize** these inputs to generate a single HTML file for a social media post.
+4.  **Prioritize** the <AESTHETIC_GOAL> over the <style-reference-image>. The image is for color/font *hints*, the goal is the primary creative direction.
+</TASK_DEFINITION>
+
+<AESTHETIC_GOAL>
+* **DESIGN_STYLE:** 'creative', 'bold', 'modern', 'artistic', 'high-impact'
+* **QUALITY_BENCHMARK:** 'Awwwards-level', 'premium-design-agency'
+* **LAYOUT:** 'asymmetric-but-balanced', 'unconventional-but-readable'
+* **TYPOGRAPHY:** 'professional', 'modern', 'experimental', 'variable-weights-spacing'
+</AESTHETIC_GOAL>
+
+<DESIGN_REQUIREMENTS>
+1.  **CONTAINER:** A single wrapper element with a strict 4:5 aspect ratio (e.g., \`width: 1080px; height: 1350px;\`). This is a critical requirement.
+2.  **BACKGROUND_IMAGE:**
+    * Use exact URL: \`${postImageUrl}\`
+    * CSS: \`background-image: url('${postImageUrl}');\`
+    * CSS: \`background-size: cover;\`
+    * CSS: \`background-position: center;\`
+3.  **TEXT_CONTENT (MUST INCLUDE):**
+    * \`<h1>\`: Large, primary title.
+    * \`<p>\`: Small complement text.
+    * \`<p class="cta">\`: Actionable text (Call-to-Action).
+    * **Data:** ${eventDate}
+    * **Data:** ${eventName}
+    * **Data:** ${postText}
+4.  **FONTS:**
+    * Identify closest Google Fonts from the <style-reference-image>.
+    * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
+</DESIGN_REQUIREMENTS>
+
+<STRICT_OUTPUT_RULES>
+1.  **FILE_FORMAT:** SINGLE, valid HTML file ONLY.
+2.  **CSS_METHOD:** ALL CSS MUST be embedded in a single \`<style>\` tag inside the \`<head>\`.
+3.  **NO_EXTRA_TEXT:** NO markdown (e.g., \`\`\`html\`), NO comments, NO explanations.
+4.  **START_TOKEN:** The response MUST start *exactly* with \`<!DOCTYPE html>\`.
+5.  **END_TOKEN:** The response MUST end *exactly* with \`</html>\`.
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+* Event_Date: ${eventDate}
+* Event_Name: ${eventName}
+* Post_Content: ${postText}
+* Background_Image_URL: ${postImageUrl}
+* Style_Reference_Image: [Image provided via API input]
+</INPUT_DATA>
+
+GENERATE.
+`;
+
+    return prompt;
+}

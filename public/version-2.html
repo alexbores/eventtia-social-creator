@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Event Social</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="./base.css">
+    <link rel="stylesheet" type="text/css" href="./style2.css">
+</head>
+
+<body>
+    
+    
+
+    <section id="url-screen">
+        <div class="content">
+            <h2 class="title">
+               Transform Your Event into Viral Posts
+            </h2>
+            <p class="description text">
+                Paste your event website URL and let AI create a complete Instagram marketing campaign.
+            </p>
+
+            <div class="input-card">
+                <form id="event-url-form">
+                  <input class="input" type="text" id="event-url-input" placeholder="www.your-event-website.com">
+
+                  <button analyze-url-btn class="button button-glared">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                    <span>Analyze Event & Generate Posts</span>
+                  </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+
+    <section id="fetching-screen">
+        <div class="content">
+
+            <div class="loading-card">
+                <h2 class="title">
+                   Event web is being analyzed...
+                </h2>
+                <div class="progress-bar">
+                  <div class="progress-bar-inner"></div>
+                </div>
+                
+                <div class="screenshot-holder">
+                  <img webpage-screenshot >
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+   
+   <section id="post-editor">
+       
+       <div class="content">
+           <button class="close button button-secondary" close>X</button>
+           <div class="wrapper">
+                   
+                   
+                   <div class="media-wrapper">
+                     
+
+                     <div class="img-holder">
+                        <button generate-image class="button button-glared">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                          <span>Generate New Image</span>
+                        </button>
+                        <img main-post-image src="" width="100%" height="100%">
+                     </div>
+
+                     <div class="buttons">
+                      
+                      <!-- <button post-img-download class="button button-secondary">
+                          <svg class="icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 15V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18L4 15M8 11L12 15M12 15L16 11M12 15V3" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <span>Download</span>
+                      </button> -->
+                      <button edit-image-open class="button button-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                        <span>Edit Image</span>
+                      </button>
+
+                      <!-- <button generate-image class="button button-secondary">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                          <span>New Image</span>
+                      </button> -->
+
+                     </div>
+                   </div>
+                   
+                   <div class="editor-side-wrapper">
+                      <div class="bar">
+                        <p class="type" type="" post-type></p>
+                        <p class="date" >posting date: <span posting-date></span></p>
+                      </div>
+
+                      <div class="texts show" text-editor>
+                          
+                          
+                          <div class="input-holder">
+                            <div class="icon-holder">
+                              <svg class="edit-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#000000"/>
+                              </svg>
+                            </div>
+                            <textarea class="post-title" post-title-input></textarea>
+                          </div>
+                          <div class="input-holder">
+                            <div class="icon-holder">
+                              <svg class="edit-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#000000"/>
+                              </svg>
+                            </div>
+                            <textarea class="post-content" post-content-input></textarea>
+                          </div>
+                          <div class="hashtags" hashtags>
+                              
+                          </div>
+                          
+
+                          <button save-post class="button button-white">
+                            <span>Save Changes</span>
+                          </button>
+                      </div>
+
+                      <div class="image-editor" image-editor>
+                          <button edit-text-open class="button button-secondary">
+                            <span>Back</span>
+                          </button>
+                          
+                          <div class="input-holder">
+                            <div class="icon-holder">
+                              <svg class="edit-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#000000"/>
+                              </svg>
+                            </div>
+                            <textarea class="post-prompt" 
+                                      placeholder="Image edit prompt" 
+                                      post-edit-prompt></textarea>
+                          </div>
+
+                          <button edit-post-image class="button button-glared">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                            <span>Edit Image</span>
+                          </button>
+                      </div>
+                   </div>
+                   
+           
+           </div> 
+           
+               
+       </div>
+   </section>
+
+        
+   <section id="posts-screen">
+       <div class="content">
+           <div class="top-bar">
+               <div class="title-holder">
+                  <h3 class="posts-content-title">
+                    AI Generated Posts List (<span posts-generated="">8</span>): 
+                  </h3>
+               </div>
+           </div>
+           <div class="posts-content">
+             <div class="posts-wrapper">
+               
+             </div>
+           </div>
+       </div>
+   </section>
+    
+
+
+</body>
+
+</html>
+
+<script>
+    const EventSocialManager = {
+        state: {
+            currentEvent:{
+              webData: null,
+              screenshot: null,
+              eventData: null,
+              posts: [],
+              tempPosts: [],
+              currentPost: null,
+              url: null,
+              uid: '',
+            },
+
+            events:[],
+        },
+
+        elements: {}, 
+
+
+        async init() {
+            this.showScreen('url-screen');
+
+            this.setElements();
+            this.bindEvents();
+
+            this.checkStorage();
+        },
+
+        setElements() {
+            this.elements = {
+                urlScreen: document.querySelector('#url-screen'),
+                analyzeUrlForm: document.querySelector('#event-url-form'),
+                urlInput: document.querySelector('#event-url-input'),
+                analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
+
+
+
+                fetchingScreen: document.querySelector('#fetching-screen'),
+
+
+                
+                postsHolder: document.querySelector('#posts-screen .posts-wrapper'),
+
+
+
+                postEditorEl: document.querySelector('#post-editor'),
+                postEditorClose: document.querySelector('#post-editor .close'),
+
+
+
+                genImgBtns: document.querySelectorAll('[generate-image]'),
+
+                savePostBtn: document.querySelector('[save-post]'),
+
+                softLoadScreen: document.querySelector('#soft-loading'),
+
+
+
+                editorMainImageEl: document.querySelector('#post-editor [main-post-image]'),
+                editorPostTypeEl: document.querySelector('#post-editor [post-type]'),
+                editorPostingDateEl: document.querySelector('#post-editor [posting-date]'),
+                editorPostTitleEl: document.querySelector('#post-editor [post-title-input]'),
+                editorPostContentEl: document.querySelector('#post-editor [post-content-input]'),
+                editorHashtagsEl: document.querySelector('#post-editor [hashtags]'),
+
+                editorImagesCountEl: document.querySelector('[images-count-text]'),
+                editorImageUndoEl: document.querySelector('[undo-image]'),
+                editorImageRedoEl: document.querySelector('[redo-image]'),
+                editorImageEditOpenEl: document.querySelector('[edit-image-open]'),
+                editorImageEditEl: document.querySelector('[edit-post-image'),
+                
+                editorTextEditOpenEl: document.querySelector('[edit-text-open]'),
+                editorImagesEditorAreaEl: document.querySelector('[image-editor]'),
+                editorTextEditorAreaEl: document.querySelector('[text-editor]'),
+
+                editorImagePromptEl: document.querySelector('[post-edit-prompt] '),
+
+                downloadImgEl: document.querySelector('[post-img-download] '),
+            } 
+        },
+
+        bindEvents() {
+            this.elements.analyzeUrlForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const url = this.elements.urlInput.value;
+                if (url) {
+                    this.fetchAllData(url);
+                } else {
+                    console.log('Please enter a valid URL.');
+                }
+            });
+            
+
+            this.elements.postsHolder.addEventListener('click', (e) => {
+
+                const post = e.target.closest('[post-card]');
+                if (post) {
+                    let id = post.getAttribute('post-card');
+                    
+                    this.openTextEditor();
+                    this.openPost(id);
+                }
+            });
+            this.elements.postEditorClose.addEventListener('click',()=>{
+                this.elements.postEditorEl.classList.remove('open');
+            });
+
+            
+            this.elements.editorPostTitleEl.addEventListener('keydown',(e)=>{
+               this.updateTextarea(e.target);
+            });
+            this.elements.editorPostContentEl.addEventListener('keydown',(e)=>{
+               this.updateTextarea(e.target);
+            });
+
+            
+            this.elements.genImgBtns.forEach(btn => {
+                btn.addEventListener('click',()=>{
+                   this.initPostImageGeneration();
+                });
+            });
+            
+
+            this.elements.savePostBtn.addEventListener('click',()=>{
+               this.saveCurrentPostChanges();
+            });
+        },
+
+
+        async fetchApi(endpoint, options = {}) {
+            try {
+                options.credentials = 'include'; 
+
+                const response = await fetch(endpoint, options);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({
+                        error: 'An unknown server error occurred.'
+                    }));
+                    throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                }
+                return response.json();
+            } catch (error) {
+                console.error(`Failed to fetch ${endpoint}:`, error);
+                throw error;
+            }
+        },
+        async fetchBinaryApi(endpoint, options = {}) {
+           try {
+               options.credentials = 'include'; 
+
+               const response = await fetch(endpoint, options);
+               
+               if (!response.ok) {
+                   const errorData = await response.json().catch(() => ({
+                       error: 'Server responded with a non-JSON error format.'
+                   }));
+                   
+                   throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+               }
+               return response;
+
+           } catch (error) {
+               console.error(`Failed to fetch ${endpoint} (Binary Call):`, error);
+               throw error;
+           }
+        },
+
+
+        async fetchAllData(url) {
+            this.showScreen('fetching-screen');
+            
+            console.log(`Fetching data for: ${url}`);
+
+            this.setLoadingProgress(2);
+
+
+            let uid = this.generateUniqueCode();
+                
+            this.state.currentEvent.uid = uid;
+
+            this.state.events.push({
+                uid: uid,
+                eventData: this.state.currentEvent,
+            });
+
+            this.state.currentEvent.posts = [];
+            this.renderPosts();
+
+            this.state.currentEvent.url = url;
+        
+            try {
+                
+                await this.getWebData();
+                this.setLoadingProgress(4);
+                
+                await this.saveScreenshot();
+                this.setLoadingProgress(5);
+
+                await this.getEventData();
+
+
+                await this.getPosts();
+
+
+                this.renderPosts();
+
+
+                this.renderData();
+
+                
+                this.saveData('full_state_data', this.state);
+
+                this.setLoadingProgress(7);
+
+                await new Promise(r => setTimeout(r, 3200));
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                this.showScreen('posts-screen');
+
+        
+            } catch (error) {
+                // --- Failure Path ---
+                console.error("Data fetch failed:", error.message);
+            }
+        },
+        
+
+
+        async getWebData(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'web_data',
+                                       webData: null })
+            });
+        
+            console.log("Web Data received", response);
+        
+            // Update state with the new data
+            this.state.currentEvent.webData = response.html;
+            this.state.currentEvent.screenshot = response.screenshot;
+        },
+        async saveScreenshot(){
+            let imageUrl = this.state.currentEvent.screenshot;
+            let imageSaved = await this.saveImageByUrl(imageUrl);
+
+            this.state.currentEvent.screenshot = imageSaved.url;
+            this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
+
+            console.log("screenshot saved");
+        },
+        async getEventData(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'event_data', 
+                                       webData: this.state.currentEvent.webData })
+            });
+        
+            console.log("Event Data received:", response);
+        
+            // Update state with the new data
+            this.state.currentEvent.eventData = response;
+
+            // this.elements.eventDataFound.innerHTML = `
+            //     <p>Generating posts for your event:</p>
+            //     <h3>${response.eventName}</h3>
+            //     <p>Starting on: ${response.eventDate}</p>
+            // `;
+        },
+        async getPosts(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'posts', 
+                                       webData: JSON.stringify(this.state.currentEvent.eventData) })
+            });
+        
+            console.log("Posts received:", response);
+        
+            // Update state with the new data
+            this.state.currentEvent.posts = response;
+        },
+
+        async getRemadePosts(){
+
+            let newData = {
+                eventData: this.state.eventData,
+                posts: this.state.posts,
+            }
+
+            newData.posts.forEach(post=>{
+                post.date = null;
+            })
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'posts_remake', 
+                                       webData: JSON.stringify(newData) })
+            });
+        
+            console.log("Remake Posts received:", response);
+        
+            // Update state with the new data
+            this.state.currentEvent.posts = response;
+        },
+
+
+        
+        async getPostImage(){
+            let postData = {
+                
+                imageUrl: this.state.currentEvent.screenshot, 
+            }
+
+            console.log(postData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'post_image_new', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+            console.log("Image Received:", response);
+        
+
+            let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
+
+            // Update state with the new data
+            this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
+            this.state.currentEvent.currentPost.selectedImage = 0;       
+        },
+        async getPostHTML(){
+            let postData = {
+                postImageUrl: this.state.currentEvent.currentPost.images[0], 
+                imageUrl: this.state.currentEvent.screenshot, 
+                eventName: this.state.currentEvent.eventData.eventName,
+                eventDate: this.state.currentEvent.eventData.eventDate,
+                postText: this.state.currentEvent.currentPost.shortPhrases
+            }
+
+            console.log(postData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'post_html', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+            console.log("HTML Received:", response);
+        
+
+            // Update state with the new data
+            this.state.currentEvent.currentPost.html = response.html;   
+        },
+        async initPostImageGeneration(){
+            try{
+              
+              let postData = this.state.currentEvent.currentPost;
+
+              await this.getPostImage();
+
+
+              let image = postData.images[0];
+
+
+
+              await this.getPostHTML();
+
+   
+              
+
+              this.saveData('full_state_data',this.state);
+
+            }
+            catch(error){
+              console.log(error);
+            }
+        },
+
+
+
+
+        saveCurrentPostChanges(){
+           this.state.currentEvent.currentPost.title = this.elements.editorPostTitleEl.value;
+           this.state.currentEvent.currentPost.content = this.elements.editorPostContentEl.value;
+ 
+           let postId = this.state.currentEvent.currentPost;
+
+           this.state.currentEvent.posts.forEach(post =>{
+              if(post.id == postId){
+                post = this.state.currentEvent.currentPost;
+              }
+           });
+
+           this.saveData('full_state_data', this.state);
+
+           this.renderPosts();
+        },
+
+
+        // --- UI RENDERING ---
+        showScreen(screenName) { 
+            let screens = document.querySelectorAll('section');
+            screens.forEach(screen=>{
+              screen.classList.add('hide');
+            });
+
+            let screen = document.querySelector(`#${screenName}`);
+            screen.classList.remove('hide');
+            if(this.elements.urlScreen){
+                this.elements.urlScreen.classList.remove('modal');
+            }
+
+            if(screenName == 'fetching-screen'){
+                screen.classList.add('loading');
+            }
+
+            if(screenName == 'posts-screen'){
+                 document.querySelector('#nav').classList.remove('hide');
+                 document.querySelector('#side-nav').classList.remove('hide');
+            }
+        },
+        
+        openTextEditor(){
+           this.elements.editorImagesEditorAreaEl.classList.remove('show');
+           this.elements.editorTextEditorAreaEl.classList.add('show');
+        },
+        openImageEditor(){
+           this.elements.editorImagesEditorAreaEl.classList.add('show');
+           this.elements.editorTextEditorAreaEl.classList.remove('show');
+        },
+        openPost(id){
+           let post = document.querySelector(`[post-card="${id}"]`);
+           this.elements.postEditorEl.classList.add('open');
+
+           let postData = this.state.currentEvent.posts.filter(post => post.id == id)[0];
+
+           this.state.currentEvent.currentPost = postData;
+
+           console.log(this.state.currentEvent.currentPost);
+
+           let hashtags = postData.hashtags.map(hashtag => {
+                                return `<p class="hashtag">${hashtag}</p>`;
+                          }).join(''); 
+
+           let postImage = postData.images[postData.selectedImage];
+           if(!postImage){
+              postImage = '';
+           }
+
+
+           let imagesCount = postData.images.length;
+           if(!imagesCount){
+              imagesCount = 0;
+           }
+           let currentImageIndex = postData.selectedImage;
+           if(!currentImageIndex){
+             currentImageIndex = 0;
+           }
+           let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
+
+           this.elements.editorMainImageEl.src = postImage;
+           this.elements.editorImagesCountEl.innerHTML = imagesCountText;
+           this.elements.editorPostTypeEl.setAttribute('type', postData.type);
+           this.elements.editorPostTypeEl.innerText = postData.type.replace('_',' ');
+           this.elements.editorPostingDateEl.innerText = postData.date;
+           this.elements.editorPostTitleEl.value = postData.title;
+           this.elements.editorPostContentEl.value = postData.content;
+           this.elements.editorHashtagsEl.innerHTML = hashtags;
+
+           this.updateTextarea(this.elements.editorPostTitleEl);
+           this.updateTextarea(this.elements.editorPostContentEl);
+        },
+        
+
+        setLoadingProgress(val){
+           this.elements.fetchingScreen.setAttribute('progress',val);
+        },
+
+        renderPosts(){
+            let html = ``;
+
+            this.elements.postsHolder.innerHTML = html;
+
+            this.state.currentEvent.posts.forEach((post,key)=>{
+                let imageUrl = post.images[post.selectedImage];
+                html += `
+                    <div class="post-card" post-card="${post.id}">
+                        <div class="bar">
+                            <p class="type" type="${post.type}">${post.type.replace('_',' ')}</p>
+                            <p class="date">posting date: <span>${post.date}</span></p>
+                        </div>
+
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-content">${post.content}</p>
+                        <div class="hashtags">
+                            ${post.hashtags.map(hashtag => {
+                                return `<p class="hashtag">${hashtag}</p>`;
+                            }).join('')} 
+                        </div>
+                    </div>
+                `;
+            });
+
+            this.elements.postsHolder.innerHTML = html;
+        },
+
+ 
+       
+        // saving and loading
+        checkStorage(){
+           let data = this.loadData('full_state_data');
+           if(data == null){
+             return;
+           }
+           
+           this.state = data;
+
+           if(!this.state.currentEvent.uid){
+             this.state.currentEvent = this.state.events[0].eventData;
+           }
+
+           this.showScreen("posts-screen");
+           this.renderPosts();
+        },
+        saveData(key, data) {
+            try {
+                // Convert the JavaScript object into a JSON string before saving.
+                const serializedData = JSON.stringify(data);
+                localStorage.setItem(key, serializedData);
+                console.log(`Data saved successfully for key: ${key}`);
+            } catch (error) {
+                console.error("Error saving data to localStorage:", error);
+            }
+        },
+        loadData(key) {
+            try {
+                const serializedData = localStorage.getItem(key);
+                
+                // Return null if no data is found for the key.
+                if (serializedData === null) {
+                    console.log(`No data found for key: ${key}`);
+                    return null;
+                }
+                
+                // Convert the JSON string back into a JavaScript object.
+                return JSON.parse(serializedData);
+            } catch (error) {
+                console.error("Error retrieving or parsing data from localStorage:", error);
+                return null;
+            }
+        },
+
+
+        async downloadCurrentImage() {
+             // --- 1. Retrieve Data and URL ---
+             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
+             let image = this.state.currentEvent.currentPost.images[imageIndex];
+             let date = this.state.currentEvent.currentPost.date;
+             let name = this.state.currentEvent.eventData.eventName;
+         
+             // --- 2. Sanitize and Format Filename ---
+             let combinedName = `${name} ${date}`;
+             let sanitizedBaseName = combinedName.trim().toLowerCase();
+             sanitizedBaseName = sanitizedBaseName.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/\s+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/-+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/^-|-$/g, '');
+         
+             // Get the final extension from the image URL to create a complete filename
+             const urlParts = image.split('.');
+             const extension = urlParts.pop().split('?')[0] || 'jpg';
+             const finalFileName = `${sanitizedBaseName}.${extension}`;
+         
+             // --- 3. Initiate Server-Side Proxy Download ---
+             try {
+
+                 const response = await this.fetchBinaryApi('/api/analyze', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                            request: 'download_image', 
+                                            webData: image })
+                 });
+
+                 console.log(response);
+                 
+                 const imageBlob = await response.blob();
+                 
+                 
+                 const blobUrl = URL.createObjectURL(imageBlob);
+                 const link = document.createElement('a');
+                 
+                 link.href = blobUrl;
+                 link.download = finalFileName;
+                 
+                 document.body.appendChild(link);
+                 link.click();
+                 
+                 document.body.removeChild(link);
+                 URL.revokeObjectURL(blobUrl);
+
+
+                 console.log(`Proxy download request sent for ${finalFileName}.`);
+         
+             } catch (error) {
+                 console.error("Client-side download initiation failed:", error);
+             }
+        },
+        
+
+        async saveImageByUrl(imageUrl){
+
+            let newImageData = null;
+            try {
+              let imageBlob = await this.urlStringToBlob(imageUrl);
+
+              newImageData = await this.encodeLocalImage(imageBlob);
+            } catch (error) {
+              console.error("Image processing error:", error);
+              return;
+            }
+
+            newImageData['name'] = this.getImageName(imageUrl);
+
+            console.log(newImageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(newImageData) })
+            });
+
+            return response;
+        },
+        async saveImageByData(imageData,name){
+
+            imageData['name'] = name;
+
+            console.log(imageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(imageData) })
+            });
+
+            return response;
+        },
+
+        async downloadImageFromUrl(url, fileName) {
+          try {
+              const response = await fetch(url);
+              
+              if (!response.ok) {
+                  throw new Error(`Failed to fetch image: Status ${response.status}`);
+              }
+
+              // 1. Get the image data as a Blob
+              const imageBlob = await response.blob();
+              
+              // 2. Create a temporary URL for the Blob
+              const blobUrl = URL.createObjectURL(imageBlob);
+
+              // 3. Create a temporary anchor element and click it
+              const link = document.createElement('a');
+              link.href = blobUrl;
+              link.download = fileName;
+              
+              // Trigger the download
+              document.body.appendChild(link);
+              link.click();
+              
+              // Clean up the temporary elements and object URL
+              document.body.removeChild(link);
+              URL.revokeObjectURL(blobUrl);
+
+              console.log(`Download initiated for ${fileName}.`);
+
+          } catch (error) {
+              console.error("Download failed:", error);
+          }
+        },
+
+
+
+        // misc
+        generateUniqueCode() {
+          // 1. Get the current Unix timestamp in milliseconds.
+          const timestamp = Date.now();
+          
+          // 2. Convert the timestamp to a Base36 string (shorter, alphanumeric representation).
+          const timeBase36 = timestamp.toString(36);
+          
+          // 3. Generate a small random component (using a character from a random Base36 string)
+          // to ensure uniqueness when the function is executed in rapid succession.
+          const randomComponent = Math.random().toString(36).substring(2, 3);
+          
+          // Combine time and a small random factor.
+          return timeBase36 + randomComponent;
+        },
+        getDaysUntil(futureDateStr) {
+         // Get today's date and set the time to the beginning of the day
+         const today = new Date();
+         today.setHours(0, 0, 0, 0);
+       
+         // Create a Date object for the future date
+         const futureDate = new Date(futureDateStr);
+       
+         // Calculate the difference in milliseconds
+         const timeDifference = futureDate.getTime() - today.getTime();
+       
+         // Convert milliseconds to days and round up
+         const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+       
+         return daysRemaining;
+        },
+
+        async encodeLocalImage(fileObject) {
+            return new Promise((resolve, reject) => {
+                
+                if (!fileObject) {
+                    return reject(new Error("No file object provided."));
+                }
+                
+                if (!(fileObject instanceof Blob)) { 
+                     return reject(new TypeError("Invalid input: Expected a File or Blob object."));
+                }
+        
+                const mimeType = fileObject.type;
+                const reader = new FileReader();
+        
+                reader.onload = () => {
+                    const dataUrl = reader.result;
+        
+                    const base64Index = dataUrl.indexOf(',');
+                    if (base64Index === -1) {
+                        return reject(new Error("Could not parse file data URL."));
+                    }
+                    
+                    const base64Data = dataUrl.substring(base64Index + 1);
+        
+                    resolve({
+                        data: base64Data,
+                        mimeType: mimeType
+                    });
+                };
+        
+                reader.onerror = (error) => {
+                    reject(new Error(`Error reading file: ${error.target.error.name}`));
+                };
+        
+                reader.readAsDataURL(fileObject);
+            });
+        },
+        async urlStringToBlob(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                throw new Error('Invalid URL string provided.');
+            }
+        
+            try {
+                console.log(`Fetching image from URL: ${imageUrl}`);
+                
+                // 1. Fetch the resource as a response stream
+                const response = await fetch(imageUrl);
+        
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch image: Status ${response.status}`);
+                }
+        
+               
+                const imageBlob = await response.blob();
+                
+                return imageBlob;
+        
+            } catch (error) {
+                console.error('Error converting URL to Blob:', error);
+                throw new Error(`Could not process image URL: ${error.message}`);
+            }
+        },
+
+        dataToUrl(imageData) {
+
+            if(imageData?.data == null || imageData?.mymeType == null){
+                return null;
+            }
+
+            const dataUrl = `data:${imageData?.mymeType};base64,${imageData?.data}`;
+            
+            return dataUrl;
+        },
+
+        getImageName(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                return '';
+            }
+        
+            const parts = imageUrl.split('/');
+            let fileNameWithExtensionAndQuery = parts.pop() || '';
+
+            if (fileNameWithExtensionAndQuery === '') {
+                fileNameWithExtensionAndQuery = parts.pop() || '';
+            }
+        
+            const fileWithExtension = fileNameWithExtensionAndQuery.split('?')[0];
+        
+            const lastDotIndex = fileWithExtension.lastIndexOf('.');
+        
+            if (lastDotIndex !== -1) {
+                return fileWithExtension.substring(0, lastDotIndex);
+            }
+            
+            return fileWithExtension;
+        },
+
+        
+
+
+        getUUID() {
+            const timeNow = Date.now();
+            const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            const randomPart2 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            
+            const timeHex = timeNow.toString(16).padStart(12, '0');
+            const uuid = 
+                timeHex.substring(0, 8) + '-' + 
+                timeHex.substring(8, 12) + '-' + 
+                '4' + randomPart1.substring(0, 3) + '-' + 
+                'a' + randomPart1.substring(3, 6); 
+            
+            return uuid;
+        },
+
+        updateTextarea(element){
+           element.style.height = 'auto'; 
+           element.style.height = element.scrollHeight + 'px'; 
+        },
+
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        EventSocialManager.init();
+    });
+</script>
+
+
+

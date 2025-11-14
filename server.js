@@ -16,6 +16,10 @@ import { getEditPostImage } from './analyzers/get_edit_post_image.js';
 import { saveImage } from './analyzers/save_image.js';
 import { downloadImage } from './analyzers/download_image.js';
 
+
+import { getPostImageNew } from './analyzers/get_post_image_new.js';
+import { getPostHTML } from './analyzers/get_post_html.js';
+
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -158,7 +162,14 @@ app.post('/api/analyze', async (req, res) => {
             // 4. STOP EXECUTION: We cannot continue to the res.json() line.
             return;
           break;
-        
+          case 'post_image_new':
+            console.log('Starting creation of post image new...');
+            response = await getPostImageNew(webData);
+          break;
+          case 'post_html':
+            console.log('Starting creation of post html...');
+            response = await getPostHTML(webData);
+          break;
         }
         
         console.log('sending response');
