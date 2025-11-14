@@ -62,7 +62,7 @@ async function getAiAnalysis(data) {
     }
 
 
-    const prompt = getPromptHTML(postPromptData);
+    const prompt = getPromptPostHTML(postPromptData);
     
 
     let aiSummary = '';
