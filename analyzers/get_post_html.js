@@ -38,7 +38,7 @@ async function getAiAnalysis(data) {
 
     let background = null;
     try{
-      background = await formatImage(postImageUrl, 'screenshot');
+      background = await formatImage(postImageUrl, 'background');
       if (!background || !background.data || !background.mimeType) {
         throw new Error("Missing valid Base64 image data (background.data or background.mimeType).");
       }
@@ -53,6 +53,7 @@ async function getAiAnalysis(data) {
         postText,
         postImageUrl
     }
+
     const prompt = getPostHTML(postPromptData);
     
     console.log('AI analysis started');
@@ -64,9 +65,10 @@ async function getAiAnalysis(data) {
 
     const model = 'gemini-2.5-flash-image';
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`;
-
+    
     const requestBody = {
         generationConfig: {
+            responseModalities: ["TEXT"],
             temperature: 1,
         },
         contents: [{
@@ -89,6 +91,8 @@ async function getAiAnalysis(data) {
             ],
         }],
     };
+    
+    console.log("AI analysis started 2");
 
     // --- 3. Execute the API Call ---
     try {
@@ -97,6 +101,8 @@ async function getAiAnalysis(data) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         });
+
+        console.log("AI analysis started 3");
 
         if (!response.ok) {
             const errorBody = await response.json(); 
