@@ -22,8 +22,7 @@ export async function getPostHTML(data) {
 
 async function getAiAnalysis(data) {
 
-    const parsedData = (typeof data === 'string') ? JSON.parse(data) : data;
-    const { eventDate, eventName, postText, imageUrl, postImageUrl } = parsedData;
+    const { eventDate, eventName, postText, imageUrl, postImageUrl  } = JSON.parse(data);
     
     // --- All your image formatting code is correct ---
     let reference = null;
@@ -70,7 +69,7 @@ async function getAiAnalysis(data) {
     const requestBody = {
         generationConfig: {
             responseModalities: ["TEXT"],
-            temperature: 1,
+            temperature: 1
         },
         contents: [{
             parts: [
@@ -80,13 +79,13 @@ async function getAiAnalysis(data) {
                 {
                     inlineData: {
                         mimeType: reference.mimeType,
-                        data: reference.data,
+                        data: reference.data.toString('base64'),
                     },
                 },
                 {
                     inlineData: {
                         mimeType: background.mimeType,
-                        data: background.data,
+                        data: background.data.toString('base64'),
                     },
                 },
             ],
@@ -94,7 +93,7 @@ async function getAiAnalysis(data) {
     };
     
     console.log("AI analysis started 2");
-
+    console.log(requestBody);
     // --- 3. Execute the API Call ---
     try {
         const response = await fetch(apiUrl, {
@@ -102,6 +101,7 @@ async function getAiAnalysis(data) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
         });
+
 
         console.log("AI analysis started 3");
 
