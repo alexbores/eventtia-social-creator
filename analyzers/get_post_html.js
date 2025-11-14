@@ -92,14 +92,14 @@ async function getAiAnalysis(data) {
                 },
                 {
                     inlineData: {
-                        mimeType: referenceImage.mimeType,
-                        data: referenceImage.data,
+                        mimeType: reference.mimeType,
+                        data: reference.data,
                     },
                 },
                 {
                     inlineData: {
-                        mimeType: backgroundImage.mimeType,
-                        data: backgroundImage.data,
+                        mimeType: background.mimeType,
+                        data: background.data,
                     },
                 },
             ],
