@@ -24,37 +24,36 @@ async function getAiAnalysis(data) {
 
     const { eventDate, eventName, postText, imageUrl, postImageUrl  } = JSON.parse(data);
     
-    // 1. Get the Style Reference Image (Screenshot)
+    // --- All your image formatting code is correct ---
     let reference = null;
-    try {
-        reference = await formatImage(imageUrl, 'screenshot');
-        if (!reference || !reference.data || !reference.mimeType) {
-            throw new Error("Missing valid Base64 image data (reference.data or reference.mimeType).");
-        }
-    } catch(error) {
-        throw new Error("Error formatting reference image: " + error.message);
+    try{
+      reference = await formatImage(imageUrl, 'screenshot');
+      if (!reference || !reference.data || !reference.mimeType) {
+        throw new Error("Missing valid Base64 image data (reference.data or reference.mimeType).");
+      }
+    }
+    catch(error){
+      throw new Error("Error while formating images ",error);
     }
 
-    // 2. Get the Background Image (for analysis)
     let background = null;
-    try {
-        background = await formatImage(postImageUrl, 'screenshot'); // You are correctly fetching this
-        if (!background || !background.data || !background.mimeType) {
-            throw new Error("Missing valid Base64 image data (background.data or background.mimeType).");
-        }
-    } catch(error) {
-        throw new Error("Error formatting background image: " + error.message);
+    try{
+      background = await formatImage(postImageUrl, 'screenshot');
+      if (!background || !background.data || !background.mimeType) {
+        throw new Error("Missing valid Base64 image data (background.data or background.mimeType).");
+      }
+    }
+    catch(error){
+      throw new Error("Error while formating images ",error);
     }
 
-    // 3. Prepare the prompt data
     let postPromptData = {
         eventDate,
         eventName,
         postText,
-        postImageUrl // Passed as a string for the final CSS
+        postImageUrl
     }
-
-    const prompt = getPromptPostHTML(postPromptData);
+    const prompt = getPostHTML(postPromptData);
     
     console.log('AI analysis started');
 
@@ -63,16 +62,19 @@ async function getAiAnalysis(data) {
         throw new Error('GEMINI_API_KEY environment variable is not set.');
     }
 
-    // --- 4. Construct the Gemini API Payload ---
-    const model = 'gemini-1.5-flash'; 
+    // --- 2. Construct the Gemini API Payload ---
+    // ⭐️ We use YOUR original model
+    const model = 'gemini-2.5-flash-image';
     
-    // ⭐️ THE FIX: Change to the NON-streaming 'generateContent' endpoint
+    // ⭐️⭐️⭐️ THE FIX ⭐️⭐️⭐️
+    // We use the NON-streaming endpoint
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const requestBody = {
         generationConfig: {
-            temperature: 0.5, 
-            responseMimeType: "text/plain", 
+            temperature: 1,
+            // We don't need responseModalities here, as text is the default
+            // for generateContent.
         },
         contents: [{
             parts: [
@@ -80,15 +82,12 @@ async function getAiAnalysis(data) {
                     text: prompt
                 },
                 {
-                    // Image 1: The Style Reference Screenshot
                     inlineData: {
                         mimeType: reference.mimeType,
                         data: reference.data,
                     },
                 },
                 {
-                    // Image 2: The Background Image (for contrast analysis)
-                    // This is correct based on your clarification.
                     inlineData: {
                         mimeType: background.mimeType,
                         data: background.data,
@@ -98,7 +97,7 @@ async function getAiAnalysis(data) {
         }],
     };
 
-    // --- 5. Execute the API Call ---
+    // --- 3. Execute the API Call ---
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -107,12 +106,12 @@ async function getAiAnalysis(data) {
         });
 
         if (!response.ok) {
-            const errorBody = await response.json();
+            const errorBody = await response.json(); 
             console.error(`Gemini API Error (${response.status}):`, errorBody.error);
             throw new Error(`Gemini API responded with status: ${response.status} - ${errorBody.error?.message || 'Unknown error'}`);
         }
 
-        // 'result' will now be a SINGLE, complete JSON object
+        // ⭐️ This will now work perfectly, as the response is a single JSON object
         const result = await response.json();
         
         console.log("AI Response (Complete)");
