@@ -440,7 +440,7 @@
             let imageSaved = await this.saveImageByUrl(imageUrl);
 
             this.state.currentEvent.screenshot = imageSaved.url;
-            this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
+            // this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
 
             console.log("screenshot saved");
         },
