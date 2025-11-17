@@ -621,6 +621,10 @@ p,h1,h2,h3,li{
 	display: none;
 	max-width: 200px;
 }
+#post-editor .img-holder iframe{
+  aspect-ratio: 4/5;
+  width: 100%;
+}
 #post-editor .img-holder img{
 	height: auto;
 	width: 100%;

@@ -43,7 +43,7 @@ Each object in the array **MUST** contain these seven keys:
 4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
-8.  **\`smallPhrases\`** (string): A collection of 3 small catchy phrases resuming all the content and title and date to use in small spaces.
+8.  **\`phrases\`** (string): A collection of 6 small catchy phrases resuming all the content and title and date to use in small spaces.
 
 ---
 ### ### Example Output Format
@@ -423,7 +423,7 @@ export function getPromptPostHTML(data) {
 
     const prompt = `
 <SYSTEM_ROLE>
-You are an expert front-end developer and creative digital designer.
+You are an expert front-end developer and very bold creative digital social media designer.
 Your task is to generate a single HTML file.
 </SYSTEM_ROLE>
 
@@ -450,11 +450,11 @@ Your task is to generate a single HTML file.
     * CSS: \`background-position: center;\`
 3.  **TEXT_CONTENT (MUST INCLUDE):**
     * \`<h1>\`: Large, primary title.
-    * \`<p>\`: Small complement text.
+    * \`<p>\`: medium, complement text.
     * \`<p class="cta">\`: Actionable text (Call-to-Action).
-    * **Data:** ${eventDate}
-    * **Data:** ${eventName}
-    * **Data:** ${postText}
+    * **Event Date Data:** ${eventDate}
+    * **Event Title Data:** ${eventName}
+    * **Event Complement Data:** ${postText}
 4.  **FONTS:**
     * Identify closest Google Fonts from the <style-reference-image>.
     * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
