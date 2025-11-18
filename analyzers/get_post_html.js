@@ -10,6 +10,11 @@ import { formatImage } from '../modules/image_handlers.js';
 // No changes to the outer function
 export async function getPostHTML(data) {
     let html = await getAiAnalysis(data);
+
+
+    html = correctHTML(html);
+    
+
     return { html };
 }
 
@@ -187,4 +192,17 @@ async function getAiAnalysis(data) {
         console.error('Error during AI HTML generation:', error);
         throw error;
     }
+}
+
+
+
+function correctHTML(html){
+   html += `<style>
+       body,
+       html{
+         padding: 0!important;
+       }
+   </style>`;
+
+   return html;
 }

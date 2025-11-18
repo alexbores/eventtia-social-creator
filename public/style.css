@@ -621,6 +621,16 @@ p,h1,h2,h3,li{
 	display: none;
 	max-width: 200px;
 }
+#post-editor .img-holder iframe{
+  width: 1080px;
+  height: 1350px;
+  max-width: unset;
+  transform: scale(0.3703);
+  transform-origin: 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 #post-editor .img-holder img{
 	height: auto;
 	width: 100%;
@@ -656,11 +666,15 @@ p,h1,h2,h3,li{
 	gap: 10px;
 	justify-content: center;
     align-items: center;
+
+
+    display: none;
 }
 #post-editor .buttons .undo-buttons .count-text{
     font-size: 12px;
     font-weight: 600;
     line-height: 1;
+
 }
 #post-editor .buttons .undo-buttons .button{
 	border-radius: 50%;
@@ -674,7 +688,10 @@ p,h1,h2,h3,li{
 	height: 15px;
 }
 
-
+#post-editor [edit-image-open],
+#post-editor [post-img-download]{
+  display: none;
+}
 
 #post-editor .editor-side-wrapper{
 	width: calc(100% - 440px);

@@ -19,29 +19,48 @@ export async function getEventData(html) {
 
     console.log('html for data: '+html);
     
+
+
     let currentDate = getCurrentDate();
 
-    let eventDate = await getAiAnalysisDate(html);
 
+
+    let eventDate = await getAiAnalysisDate(html);
     console.log('event date :'+eventDate);
 
-    eventDate = advanceDateIfOlder(eventDate, currentDate);
 
+
+    eventDate = advanceDateIfOlder(eventDate, currentDate);
     console.log('event date modified:'+eventDate);
 
 
-    let eventName = await getAiAnalysisEventName(html);
 
+    let eventName = await getAiAnalysisEventName(html);
     console.log('event Name:'+eventName);
 
 
+
     let content = await getContent(html);
-
     content = await getAiAnalysisContent(content);
-
     console.log('event cleaned content :'+content);
 
-    return {currentDate, eventDate, eventName ,content};
+
+
+    let speaker = await getSpeakersData();
+
+
+
+    let logoUrl = await getLogoSrc(html);
+
+
+    return {
+        currentDate, 
+        eventDate, 
+        eventName,
+        content,
+        // speakers,
+        logoUrl,
+    };
 }
 
 
@@ -204,6 +223,106 @@ function advanceDateIfOlder(dateToCheckStr, referenceDateStr) {
   return formatDate(dateToCheck);
 }
 
+
+
+
+async function getLogoSrc(html, baseUrl = '') {
+  const dom = new JSDOM(html, { url: baseUrl || "http://localhost" });
+  const doc = dom.window.document;
+
+  // --- STRATEGY 1: Check JSON-LD (Structured Data) ---
+  // This is the most accurate method if the site uses SEO best practices.
+  const jsonLd = doc.querySelectorAll('script[type="application/ld+json"]');
+  for (const script of jsonLd) {
+    try {
+      const data = JSON.parse(script.textContent);
+      // Handle both single objects and arrays of objects
+      const items = Array.isArray(data) ? data : [data];
+      
+      for (const item of items) {
+        if (item['@type'] === 'Organization' || item['@type'] === 'Brand') {
+          if (item.logo) {
+            const logoUrl = typeof item.logo === 'string' ? item.logo : item.logo.url;
+            if (logoUrl) return resolveUrl(logoUrl, baseUrl);
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore JSON parse errors
+    }
+  }
+
+  // --- STRATEGY 2: Heuristic Scoring (DOM Analysis) ---
+  const images = Array.from(doc.querySelectorAll('img'));
+  let bestCandidate = { el: null, score: 0, src: '' };
+
+  images.forEach((img) => {
+    let score = 0;
+    const src = img.getAttribute('src') || img.getAttribute('data-src'); // specific for lazy loading
+    const alt = (img.getAttribute('alt') || '').toLowerCase();
+    const className = (img.getAttribute('class') || '').toLowerCase();
+    const id = (img.getAttribute('id') || '').toLowerCase();
+    
+    if (!src) return; // Skip images without sources
+
+    const srcLower = src.toLowerCase();
+
+    // 1. Keyword Matching (High Value)
+    if (srcLower.includes('logo')) score += 10;
+    if (alt.includes('logo')) score += 5;
+    if (className.includes('logo') || id.includes('logo')) score += 5;
+    
+    // 2. Structural Location (High Value)
+    // Check if inside <header> or <nav>
+    const closestHeader = img.closest('header, nav, .navbar, .nav, .header');
+    if (closestHeader) {
+      score += 5;
+    }
+
+    // 3. Functional Location
+    // Check if wrapped in an <a> tag that points to the root "/"
+    const parentLink = img.closest('a');
+    if (parentLink) {
+      const href = parentLink.getAttribute('href');
+      if (href === '/' || href === baseUrl || (baseUrl && href === baseUrl + '/')) {
+        score += 5;
+      }
+    }
+
+    // 4. Negative Heuristics (Filter out noise)
+    // If it's an SVG in src, it's likely an icon or logo (good)
+    if (srcLower.endsWith('.svg')) score += 2;
+    // If it looks like a social icon (twitter, fb), penalize it
+    if (srcLower.includes('facebook') || srcLower.includes('twitter') || srcLower.includes('instagram')) score -= 10;
+
+    // Update best candidate if this one beats the previous high score
+    if (score > bestCandidate.score) {
+      bestCandidate = { el: img, score: score, src: src };
+    }
+  });
+
+  if (bestCandidate.src) {
+    return resolveUrl(bestCandidate.src, baseUrl);
+  }
+
+  // --- STRATEGY 3: Fallback to Open Graph Image ---
+  // Often the "og:image" is a branded image or the logo
+  const ogImage = doc.querySelector('meta[property="og:image"]');
+  if (ogImage && ogImage.content) {
+    return resolveUrl(ogImage.content, baseUrl);
+  }
+
+  return null; // No logo found
+}
+
+function resolveUrl(src, baseUrl) {
+  if (!baseUrl) return src;
+  try {
+    return new URL(src, baseUrl).href;
+  } catch (e) {
+    return src;
+  }
+}
 
 
 

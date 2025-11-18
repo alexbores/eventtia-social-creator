@@ -418,7 +418,7 @@ GENERATE_IMAGE.
 
 export function getPromptPostHTML(data) {
 
-    const {eventDate, eventName, postText, postImageUrl} = data;
+    const {eventDate, eventName, postText, postImageUrl, logoUrl} = data;
 
 
     const prompt = `
@@ -451,13 +451,15 @@ Your task is to generate a single HTML file.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
     * \`<h1>\`: Large, primary title.
     * \`<p>\`: medium, complement text.
-    * \`<p class="cta">\`: Actionable text (Call-to-Action).
+    * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
     * **Event Date Data:** ${eventDate}
     * **Event Title Data:** ${eventName}
     * **Event Complement Data:** ${postText}
 4.  **FONTS:**
     * Identify closest Google Fonts from the <style-reference-image>.
     * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
+5.  **LOGO: (MUST INCLUDE): **
+    * \`<img>\`: Logo for the event use src: \`${logoUrl}\`
 </DESIGN_REQUIREMENTS>
 
 <STRICT_OUTPUT_RULES>

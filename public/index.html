@@ -90,7 +90,7 @@
         </div>
     </section>
    
-   <section id="post-editor" class="">
+   <section id="post-editor">
        
        <div class="content">
            <button class="close button button-secondary" close>X</button>
@@ -105,7 +105,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
                           <span>Generate New Image</span>
                         </button>
-                        <img main-post-image src="" width="100%" height="100%">
+                        <iframe main-post-image width="100%" height="100%"></iframe>
                      </div>
 
                      <div class="buttons">
@@ -540,31 +540,23 @@
             });
 
             this.state.currentEvent.posts = [];
-            this.renderPosts();
 
             this.state.currentEvent.url = url;
         
             try {
                 
                 await this.getWebData();
-                this.setLoadingProgress(4);
-                
+                this.setLoadingProgress(3);
+
                 await this.saveScreenshot();
-                this.setLoadingProgress(5);
+                this.setLoadingProgress(4);
+
+
 
                 await this.getEventData();
-                this.setLoadingProgress(7);
+                this.setLoadingProgress(5);
 
-                await new Promise(r => setTimeout(r, 3200));
 
-                // Transition the UI to the results screen
-                const screen = document.querySelector('#fetching-screen');
-                screen.classList.add('end-loading');
-
-                await new Promise(r => setTimeout(r, 1200));
-
-                this.showScreen('posts-screen');
-                this.softLoading(true);
 
                 await this.getPosts();
 
@@ -572,17 +564,26 @@
 
                 console.log('posts rendered');
 
-                this.renderData();
+                this.setLoadingProgress(6);
 
-                
-                this.saveData('full_state_data', this.state);
-                
-                this.softLoading(false);
+                this.renderData();
 
 
                 await this.initAllPostImageGeneration();
 
-                // this.renderPosts();
+
+                this.setLoadingProgress(7);
+                
+                this.saveData('full_state_data', this.state);
+
+                
+                await new Promise(r => setTimeout(r, 1200));
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                this.showScreen('posts-screen');
 
         
             } catch (error) {
@@ -591,7 +592,6 @@
             }
         },
         
-
 
         async getWebData(){
             const response = await this.fetchApi('/api/analyze', {
@@ -612,9 +612,6 @@
             let imageUrl = this.state.currentEvent.screenshot;
             let imageSaved = await this.saveImageByUrl(imageUrl);
 
-            this.state.currentEvent.screenshot = imageSaved.url;
-            this.elements.eventScreenshot.src = this.state.currentEvent.screenshot;
-
             console.log("screenshot saved");
         },
         async getEventData(){
@@ -628,14 +625,7 @@
         
             console.log("Event Data received:", response);
         
-            // Update state with the new data
             this.state.currentEvent.eventData = response;
-
-            // this.elements.eventDataFound.innerHTML = `
-            //     <p>Generating posts for your event:</p>
-            //     <h3>${response.eventName}</h3>
-            //     <p>Starting on: ${response.eventDate}</p>
-            // `;
         },
         async getPosts(){
             const response = await this.fetchApi('/api/analyze', {
@@ -681,14 +671,14 @@
         async initAllPostImageGeneration() {
             this.imgPostLoading(true);
 
-            const maxCount = 6;
+            const maxCount = 3;
             let iterationCount = 0;
 
             try {
                 for (const post of this.state.currentEvent.posts) {
                     this.state.currentEvent.currentPost = post;
 
-                    await this.getPostImage(true);
+                    await this.getPostImage();
 
                     await this.getEditImage(this.prompts.removeText);
 
@@ -716,14 +706,10 @@
         },
 
         
-        async getPostImage(includeText = false){
+        async getPostImage(){
             let postData = {
                 
                 imageUrl: this.state.currentEvent.screenshot, 
-                eventName: this.state.currentEvent.eventData.eventName,
-                eventDate: this.state.currentEvent.eventData.eventDate,
-                postText: this.state.currentEvent.currentPost.shortPhrases,
-                includeText: includeText,
             }
 
             console.log(postData);
@@ -732,7 +718,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: this.state.currentEvent.url, 
-                                       request: 'post_image', 
+                                       request: 'post_image_new', 
                                        webData: JSON.stringify(postData) })
             });
         
@@ -742,8 +728,33 @@
             let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
 
             // Update state with the new data
-            this.state.currentEvent.currentPost.images.unshift(imageSaved.url);
-            this.state.currentEvent.currentPost.selectedImage = 0;       
+            this.state.currentEvent.currentPost.image = imageSaved;       
+        },
+        async getPostHTML(){
+            let postData = {
+                postImageUrl: this.state.currentEvent.currentPost.images[0], 
+                imageUrl: this.state.currentEvent.screenshot, 
+                eventName: this.state.currentEvent.eventData.eventName,
+                eventDate: this.state.currentEvent.eventData.eventDate,
+                postText: this.state.currentEvent.currentPost.phrases,
+                logoUrl: this.state.currentEvent.eventData.logoUrl,
+            }
+
+            console.log(postData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'post_html', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+            console.log("HTML Received:", response);
+        
+
+            // Update state with the new data
+            this.state.currentEvent.currentPost.html = response.html;   
         },
         async initPostImageGeneration(){
             this.softLoading(true);
@@ -752,39 +763,26 @@
               
               let postData = this.state.currentEvent.currentPost;
 
-              // if(postData?.images?.length && postData.images.length > 0){
-              //     await this.getPostImage();
-              // }
-              // else{
-                  await this.getPostImage(true);
+              await this.getPostImage();
 
-                  await this.getEditImage(this.prompts.removeText);
+              await this.getPostHTML();
 
-                  let temp = postData.images[1];
-                  postData.images[1] = postData.images[0];
-                  postData.images[0] = temp;
-              // }
-
-              let image = postData.images[0];
-              
 
               this.saveData('full_state_data',this.state);
               
 
-              this.elements.editorMainImageEl.src = image;
+              // let imagesCount = postData.images.length;
+              // if(!imagesCount){
+              //    imagesCount = 0;
+              // }
+              // let currentImageIndex = postData.selectedImage;
+              // if(!currentImageIndex){
+              //   currentImageIndex = 0;
+              // }
+              // let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
+              // this.elements.editorImagesCountEl.innerHTML = imagesCountText;
 
-              let imagesCount = postData.images.length;
-              if(!imagesCount){
-                 imagesCount = 0;
-              }
-              let currentImageIndex = postData.selectedImage;
-              if(!currentImageIndex){
-                currentImageIndex = 0;
-              }
-              let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
-              this.elements.editorImagesCountEl.innerHTML = imagesCountText;
-
-
+              this.renderCurrentPost();
               this.renderPosts();
             }
             catch(error){
@@ -793,6 +791,7 @@
 
             this.softLoading(false);
         },
+
 
         async getEditImage(promptRules = null){
 
@@ -1126,37 +1125,7 @@
 
            console.log(this.state.currentEvent.currentPost);
 
-           let hashtags = postData.hashtags.map(hashtag => {
-                                return `<p class="hashtag">${hashtag}</p>`;
-                          }).join(''); 
-
-           let postImage = postData.images[postData.selectedImage];
-           if(!postImage){
-              postImage = '';
-           }
-
-
-           let imagesCount = postData.images.length;
-           if(!imagesCount){
-              imagesCount = 0;
-           }
-           let currentImageIndex = postData.selectedImage;
-           if(!currentImageIndex){
-             currentImageIndex = 0;
-           }
-           let imagesCountText = `${currentImageIndex+1} / ${imagesCount}`;
-
-           this.elements.editorMainImageEl.src = postImage;
-           this.elements.editorImagesCountEl.innerHTML = imagesCountText;
-           this.elements.editorPostTypeEl.setAttribute('type', postData.type);
-           this.elements.editorPostTypeEl.innerText = postData.type.replace('_',' ');
-           this.elements.editorPostingDateEl.innerText = postData.date;
-           this.elements.editorPostTitleEl.value = postData.title;
-           this.elements.editorPostContentEl.value = postData.content;
-           this.elements.editorHashtagsEl.innerHTML = hashtags;
-
-           this.updateTextarea(this.elements.editorPostTitleEl);
-           this.updateTextarea(this.elements.editorPostContentEl);
+           this.renderCurrentPost();
         },
         saveCurrentPostChanges(){
            this.state.currentEvent.currentPost.title = this.elements.editorPostTitleEl.value;
@@ -1210,7 +1179,8 @@
             this.elements.postsHolder.innerHTML = html;
 
             this.state.currentEvent.posts.forEach((post,key)=>{
-                let imageUrl = post.images[post.selectedImage];
+                // let imageUrl = post.images[post.selectedImage];
+                let postHtml = post?.html;
                 html += `
                     <div class="post-card" post-card="${post.id}">
                         <div class="bar">
@@ -1219,7 +1189,7 @@
                         </div>
 
                         <div class="img-holder">
-                           ${(!imageUrl) ? 
+                           ${(!postHtml) ? 
                                `
                                 <button generate-image-out="${post.id}"
                                         class="button button-glared">
@@ -1228,7 +1198,7 @@
                                 </button>
 
                                 `:
-                               `<img src="${imageUrl}" width="100%" height="100%">`
+                               `<iframe srcdoc="${postHtml}" width="100%" height="100%"></iframe>`
                            }
                            <svg class="loader" width="60" height="30" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
                               <circle class="dot" cx="10" cy="20" r="5"/>
@@ -1284,6 +1254,39 @@
                  `;
             });
             this.elements.eventsListEl.innerHTML = events;
+        },
+
+
+        renderCurrentPost(){
+           let postData = this.state.currentEvent.currentPost;
+
+
+           let hashtags = postData.hashtags.map(hashtag => {
+                                return `<p class="hashtag">${hashtag}</p>`;
+                          }).join(''); 
+
+           // let postImage = postData.images[0];
+           // if(!postImage){
+           //    postImage = '';
+           // }
+
+           
+           let htmlString = postData.html;
+           let iframe = this.elements.editorMainImageEl;
+           let doc = iframe.contentDocument || iframe.contentWindow.document;
+           doc.open();
+           doc.write(htmlString);
+           doc.close();
+
+           this.elements.editorPostTypeEl.setAttribute('type', postData.type);
+           this.elements.editorPostTypeEl.innerText = postData.type.replace('_',' ');
+           this.elements.editorPostingDateEl.innerText = postData.date;
+           this.elements.editorPostTitleEl.value = postData.title;
+           this.elements.editorPostContentEl.value = postData.content;
+           this.elements.editorHashtagsEl.innerHTML = hashtags;
+
+           this.updateTextarea(this.elements.editorPostTitleEl);
+           this.updateTextarea(this.elements.editorPostContentEl);
         },
  
        

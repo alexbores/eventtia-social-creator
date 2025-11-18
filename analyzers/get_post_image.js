@@ -24,7 +24,7 @@ export async function getPostImage(postData) {
 
 
 async function getAiImage(data) {
-    const { eventDate, eventName, postText, imageUrl, includeText  } = JSON.parse(data);
+    const { imageUrl  } = JSON.parse(data);
     
     let reference = null;
     
@@ -46,23 +46,7 @@ async function getAiImage(data) {
     }
     
 
-    let postPromptData = {
-        eventDate,
-        eventName,
-        postText
-    }
-
-    
-    let systemPrompt = ''; 
-    if(includeText){
-        systemPrompt = getPromptTextImage(postPromptData); 
-    }
-    else{
-        systemPrompt = getPromptImage(); 
-    }
-
-
-    let fullPrompt = systemPrompt;
+    let fullPrompt = getPromptImage(); 
 
     // --- 2. Construct the Gemini API Payload ---
     const model = 'gemini-2.5-flash-image';
