@@ -21,7 +21,7 @@ export async function getIdentity(data) {
 
     
     
-    let content = await getContent(html);
+    let content = await getDesignContext(html);
     console.log('html for data identity extractor: '+html);
 
     let eventIdentity = await getAiAnalysisIdentity(html,imageUrl);
