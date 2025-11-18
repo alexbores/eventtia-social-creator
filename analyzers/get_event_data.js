@@ -50,6 +50,14 @@ export async function getEventData(html) {
 
 
 
+    // let fonts = await getFonts();
+    // let identity = await getIdentity();
+    
+
+    let fonts = identity.fonts;
+    let colors = identity.colors;
+
+
     let logoUrl = await getLogoSrc(html);
 
 

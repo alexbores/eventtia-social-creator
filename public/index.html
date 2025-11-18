@@ -630,6 +630,27 @@
         
             this.state.currentEvent.eventData = response;
         },
+        async getIdentityData(){
+            let data = {
+                html: this.state.currentEvent.webData, 
+                imageUrl: this.state.currentEvent.screenshot, 
+            }
+            
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'identity', 
+                                       webData: JSON.stringify(data) })
+            });
+        
+            console.log("Event Idenity received:", response);
+
+        
+            this.state.currentEvent.eventData.fonts = response?.fonts;
+            this.state.currentEvent.eventData.colors = response?.colors;
+        },
         async getPosts(){
             const response = await this.fetchApi('/api/analyze', {
                 method: 'POST',
@@ -736,7 +757,8 @@
                 postText: this.state.currentEvent.currentPost.phrases,
                 logoUrl: this.state.currentEvent.eventData.logoUrl,
             }
-
+            
+            console.log('getting html post: ');
             console.log(postData);
 
             const response = await this.fetchApi('/api/analyze', {

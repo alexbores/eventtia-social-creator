@@ -15,6 +15,7 @@ import { getPostImage } from './analyzers/get_post_image.js';
 import { getEditPostImage } from './analyzers/get_edit_post_image.js';
 import { saveImage } from './analyzers/save_image.js';
 import { downloadImage } from './analyzers/download_image.js';
+import { getIdentity } from './analyzers/get_identity.js';
 
 
 import { getPostImageNew } from './analyzers/get_post_image_new.js';
@@ -169,6 +170,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'post_html':
             console.log('Starting creation of post html...');
             response = await getPostHTML(webData);
+          break;
+          case 'identity':
+            console.log('gettign identity...');
+            response = await getIdentity(webData);
           break;
         }
         

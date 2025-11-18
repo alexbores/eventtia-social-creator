@@ -43,7 +43,7 @@ Each object in the array **MUST** contain these seven keys:
 4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
-8.  **\`phrases\`** (string): A collection of 6 small catchy phrases resuming all the content and title and date to use in small spaces.
+8.  **\`phrases\`** (string): A collection of 6 sentences resuming all the content and title to use in small spaces.
 
 ---
 ### ### Example Output Format
@@ -369,6 +369,63 @@ export function getPromptEditImage() {
 }
 
 
+export function getPromptIdentity(data) {
+    const {html} = data;
+
+    const prompt = `<SYSTEM_ROLE>
+You are an expert Brand Identity Analyzer and Senior Front-End Developer.
+Your task is to reverse-engineer the design system from the provided <INPUT_DATA> (HTML and/or Image) and output a strict JSON object.
+</SYSTEM_ROLE>
+
+<TASK_DEFINITION>
+1.  **Analyze** the CSS/HTML within the provided code to find \`font-family\` definitions and color codes (hex, rgb, variables).
+2.  **Analyze** the visual hierarchy to determine which colors and fonts are dominant versus accents.
+3.  **Map** any custom or obscure fonts to their closest Google Font equivalent.
+4.  **Synthesize** findings into the specific JSON structure defined below.
+</TASK_DEFINITION>
+
+<EXTRACTION_LOGIC>
+**COLORS:**
+* **Primary Color:** The most dominant brand color. Often found in the navbar background, primary buttons, or the logo. (Prefer Hex format, e.g., #FF5733).
+* **Secondary Color:** The accent color used for highlights, links, or secondary buttons. If the site is monochrome, use the primary text color (often dark grey/black) or the background color if inverted.
+
+**FONTS:**
+* **Title Font:** The \`font-family\` used for \`<h1>\`, \`<h2>\`, or hero typography. Clean the string (remove 'sans-serif', etc.) to get the font name.
+* **Text Font:** The \`font-family\` used for \`<p>\`, \`<body>\`, or \`<span>\`.
+* *Note:* If the font is generic (e.g., "system-ui"), identify the closest Google Font style (e.g., "Inter" or "Roboto").
+</EXTRACTION_LOGIC>
+
+<JSON_OUTPUT_SCHEMA>
+{
+  "colors": {
+    "primary_color": "string (Hex Code)",
+    "secondary_color": "string (Hex Code)"
+  },
+  "fonts": {
+    "title_font": "string (Font Name)",
+    "text_font": "string (Font Name)"
+  }
+}
+</JSON_OUTPUT_SCHEMA>
+
+<STRICT_OUTPUT_RULES>
+1.  **FORMAT:** Return ONLY valid, parseable JSON.
+2.  **NO WRAPPERS:** Do not use markdown code blocks (no \`\`\`json). Just the raw JSON string.
+3.  **NO CHATTER:** Do not include explanations, "Here is the JSON", or any other text.
+4.  **DEFAULTS:** If data is completely missing, default to: Colors: #000000/#FFFFFF, Fonts: "Inter"/"Inter".
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+* Reference HTML/Context: ${html}
+* Style_Reference_Image: [Image provided via API input]
+</INPUT_DATA>
+
+ANALYZE AND RETURN JSON.
+`;
+
+    return prompt;
+}
+
 
 
 export function getPromptImageNew() {
@@ -454,7 +511,7 @@ Your task is to generate a single HTML file.
     * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
     * **Event Date Data:** ${eventDate}
     * **Event Title Data:** ${eventName}
-    * **Event Complement Data:** ${postText}
+    * **Event Complement Data:** ${postText} 
     * All text must not overflow the container.
 4.  **FONTS:**
     * Identify closest Google Fonts from the <style-reference-image>.
@@ -466,6 +523,7 @@ Your task is to generate a single HTML file.
     * DO NOT add interactive elements.
     * All main text must be horizontal oriented an very visible.
     * Use Flexbox css.
+    * All text must not overflow the container.
 </DESIGN_REQUIREMENTS>
 
 <STRICT_OUTPUT_RULES>
