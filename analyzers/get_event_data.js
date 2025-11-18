@@ -49,15 +49,6 @@ export async function getEventData(html) {
     // let speaker = await getSpeakersData();
 
 
-
-    // let fonts = await getFonts();
-    // let identity = await getIdentity();
-    
-
-    let fonts = identity.fonts;
-    let colors = identity.colors;
-
-
     let logoUrl = await getLogoSrc(html);
 
 
@@ -66,7 +57,6 @@ export async function getEventData(html) {
         eventDate, 
         eventName,
         content,
-        // speakers,
         logoUrl,
     };
 }
