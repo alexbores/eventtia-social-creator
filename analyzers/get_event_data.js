@@ -46,7 +46,7 @@ export async function getEventData(html) {
 
 
 
-    let speaker = await getSpeakersData();
+    // let speaker = await getSpeakersData();
 
 
 

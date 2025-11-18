@@ -1167,6 +1167,7 @@ p,h1,h2,h3,li{
   width: 100%;
   height: auto;
   margin-top: 20px;
+  display: none;
 }
 #fetching-screen .screenshot-holder img{
   width: 100%;
