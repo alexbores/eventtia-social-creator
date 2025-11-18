@@ -438,6 +438,17 @@ p,h1,h2,h3,li{
 	object-fit: cover;
 	display: block;
 }
+#posts-screen .post-card .img-holder iframe{
+  width: 1080px;
+  height: 1350px;
+  max-width: unset;
+  transform: scale(0.3703);
+  transform-origin: 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
 #posts-screen .post-card .img-holder .loader{
   position: absolute;
   top: 0;
@@ -630,6 +641,7 @@ p,h1,h2,h3,li{
   position: absolute;
   top: 0;
   left: 0;
+  pointer-events: none;
 }
 #post-editor .img-holder img{
 	height: auto;

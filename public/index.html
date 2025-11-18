@@ -669,7 +669,7 @@
 
 
         async initAllPostImageGeneration() {
-            this.imgPostLoading(true);
+            // this.imgPostLoading(true);
 
             const maxCount = 3;
             let iterationCount = 0;
@@ -680,17 +680,7 @@
 
                     await this.getPostImage();
 
-                    await this.getEditImage(this.prompts.removeText);
-
-                    let postData = this.state.currentEvent.currentPost;
-
-                    let temp = postData.images[1];
-                    postData.images[1] = postData.images[0];
-                    postData.images[0] = temp;
-        
-                    this.saveData('full_state_data', this.state);
-
-                    this.renderPosts();
+                    await this.getPostHTML();
 
                     iterationCount++; 
 
@@ -701,8 +691,12 @@
             } catch(error) {
                 console.error("Error during image generation process:", error);
             }
+
+            this.saveData('full_state_data', this.state);
+
+            // this.renderPosts();
         
-            this.imgPostLoading(false);
+            // this.imgPostLoading(false);
         },
 
         
@@ -1181,6 +1175,8 @@
             this.state.currentEvent.posts.forEach((post,key)=>{
                 // let imageUrl = post.images[post.selectedImage];
                 let postHtml = post?.html;
+
+
                 html += `
                     <div class="post-card" post-card="${post.id}">
                         <div class="bar">
@@ -1198,7 +1194,7 @@
                                 </button>
 
                                 `:
-                               `<iframe srcdoc="${postHtml}" width="100%" height="100%"></iframe>`
+                               `<iframe width="100%" height="100%"></iframe>`
                            }
                            <svg class="loader" width="60" height="30" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
                               <circle class="dot" cx="10" cy="20" r="5"/>
@@ -1219,6 +1215,24 @@
             });
 
             this.elements.postsHolder.innerHTML = html;
+
+            setTimeout(()=>{
+              
+               let postsIframes = this.elements.postsHolder.querySelectorAll('[post-card] iframe');
+               
+               let posts = this.state.currentEvent.posts;
+
+               postsIframes.forEach((iframe,key)=>{
+                  
+                  let htmlString = posts[key].html;
+                  let doc = iframe.contentDocument || iframe.contentWindow.document;
+                  doc.open();
+                  doc.write(htmlString);
+                  doc.close();
+
+               });
+
+            },10);
         },
 
         renderData(){
