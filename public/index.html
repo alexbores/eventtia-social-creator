@@ -725,7 +725,7 @@
             let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
 
             // Update state with the new data
-            this.state.currentEvent.currentPost.image = imageSaved;       
+            this.state.currentEvent.currentPost.image = imageSaved.url;       
         },
         async getPostHTML(){
             let postData = {
