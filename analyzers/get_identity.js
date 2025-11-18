@@ -31,14 +31,8 @@ export async function getIdentity(data) {
 
 
 
-    let fonts = identity.fonts;
-    let colors = identity.colors;
 
-
-    return {
-        fonts,
-        colors
-    };
+    return eventIdentity;
 }
 
 
