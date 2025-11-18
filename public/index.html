@@ -612,6 +612,9 @@
             let imageUrl = this.state.currentEvent.screenshot;
             let imageSaved = await this.saveImageByUrl(imageUrl);
 
+
+            this.state.currentEvent.screenshot = imageSaved.url;
+
             console.log("screenshot saved");
         },
         async getEventData(){
@@ -726,7 +729,7 @@
         },
         async getPostHTML(){
             let postData = {
-                postImageUrl: this.state.currentEvent.currentPost.images[0], 
+                postImageUrl: this.state.currentEvent.currentPost.image, 
                 imageUrl: this.state.currentEvent.screenshot, 
                 eventName: this.state.currentEvent.eventData.eventName,
                 eventDate: this.state.currentEvent.eventData.eventDate,
