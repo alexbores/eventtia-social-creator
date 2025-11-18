@@ -444,7 +444,7 @@ Your task is to generate a single HTML file.
 <DESIGN_REQUIREMENTS>
 1.  **CONTAINER:** A single wrapper element with a strict 4:5 aspect ratio (e.g., \`width: 1080px; height: 1350px;\`). This is a critical requirement.
 2.  **BACKGROUND_IMAGE:**
-    * Use exact URL: \`${postImageUrl}\`
+    * Use exact URL: \`${postImageUrl}\` and no variables.
     * CSS: \`background-image: url('${postImageUrl}');\`
     * CSS: \`background-size: cover;\`
     * CSS: \`background-position: center;\`
@@ -455,11 +455,17 @@ Your task is to generate a single HTML file.
     * **Event Date Data:** ${eventDate}
     * **Event Title Data:** ${eventName}
     * **Event Complement Data:** ${postText}
+    * All text must not overflow the container.
 4.  **FONTS:**
     * Identify closest Google Fonts from the <style-reference-image>.
     * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
-5.  **LOGO: (MUST INCLUDE): **
-    * \`<img>\`: Logo for the event use src: \`${logoUrl}\`
+5.  **LOGO_IMAGE: (MUST INCLUDE): **
+    * Use exact URL: \`${logoUrl}\` in \`<img>\` element.
+6.  **OTHER_RULES:
+    * DO NOT add animations.
+    * DO NOT add interactive elements.
+    * All main text must be horizontal oriented an very visible.
+    * Use Flexbox css.
 </DESIGN_REQUIREMENTS>
 
 <STRICT_OUTPUT_RULES>
