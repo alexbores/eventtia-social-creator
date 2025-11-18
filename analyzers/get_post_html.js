@@ -23,7 +23,7 @@ export async function getPostHTML(data) {
  * NON-STREAMING (unary) endpoint.
  */
 async function getAiAnalysis(data) {
-    const { eventDate, eventName, postText, imageUrl, postImageUrl } = JSON.parse(data);
+    const { eventDate, eventName, postText, imageUrl, postImageUrl, logoUrl } = JSON.parse(data);
     
     // --- 1. Image Formatting (Unchanged, assumed correct) ---
     let reference = null;
@@ -58,7 +58,8 @@ async function getAiAnalysis(data) {
         eventDate,
         eventName,
         postText,
-        postImageUrl
+        postImageUrl,
+        logoUrl,
     };
     const prompt = getPromptPostHTML(postPromptData); // Corrected function call
     
