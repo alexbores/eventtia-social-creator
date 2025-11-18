@@ -8,6 +8,7 @@ import { JSDOM } from 'jsdom';
 import { getAIFetch } from '../modules/AI_fetcher.js';
 import { stripHtml } from '../modules/html_stripper.js';
 import { getPromptIdentity} from '../modules/prompt_generator.js';
+import { getImageName,formatImage} from '../modules/image_handlers.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
