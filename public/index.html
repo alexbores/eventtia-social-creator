@@ -555,7 +555,9 @@
 
                 await this.getEventData();
                 this.setLoadingProgress(5);
-
+                
+                await this.getIdentityData();
+                this.setLoadingProgress(6);
 
 
                 await this.getPosts();
@@ -564,7 +566,7 @@
 
                 console.log('posts rendered');
 
-                this.setLoadingProgress(6);
+                this.setLoadingProgress(7);
 
                 this.renderData();
 
@@ -572,7 +574,7 @@
                 await this.initAllPostImageGeneration();
 
 
-                this.setLoadingProgress(7);
+                this.setLoadingProgress(8);
                 
                 this.saveData('full_state_data', this.state);
 
