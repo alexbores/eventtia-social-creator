@@ -765,13 +765,17 @@
             }
 
             let postData = {
-                postImageUrl: this.state.currentEvent.currentPost.image, 
-                imageUrl: this.state.currentEvent.screenshot, 
-                eventName: this.state.currentEvent.eventData.eventName,
-                eventDate: this.state.currentEvent.eventData.eventDate,
-                postText: this.state.currentEvent.currentPost.phrase,
-                logoUrl: this.state.currentEvent.eventData.logoUrl,
-                referenceHTML: referenceHTML,
+              postImageUrl: this.state.currentEvent.currentPost.image, 
+              imageUrl: this.state.currentEvent.screenshot, 
+              eventName: this.state.currentEvent.eventData.eventName,
+              eventDate: this.state.currentEvent.eventData.eventDate,
+              postText: this.state.currentEvent.currentPost.phrase,
+              logoUrl: this.state.currentEvent.eventData.logoUrl,
+              referenceHTML: referenceHTML,
+              titleFont: this.state.currentEvent.eventData.fonts.title_font,
+              textFont: this.state.currentEvent.eventData.fonts.text_font,
+              primaryColor: this.state.currentEvent.eventData.colors.primary_color,
+              secondaryColor: this.state.currentEvent.eventData.colors.secondary_color,
             }
             
             console.log('getting html post: ');

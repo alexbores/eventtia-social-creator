@@ -48,8 +48,6 @@ export async function getWebData(page, config) {
         });
 
 
-        // const baseScreenshotBuffer = await page.screenshot({ type: 'webp', quality: 50, fullPage: true });
-        
         const HARD_TIMEOUT = 20000; // 20 seconds maximum for the full attempt
 
         // Initialize the buffer variable outside the try block
@@ -60,31 +58,16 @@ export async function getWebData(page, config) {
         try {
             console.log(`Viewport set. Attempting full-page screenshot with ${HARD_TIMEOUT / 1000}s timeout...`);
 
-            // This is the core operation that may fail due to timeout
             baseScreenshotBuffer = await page.screenshot({ 
                 type: 'webp', 
                 quality: 50, 
-                fullPage: true,
+                fullPage: false,
                 timeout: HARD_TIMEOUT 
             });
             
         } catch (error) {
             console.warn(`⚠️ Screenshot failed after ${HARD_TIMEOUT / 1000}s (Timeout/Hang). Falling back to viewport screenshot.`);
-
-            // --- 2. Fallback Capture: Take a quick viewport shot ---
-            try {
-                // Remove the fullPage option to guarantee a quick, non-hanging shot of the visible area
-                baseScreenshotBuffer = await page.screenshot({ 
-                    type: 'webp', 
-                    quality: 50, 
-                    fullPage: false 
-                });
-                fallbackFileName = `fallback_${config.screenSize}_${crypto.createHash('md5').update(url).digest('hex').substring(0, 8)}.webp`;
-                
-            } catch (fallbackError) {
-                console.error("CRITICAL: Fallback screenshot also failed. Skipping image capture.");
-                return null; 
-            }
+            return null
         }
 
         if (baseScreenshotBuffer) {
@@ -98,8 +81,8 @@ export async function getWebData(page, config) {
         console.log(`cleaning html page content...`);
         await page.evaluate(() => {
             // 1. Remove all <style> blocks (Inline CSS)
-            const styleTags = document.querySelectorAll('style');
-            styleTags.forEach(el => el.remove());
+            // const styleTags = document.querySelectorAll('style');
+            // styleTags.forEach(el => el.remove());
         
             // 2. Remove all <script> blocks (External/Inline JS code)
             const scriptTags = document.querySelectorAll('script');
@@ -117,8 +100,8 @@ export async function getWebData(page, config) {
             });
         
             // 3. Remove all <link> tags that load CSS files
-            const linkCssTags = document.querySelectorAll('link[rel="stylesheet"]');
-            linkCssTags.forEach(el => el.remove());
+            // const linkCssTags = document.querySelectorAll('link[rel="stylesheet"]');
+            // linkCssTags.forEach(el => el.remove());
         
             const hiddenElements = document.querySelectorAll('[style*="display: none"], [style*="visibility: hidden"]');
             hiddenElements.forEach(el => el.remove()); 

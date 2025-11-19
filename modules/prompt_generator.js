@@ -442,7 +442,6 @@ This image will be used as a background for a social media HTML post.
     * **PRIMARY:** Analyze <INPUT_IMAGE: style-reference-screenshot> for aesthetic elements:
         * <ELEMENT: color_palette> (primary, secondary)
         * <ELEMENT: mood_tone> (e.g., professional, energetic, minimalist, vibrant)
-    * **SECONDARY:** Analyze <INPUT_TEXT: event_content> for contextual hints, but DO NOT include directly.
 2.  **COMPOSITION_STRATEGY:**
     * **MANDATORY:** Create a **brand new, original composition**.
     * **MANDATORY:** Do NOT replicate layout from the <INPUT_IMAGE: style-reference-screenshot>.
@@ -463,7 +462,6 @@ This image will be used as a background for a social media HTML post.
 </STRICT_OUTPUT_RULES>
 
 <INPUT_DATA>
-* Event_Content_Text: [text describing the event if provided separately]
 * Style_Reference_Screenshot: [Image provided via API input]
 </INPUT_DATA>
 
@@ -475,7 +473,17 @@ GENERATE_IMAGE.
 
 export function getPromptPostHTML(data) {
 
-    const {eventDate, eventName, postText, postImageUrl, logoUrl, referenceHTML} = data;
+    const {eventDate, 
+           eventName,
+           postText,
+           postImageUrl,
+           logoUrl,
+           referenceHTML,
+           titleFont,
+           textFont,
+           primaryColor,
+           secondaryColor,
+        } = data;
 
     const referencePrompt = "";
     
@@ -497,7 +505,8 @@ Your task is to generate a single HTML file.
 1.  **Analyze** the provided <INPUT_DATA> (text and background URL).
 2.  **Analyze** the provided input <style-reference-image> (the screenshot).
 3.  **Synthesize** these inputs to generate a single HTML file for a social media post.
-4.  **Prioritize** the <AESTHETIC_GOAL> over the <style-reference-image>. The image is for color/font *hints*, the goal is the primary creative direction.
+4.  **Prioritize** the <AESTHETIC_GOAL> over the <style-reference-image>. The image is for *hints*, the goal is the primary creative direction.
+5.  **Colors** the primary color is \`${primaryColor}\`, the secondary is \`${primaryColor}\`.
 </TASK_DEFINITION>
 
 <AESTHETIC_GOAL>
@@ -516,15 +525,15 @@ Your task is to generate a single HTML file.
     * CSS: \`background-position: center;\`
     * Include the image element in a creative way if possible, the image is not informational.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
-    * \`<h1>\`: Large, primary title.
-    * \`<p>\`: medium, complement text.
+    * \`<h1>\`: Large, primary title, use exact font: \`${titleFont}\`.
+    * \`<p>\`: medium, complement text, use exact font: \`${textFont}\`.
     * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
     * **Event Date Data:** ${eventDate}
     * **Event Title Data:** ${eventName}
     * **Event Complement Data:** ${postText} 
     * All text must not overflow the container.
 4.  **FONTS:**
-    * Identify closest Google Fonts from the <style-reference-image>.
+    * Use closest Google Fonts from the "3. TEXT_CONTENT" if fonts provided are not from google
     * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
 5.  **LOGO_IMAGE: (MUST INCLUDE): **
     * Use exact URL: \`${logoUrl}\` in \`<img>\` element.
