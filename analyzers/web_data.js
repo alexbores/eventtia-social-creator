@@ -27,26 +27,8 @@ export async function getWebData(page, config) {
     
         await new Promise(r => setTimeout(r, 500));
 
-        console.log(`Viewport correctly setted, stabilicing web...`);
+        console.log(`Viewport correctly setted`);
         
-        await page.evaluate(async () => {
-          // Wait for 1 second of inactivity in scroll height to confirm page has finished loading content
-          await new Promise(resolve => {
-            let lastHeight = 0;
-            const checkHeight = () => {
-                const currentHeight = document.body.scrollHeight;
-                if (currentHeight === lastHeight) {
-                    // Height hasn't changed since the last check, page is stable
-                    resolve();
-                } else {
-                    lastHeight = currentHeight;
-                    setTimeout(checkHeight, 500); // Check again in 500ms
-                }
-            };
-            checkHeight();
-          });
-        });
-
 
         const HARD_TIMEOUT = 20000; // 20 seconds maximum for the full attempt
 
@@ -77,6 +59,26 @@ export async function getWebData(page, config) {
           fs.writeFileSync(path.join(config.imageDir, baseFileName), baseScreenshotBuffer);
           report.screenshot = config.imagePath + baseFileName;
         }
+
+
+        console.log(`screenshot gotted, stabilicing web...`);
+        await page.evaluate(async () => {
+          // Wait for 1 second of inactivity in scroll height to confirm page has finished loading content
+          await new Promise(resolve => {
+            let lastHeight = 0;
+            const checkHeight = () => {
+                const currentHeight = document.body.scrollHeight;
+                if (currentHeight === lastHeight) {
+                    resolve();
+                } else {
+                    lastHeight = currentHeight;
+                    setTimeout(checkHeight, 500); // Check again in 500ms
+                }
+            };
+            checkHeight();
+          });
+        });
+
         
         console.log(`cleaning html page content...`);
         await page.evaluate(() => {

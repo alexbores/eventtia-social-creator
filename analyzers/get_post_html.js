@@ -23,7 +23,18 @@ export async function getPostHTML(data) {
  * NON-STREAMING (unary) endpoint.
  */
 async function getAiAnalysis(data) {
-    const { eventDate, eventName, postText, imageUrl, postImageUrl, logoUrl } = JSON.parse(data);
+    const { eventDate,
+            eventName,
+            postText,
+            imageUrl,
+            postImageUrl,
+            logoUrl ,
+            referenceHTML,
+            titleFont,
+            textFont,
+            primaryColor,
+            secondaryColor,
+        } = JSON.parse(data);
     
     // --- 1. Image Formatting (Unchanged, assumed correct) ---
     let reference = null;
@@ -202,8 +213,10 @@ function correctHTML(html){
        body,
        html{
          padding: 0!important;
+         width: 1080px;
+         height: 1350px;
        }
-   </style>`;
+      </style>`;
 
    return html;
 }
