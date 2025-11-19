@@ -23,17 +23,9 @@ export async function getPostHTML(data) {
  * NON-STREAMING (unary) endpoint.
  */
 async function getAiAnalysis(data) {
-    const { eventDate,
-            eventName,
-            postText,
-            imageUrl,
-            postImageUrl,
-            logoUrl ,
-            referenceHTML,
-            titleFont,
-            textFont,
-            primaryColor,
-            secondaryColor,
+    let { 
+          imageUrl,
+          postImageUrl,
         } = JSON.parse(data);
     
     // --- 1. Image Formatting (Unchanged, assumed correct) ---
@@ -60,11 +52,6 @@ async function getAiAnalysis(data) {
     }
 
     // --- 2. Prompt Generation (Unchanged, assumed correct) ---
-    // NOTE: There is a recursive call in the original code.
-    // The original code has: const prompt = getPostHTML(postPromptData);
-    // This is likely a bug and should be:
-    // const prompt = getPromptPostHTML(postPromptData);
-    // This solution assumes the user intended to call the prompt generator.
     let postPromptData = JSON.parse(data);
     const prompt = getPromptPostHTML(postPromptData); // Corrected function call
     
@@ -78,15 +65,9 @@ async function getAiAnalysis(data) {
     // --- 3. CRITICAL CHANGES: API Configuration ---
 
     // CHANGE 2: Model Selection
-    // 'gemini-2.5-flash-image' is for IMAGE GENERATION (outputting images).
-    // 'gemini-2.5-pro' or 'gemini-2.5-flash' are for multimodal INPUT
-    // (text + images) and text OUTPUT. 'gemini-2.5-pro' is used here
-    // to match the original Bash script's intent.
     const model = 'gemini-2.5-pro';
 
     // CHANGE 1: API Endpoint
-    // Switched from ':streamGenerateContent' to ':generateContent'.
-    // This requests a single, non-streaming, JSON response.
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     
     // CHANGE 4: Optimized generationConfig

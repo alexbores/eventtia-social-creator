@@ -506,7 +506,7 @@ GENERATE_IMAGE.
 
 export function getPromptPostHTML(data) {
 
-    const {eventDate, 
+    let {eventDate, 
            eventName,
            postText,
            postImageUrl,
