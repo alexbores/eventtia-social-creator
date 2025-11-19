@@ -488,7 +488,7 @@ This image will be used as a background for a social media post, adhering strict
   <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
   <ASPECT_RATIO>The final image aspect ratio MUST be **4:5**. No other ratio.</ASPECT_RATIO>
   <ORIGINALITY_CONSTRAINT>The reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.</ORIGINALITY_CONSTRAINT>
-  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., ```json```) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
+  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
 </STRICT_OUTPUT_RULES>
 
 <INPUT_DATA>
