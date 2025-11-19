@@ -81,9 +81,10 @@ async function getAiAnalysisIdentity(html,imageUrl) {
           type: "OBJECT",
           properties: {
             title_font: { type: "STRING", description: "Heading font family" },
-            text_font: { type: "STRING", description: "Body font family" }
+            text_font: { type: "STRING", description: "Body font family" },
+            title_style: { type: "STRING", description: "Heading css styles" },
           },
-          required: ["title_font", "text_font"]
+          required: ["title_font", "text_font", "title_style"]
         }
       },
       required: ["colors", "fonts"]

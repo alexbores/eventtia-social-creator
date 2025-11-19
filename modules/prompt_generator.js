@@ -391,8 +391,9 @@ Your task is to reverse-engineer the design system from the provided <INPUT_DATA
 
 **FONTS:**
 * **Title Font:** The \`font-family\` used for \`<h1>\`, \`<h2>\`, or hero typography. Clean the string (remove 'sans-serif', etc.) to get the font name.
+* *Title style:* The css styles used for \`<h1>\`, \`<h2>\`, or hero, get main colors, shadows if any but disregard font-size and letter-spacing.
 * **Text Font:** The \`font-family\` used for \`<p>\`, \`<body>\`, or \`<span>\`.
-* *Note:* If the font is generic (e.g., "system-ui"), identify the closest Google Font style (e.g., "Inter" or "Roboto").
+* *Note:* If the font is generic (e.g., "system-ui"), identify the closest Google Font style.
 </EXTRACTION_LOGIC>
 
 <JSON_OUTPUT_SCHEMA>
@@ -403,6 +404,7 @@ Your task is to reverse-engineer the design system from the provided <INPUT_DATA
   },
   "fonts": {
     "title_font": "string (Font Name)",
+    "title_style": "string (CSS rules)",
     "text_font": "string (Font Name)"
   }
 }
@@ -514,6 +516,7 @@ export function getPromptPostHTML(data) {
            textFont,
            primaryColor,
            secondaryColor,
+           titleStyle,
         } = data;
 
     const referencePrompt = "";
@@ -528,7 +531,7 @@ export function getPromptPostHTML(data) {
 
     const prompt = `
 <SYSTEM_ROLE>
-You are an expert front-end developer and very bold creative digital social media designer.
+You are an expert front-end developer and Awwwards designer winner and very bold creative digital social media designer.
 Your task is to generate a single HTML file.
 </SYSTEM_ROLE>
 
@@ -556,7 +559,7 @@ Your task is to generate a single HTML file.
     * CSS: \`background-position: center;\`
     * Include the image element in a creative way if possible, the image is not informational.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
-    * \`<h1>\`: Large, primary title, use exact font: \`${titleFont}\`.
+    * \`<h1>\`: Large, primary title, use exact font: \`${titleFont}\` and take into account this styles \`${titleStyle}\`.
     * \`<p>\`: medium, complement text, use exact font: \`${textFont}\`.
     * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
     * **Event Date Data:** ${eventDate}

@@ -71,6 +71,12 @@ async function getAiAnalysis(data) {
         postText,
         postImageUrl,
         logoUrl,
+        referenceHTML,
+        titleFont,
+        textFont,
+        primaryColor,
+        secondaryColor,
+        titleStyle,
     };
     const prompt = getPromptPostHTML(postPromptData); // Corrected function call
     
