@@ -512,7 +512,7 @@ export function getPromptPostHTML(data) {
            titleStyle,
         } = data;
 
-    const referencePrompt = "";
+    let referencePrompt = "";
     
     if(referenceHTML != null){
         referencePrompt = `
