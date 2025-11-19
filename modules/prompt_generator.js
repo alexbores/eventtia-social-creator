@@ -433,35 +433,67 @@ export function getPromptImageNew() {
     const prompt = `
 <SYSTEM_ROLE>
 You are an advanced image generation service.
-Your task is to create a compelling background image.
-This image will be used as a background for a social media post.
+Your task is to create a compelling, brand-aligned background image.
+This image will be used as a background for a social media post, adhering strictly to a provided style reference.
 </SYSTEM_ROLE>
 
 <IMAGE_GENERATION_TASK>
-1.  **INPUT_ANALYSIS:**
-    * **PRIMARY:** Analyze <INPUT_IMAGE: style-reference-screenshot> for aesthetic elements:
-        * <ELEMENT: color_palette> (primary, secondary)
-        * <ELEMENT: mood_tone> (e.g., professional, energetic, minimalist, vibrant)
-2.  **COMPOSITION_STRATEGY:**
-    * **MANDATORY:** Create a **brand new, original composition**.
-    * **MANDATORY:** Do NOT replicate layout from the <INPUT_IMAGE: style-reference-screenshot>.
-    * **MANDATORY:** This is a **style-transfer-ONLY** task, NOT an image-editing task.
-3.  **OUTPUT_IMAGE_CONTENT:**
-    * **MAIN_FOCUS:** Dynamic, engaging, and visually appealing composition.
-    * **STYLE_ADHERENCE:** All visual elements (colors, abstract shapes, textures, lighting) MUST strictly adhere to the <ELEMENT: color_palette> and <ELEMENT: mood_tone> identified from the <INPUT_IMAGE: style-reference-screenshot>.
-    * **NO_TEXT:** Absolutely NO text, NO words, NO numbers, NO dates, NOR typography.
-    * **NO_LOGOS_ICONS:** Absolutely NO logos, NO icons, NOR brand marks.
+  <INPUT_ANALYSIS>
+    <PRIMARY_REFERENCE>
+      <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>
+      <INSTRUCTION>Analyze the provided screenshot for its aesthetic DNA.</INSTRUCTION>
+      <EXTRACT_ELEMENTS>
+        <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>
+          <SUB_ELEMENTS>
+            <COLOR_SCHEME>primary, secondary, accent colors</COLOR_SCHEME>
+            <COLOR_QUALITIES>vibrancy, saturation, luminosity</COLOR_QUALITIES>
+          </SUB_ELEMENTS>
+        <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>
+          <SUB_ELEMENTS>
+            <TONE_DESCRIPTORS>e.g., professional, energetic, minimalist, vibrant, gritty, elegant, futuristic, organic</TONE_DESCRIPTORS>
+          </SUB_ELEMENTS>
+        <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE>
+          <SUB_ELEMENTS>
+            <MOTIF_EXAMPLES>e.g., blurred gradients, sharp geometric shapes, organic curves, distressed textures, digital artifacts, clean lines, layered elements, glowing effects, metallic sheen</MOTIF_EXAMPLES>
+          </SUB_ELEMENTS>
+      </EXTRACT_ELEMENTS>
+    </PRIMARY_REFERENCE>
+  </INPUT_ANALYSIS>
+
+  <COMPOSITION_STRATEGY>
+    <MANDATORY_ACTION>Create a **brand new, original, abstract digital composition**.</MANDATORY_ACTION>
+    <MANDATORY_CONSTRAINT>DO NOT replicate the layout, specific objects, or photographic elements from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
+    <MANDATORY_FUNCTION>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_FUNCTION>
+  </COMPOSITION_STRATEGY>
+
+  <OUTPUT_IMAGE_CONTENT>
+    <MAIN_FOCUS>A dynamic, engaging, and visually appealing **abstract background image** suitable for brand use.</MAIN_FOCUS>
+    <STYLE_ADHERENCE>All visual elements (colors, abstract shapes, textures, lighting, composition flow) MUST strictly adhere to the <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>, <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>, and <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE> identified from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</STYLE_ADHERENCE>
+    <NEGATIVE_CONSTRAINTS>
+      <PROHIBIT_ELEMENT>text</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>words</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>numbers</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>dates</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>typography</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>logos</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>icons</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>brand marks</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>human figures</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>recognizable objects</PROHIBIT_ELEMENT>
+    </NEGATIVE_CONSTRAINTS>
+  </OUTPUT_IMAGE_CONTENT>
 </IMAGE_GENERATION_TASK>
 
 <STRICT_OUTPUT_RULES>
-1.  **OUTPUT_FORMAT:** Generate a single image.
-2.  **ASPECT_RATIO:** The final image aspect ratio MUST be **4:5**. No other ratio.
-3.  **ORIGINALITY_CONSTRAINT:** Reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.
-4.  **NO_TEXT_OUTPUT:** DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`) before or after the image generation.
+  <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
+  <ASPECT_RATIO>The final image aspect ratio MUST be **4:5**. No other ratio.</ASPECT_RATIO>
+  <ORIGINALITY_CONSTRAINT>The reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.</ORIGINALITY_CONSTRAINT>
+  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., ```json```) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
 </STRICT_OUTPUT_RULES>
 
 <INPUT_DATA>
-* Style_Reference_Screenshot: [Image provided via API input]
+  <FIELD_NAME>Style_Reference_Screenshot</FIELD_NAME>
+  <FIELD_VALUE>[Image provided via API input]</FIELD_VALUE>
 </INPUT_DATA>
 
 GENERATE_IMAGE.
