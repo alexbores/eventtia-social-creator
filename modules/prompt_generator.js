@@ -43,7 +43,7 @@ Each object in the array **MUST** contain these seven keys:
 4.  **\`content\`** (string): The post body, 2-5 sentences long. Use an enthusiastic and professional tone, include links to register to the event and the event data.
 6.  **\`hashtags\`** (array of strings): An array of 3-5 relevant hashtags (e.g., \`["#EventName", "#Topic", "#City"]\`).
 7.  **\`type\`** (string): The post category. Must be one of: \`announcement\`, \`speaker\`, \`activity\`, \`venue\`, \`deadline\`, \`reminder\`, \`urgency\`, \`event_day\`.
-8.  **\`phrases\`** (string): A collection of 6 sentences resuming all the content and title to use in small spaces.
+8.  **\`phrase\`** (string): A powerfull sentence resuming all the content and title to use in social media, NO hashtags.
 
 ---
 ### ### Example Output Format
@@ -57,7 +57,7 @@ Each object in the array **MUST** contain these seven keys:
     "content": "[Engaging 2-5 sentence description of the event, what it is, and for whom.]",
     "hashtags": ["[#EventNameYYYY]", "#[PrimaryTopic]", "#[City]"],
     "type": "announcement",
-    "smallPhrases": "[catchy small relevant phrases]",
+    "phrase": "[sentence for social]",
   },
   {
     "id": 2,
@@ -66,7 +66,7 @@ Each object in the array **MUST** contain these seven keys:
     "content": "[Exciting 2-5 sentence description of a specific event feature, like a speaker or activity, and why it's a must-see.]",
     "hashtags": ["[#SpecificTopic]", "#[FeatureType]", "#[EventName]"],
     "type": "speaker",
-    "smallPhrases": "[catchy small relevant phrases]",
+    "phrase": "[sentence for social]",
   }
 ]
 \\\`\\\`\\\`
@@ -450,9 +450,9 @@ This image will be used as a background for a social media HTML post.
 3.  **OUTPUT_IMAGE_CONTENT:**
     * **MAIN_FOCUS:** Dynamic, engaging, and visually appealing abstract or semi-abstract composition.
     * **STYLE_ADHERENCE:** All visual elements (colors, abstract shapes, textures, lighting) MUST strictly adhere to the <ELEMENT: color_palette> and <ELEMENT: mood_tone> identified from the <INPUT_IMAGE: style-reference-screenshot>.
-    * **NO_TEXT:** Absolutely NO text, words, or typography.
-    * **NO_LOGOS_ICONS:** Absolutely NO logos, icons, or brand marks.
-    * **REUSABILITY:** Design the background to be versatile enough to accommodate various text overlays later.
+    * **NO_TEXT:** Absolutely NO text, NO words, NO numbers, NO dates, NOR typography.
+    * **NO_LOGOS_ICONS:** Absolutely NO logos, NO icons, NOR brand marks.
+    * **REUSABILITY:** Design the background to be versatile enough to accommodate various overlays later.
 </IMAGE_GENERATION_TASK>
 
 <STRICT_OUTPUT_RULES>
@@ -475,8 +475,17 @@ GENERATE_IMAGE.
 
 export function getPromptPostHTML(data) {
 
-    const {eventDate, eventName, postText, postImageUrl, logoUrl} = data;
+    const {eventDate, eventName, postText, postImageUrl, logoUrl, referenceHTML} = data;
 
+    const referencePrompt = "";
+    
+    if(referenceHTML != null){
+        referencePrompt = `
+          7.  **REFERENCE_HTML:
+              * Use this code as a reference to create the html, it should be similar on style and harmonius but not exactly the same:
+              * reference HTML: ${referenceHTML}
+        `;
+    }
 
     const prompt = `
 <SYSTEM_ROLE>
@@ -500,11 +509,12 @@ Your task is to generate a single HTML file.
 
 <DESIGN_REQUIREMENTS>
 1.  **CONTAINER:** A single wrapper element with a strict 4:5 aspect ratio (e.g., \`width: 1080px; height: 1350px;\`). This is a critical requirement.
-2.  **BACKGROUND_IMAGE:**
+2.  **MAIN_IMAGE:**
     * Use exact URL: \`${postImageUrl}\` and no variables.
     * CSS: \`background-image: url('${postImageUrl}');\`
     * CSS: \`background-size: cover;\`
     * CSS: \`background-position: center;\`
+    * Include the image element in a creative way if possible, the image is not informational.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
     * \`<h1>\`: Large, primary title.
     * \`<p>\`: medium, complement text.
@@ -524,6 +534,8 @@ Your task is to generate a single HTML file.
     * All main text must be horizontal oriented an very visible.
     * Use Flexbox css.
     * All text must not overflow the container.
+${referencePrompt}
+
 </DESIGN_REQUIREMENTS>
 
 <STRICT_OUTPUT_RULES>
@@ -547,3 +559,5 @@ GENERATE.
 
     return prompt;
 }
+
+
