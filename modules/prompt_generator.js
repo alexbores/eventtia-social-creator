@@ -451,25 +451,18 @@ This image will be used as a background for a social media post, adhering strict
             <COLOR_QUALITIES>vibrancy, saturation, luminosity</COLOR_QUALITIES>
           </SUB_ELEMENTS>
         <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>
-          <SUB_ELEMENTS>
-            <TONE_DESCRIPTORS>e.g., professional, energetic, minimalist, vibrant, gritty, elegant, futuristic, organic</TONE_DESCRIPTORS>
-          </SUB_ELEMENTS>
-        <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE>
-          <SUB_ELEMENTS>
-            <MOTIF_EXAMPLES>e.g., blurred gradients, sharp geometric shapes, organic curves, distressed textures, digital artifacts, clean lines, layered elements, glowing effects, metallic sheen</MOTIF_EXAMPLES>
-          </SUB_ELEMENTS>
       </EXTRACT_ELEMENTS>
     </PRIMARY_REFERENCE>
   </INPUT_ANALYSIS>
 
   <COMPOSITION_STRATEGY>
     <MANDATORY_ACTION>Create a **brand new, original, abstract digital composition**.</MANDATORY_ACTION>
-    <MANDATORY_CONSTRAINT>DO NOT replicate the layout, specific objects, or photographic elements from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
+    <MANDATORY_CONSTRAINT>DO NOT replicate the layout or text objects from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
     <MANDATORY_FUNCTION>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_FUNCTION>
   </COMPOSITION_STRATEGY>
 
   <OUTPUT_IMAGE_CONTENT>
-    <MAIN_FOCUS>A dynamic, engaging, and visually appealing **abstract background image** suitable for brand use.</MAIN_FOCUS>
+    <MAIN_FOCUS>A dynamic, engaging, and visually appealing **background image** suitable for brand use.</MAIN_FOCUS>
     <STYLE_ADHERENCE>All visual elements (colors, abstract shapes, textures, lighting, composition flow) MUST strictly adhere to the <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>, <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>, and <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE> identified from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</STYLE_ADHERENCE>
     <NEGATIVE_CONSTRAINTS>
       <PROHIBIT_ELEMENT>text</PROHIBIT_ELEMENT>
