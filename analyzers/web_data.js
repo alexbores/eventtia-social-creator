@@ -29,6 +29,12 @@ export async function getWebData(page, config) {
 
         console.log(`Viewport correctly setted`);
         
+        // --- CRITICAL ADDITION: Force scroll to top ---
+        await page.evaluate(() => {
+            window.scrollTo(0, 0);
+        });
+        console.log(`Page forcefully scrolled to top.`);
+        
 
         const HARD_TIMEOUT = 20000; // 20 seconds maximum for the full attempt
 

@@ -434,7 +434,7 @@ export function getPromptImageNew() {
 <SYSTEM_ROLE>
 You are an advanced image generation service.
 Your task is to create a compelling background image.
-This image will be used as a background for a social media HTML post.
+This image will be used as a background for a social media post.
 </SYSTEM_ROLE>
 
 <IMAGE_GENERATION_TASK>
@@ -451,7 +451,6 @@ This image will be used as a background for a social media HTML post.
     * **STYLE_ADHERENCE:** All visual elements (colors, abstract shapes, textures, lighting) MUST strictly adhere to the <ELEMENT: color_palette> and <ELEMENT: mood_tone> identified from the <INPUT_IMAGE: style-reference-screenshot>.
     * **NO_TEXT:** Absolutely NO text, NO words, NO numbers, NO dates, NOR typography.
     * **NO_LOGOS_ICONS:** Absolutely NO logos, NO icons, NOR brand marks.
-    * **REUSABILITY:** Design the background to accommodate various overlays later.
 </IMAGE_GENERATION_TASK>
 
 <STRICT_OUTPUT_RULES>
@@ -531,10 +530,9 @@ Your task is to generate a single HTML file.
     * **Event Date Data:** ${eventDate}
     * **Event Title Data:** ${eventName}
     * **Event Complement Data:** ${postText} 
-    * All text must not overflow the container.
+    * All text must NOT overflow the container of 1350px.
 4.  **FONTS:**
-    * Use closest Google Fonts from the "3. TEXT_CONTENT" if fonts provided are not from google
-    * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\`.
+    * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\` from google.
 5.  **LOGO_IMAGE: (MUST INCLUDE): **
     * Use exact URL: \`${logoUrl}\` in \`<img>\` element.
 6.  **OTHER_RULES:

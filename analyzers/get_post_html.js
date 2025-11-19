@@ -12,7 +12,7 @@ export async function getPostHTML(data) {
     let html = await getAiAnalysis(data);
 
 
-    html = correctHTML(html);
+    html = correctHTML(html, data);
     
 
     return { html };
@@ -209,12 +209,23 @@ async function getAiAnalysis(data) {
 
 
 function correctHTML(html){
+   const { 
+            titleFont,
+            textFont,
+        } = JSON.parse(data);
+
    html += `<style>
        body,
        html{
          padding: 0!important;
          width: 1080px;
          height: 1350px;
+       }
+       h1{
+         font-family: '${titleFont}', sans-serif;
+       }
+       p{
+          font-family: '${textFont}', sans-serif;
        }
       </style>`;
 
