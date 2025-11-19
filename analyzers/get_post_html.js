@@ -208,7 +208,7 @@ async function getAiAnalysis(data) {
 
 
 
-function correctHTML(html){
+function correctHTML(html,data){
    const { 
             titleFont,
             textFont,
