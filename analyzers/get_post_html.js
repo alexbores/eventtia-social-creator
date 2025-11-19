@@ -65,19 +65,7 @@ async function getAiAnalysis(data) {
     // This is likely a bug and should be:
     // const prompt = getPromptPostHTML(postPromptData);
     // This solution assumes the user intended to call the prompt generator.
-    let postPromptData = {
-        eventDate,
-        eventName,
-        postText,
-        postImageUrl,
-        logoUrl,
-        referenceHTML,
-        titleFont,
-        textFont,
-        primaryColor,
-        secondaryColor,
-        titleStyle,
-    };
+    let postPromptData = JSON.parse(data);
     const prompt = getPromptPostHTML(postPromptData); // Corrected function call
     
     console.log('AI analysis started');
