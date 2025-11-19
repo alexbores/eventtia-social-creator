@@ -433,7 +433,7 @@ export function getPromptImageNew() {
     const prompt = `
 <SYSTEM_ROLE>
 You are an advanced image generation service.
-Your task is to create a versatile, reusable, and compelling background image.
+Your task is to create a compelling background image.
 This image will be used as a background for a social media HTML post.
 </SYSTEM_ROLE>
 
@@ -445,14 +445,14 @@ This image will be used as a background for a social media HTML post.
     * **SECONDARY:** Analyze <INPUT_TEXT: event_content> for contextual hints, but DO NOT include directly.
 2.  **COMPOSITION_STRATEGY:**
     * **MANDATORY:** Create a **brand new, original composition**.
-    * **MANDATORY:** Completely disregard and do NOT replicate layout, subject matter, or objects from the <INPUT_IMAGE: style-reference-screenshot>.
+    * **MANDATORY:** Do NOT replicate layout from the <INPUT_IMAGE: style-reference-screenshot>.
     * **MANDATORY:** This is a **style-transfer-ONLY** task, NOT an image-editing task.
 3.  **OUTPUT_IMAGE_CONTENT:**
-    * **MAIN_FOCUS:** Dynamic, engaging, and visually appealing abstract or semi-abstract composition.
+    * **MAIN_FOCUS:** Dynamic, engaging, and visually appealing composition.
     * **STYLE_ADHERENCE:** All visual elements (colors, abstract shapes, textures, lighting) MUST strictly adhere to the <ELEMENT: color_palette> and <ELEMENT: mood_tone> identified from the <INPUT_IMAGE: style-reference-screenshot>.
     * **NO_TEXT:** Absolutely NO text, NO words, NO numbers, NO dates, NOR typography.
     * **NO_LOGOS_ICONS:** Absolutely NO logos, NO icons, NOR brand marks.
-    * **REUSABILITY:** Design the background to be versatile enough to accommodate various overlays later.
+    * **REUSABILITY:** Design the background to accommodate various overlays later.
 </IMAGE_GENERATION_TASK>
 
 <STRICT_OUTPUT_RULES>
