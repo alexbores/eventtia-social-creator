@@ -629,6 +629,7 @@ This image will be used as a background, adhering strictly to a provided style r
   <COMPOSITION_STRATEGY>
     <MANDATORY_ACTION>Create a **brand new, original, abstract digital composition**.</MANDATORY_ACTION>
     <MANDATORY_CONSTRAINT>DO NOT replicate the layout or text objects from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
+    MANDATORY_CONSTRAINT>DO NOT add text, numbers or icons of any type to the final image.</MANDATORY_CONSTRAINT>
     <MANDATORY_FUNCTION>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_FUNCTION>
   </COMPOSITION_STRATEGY>
 
@@ -645,7 +646,6 @@ This image will be used as a background, adhering strictly to a provided style r
       <PROHIBIT_ELEMENT>icons</PROHIBIT_ELEMENT>
       <PROHIBIT_ELEMENT>brand marks</PROHIBIT_ELEMENT>
       <PROHIBIT_ELEMENT>human figures</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>recognizable objects</PROHIBIT_ELEMENT>
     </NEGATIVE_CONSTRAINTS>
   </OUTPUT_IMAGE_CONTENT>
 </IMAGE_GENERATION_TASK>

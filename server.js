@@ -23,6 +23,7 @@ import { getPostHTML } from './analyzers/get_post_html.js';
 
 
 import { getBackgroundImage } from './analyzers/get_background_image.js';
+import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
 import { fileURLToPath } from 'url';
 
@@ -122,6 +123,38 @@ app.post('/api/analyze', async (req, res) => {
 
             console.log('Gettign the web data.');
             response = await getWebData(page, config);
+
+            
+          break;
+      case 'web_screenshot':
+            // --- Step 1: Puppeteer block ---
+            console.log(`Launching browser to get web data from: ${url}`);
+            browser = await puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+                ignoreHTTPSErrors: true,
+            });
+            console.log('Browser launched successfully.');
+
+            const page = await browser.newPage();
+
+            // Enable request interception
+            await page.setRequestInterception(true);
+            
+            // Listen for each request and decide whether to continue or abort it
+            page.on('request', (req) => {
+                const resourceType = req.resourceType();
+                    req.continue();
+            });
+
+            console.log(`going to the url`);
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 2000000 });
+            // await autoScroll(page);
+
+            console.log('Gettign the web data.');
+            response = await getWebScreenshot(page, config);
 
             
           break;
