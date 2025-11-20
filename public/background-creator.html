@@ -24,7 +24,7 @@
             <p class="url-text" event-url></p>
 
             <div class="options">
-                <button download-image class="button">
+                <button download-image class="button button-secondary">
                   <span>Download Image</span>
                 </button>
                 <button analyze-new-event class="button button-glared">
@@ -124,7 +124,10 @@
                 analyzeUrlForm: document.querySelector('#event-url-form'),
                 urlInput: document.querySelector('#event-url-input'),
                 analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
+                
+                analyzeNewBtn: document.querySelector('[analyze-new-event]');
 
+                closeUrlScreen: document.querySelector('[close-url-screen]'),
 
 
                 fetchingScreen: document.querySelector('#fetching-screen'),
@@ -155,6 +158,14 @@
 
             this.elements.downloadImgEl.addEventListener('click',(e)=>{
                this.downloadCurrentImage();
+            });
+
+
+            this.elements.closeUrlScreen.addEventListener('click',()=>{
+                this.elements.urlScreen.classList.remove('modal');
+            });
+            this.elements.newEventBtn.addEventListener('click',()=>{
+                 this.analyzeNewEvent();
             });
         },
 
@@ -279,6 +290,14 @@
 
 
        
+
+        analyzeNewEvent(){
+            // this.showScreen('url-screen');
+            this.elements.urlScreen.classList.add('modal');
+
+            const screen = document.querySelector('#fetching-screen');
+            screen.classList.remove('end-loading');
+        },
 
         
         async getBackgroundImage(){
@@ -479,7 +498,7 @@
                    src="${imageUrl}" >
             `;
 
-            this.elements.eventUrlEl.innerHTML = url;
+            this.elements.eventUrlEl.innerHTML = `Url: <i>${url}</i>`;
         },
 
 

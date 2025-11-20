@@ -123,11 +123,6 @@ p,h1,h2,h3,li{
   border: 1.7px solid #eeeeee;
   background-color: #eeeeee;
   color: var(--color-black);
-  height: 25px;
-  padding: 0 5px;
-  font-size: 9px;
-  font-weight: 600;
-  gap: 5px;
 }
 .button.button-secondary:hover{
   background-color: var(--color-gray-white);
@@ -190,6 +185,10 @@ p,h1,h2,h3,li{
   color: var(--color-black);
   font-size: 20px;
   font-weight: 900;
+}
+#nav .url-text{
+  font-size: 14px;
+  font-weight: 600;
 }
 #nav .options{
   display: flex;
