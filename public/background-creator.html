@@ -302,7 +302,7 @@
             console.log("Image Received:", response);
         
 
-            let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
+            let imageSaved = await this.saveImageByData(response.backgroundImage, this.getUUID());
 
             // Update state with the new data
             this.state.currentEvent.background = imageSaved.url;       
