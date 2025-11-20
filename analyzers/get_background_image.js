@@ -47,7 +47,7 @@ async function getAiImage(data) {
     
 
 
-    let prompt = getPromptImageNew();
+    let prompt = getPromptBackgroundImage();
 
     // --- 2. Construct the Gemini API Payload ---
     const model = 'gemini-2.5-flash-image';
@@ -58,7 +58,7 @@ async function getAiImage(data) {
           responseModalities: ["IMAGE"],
           temperature: 0.8,
           imageConfig: {
-            aspectRatio: "4:5"
+            aspectRatio: "16:9"
           },
         },
         contents: [{

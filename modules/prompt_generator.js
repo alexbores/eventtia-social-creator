@@ -607,7 +607,7 @@ export function getPromptBackgroundImage() {
 <SYSTEM_ROLE>
 You are an advanced image generation service.
 Your task is to create a compelling, brand-aligned background image.
-This image will be used as a background for a social media post, adhering strictly to a provided style reference.
+This image will be used as a background, adhering strictly to a provided style reference.
 </SYSTEM_ROLE>
 
 <IMAGE_GENERATION_TASK>
@@ -652,7 +652,7 @@ This image will be used as a background for a social media post, adhering strict
 
 <STRICT_OUTPUT_RULES>
   <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
-  <ASPECT_RATIO>The final image aspect ratio MUST be **4:5**. No other ratio.</ASPECT_RATIO>
+  <ASPECT_RATIO>The final image aspect ratio MUST be **16:9**. No other ratio.</ASPECT_RATIO>
   <ORIGINALITY_CONSTRAINT>The reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.</ORIGINALITY_CONSTRAINT>
   <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
 </STRICT_OUTPUT_RULES>
