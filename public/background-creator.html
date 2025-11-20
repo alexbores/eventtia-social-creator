@@ -234,6 +234,8 @@
             
             console.log(`Fetching data for: ${url}`);
 
+            this.renderBackground();
+
             this.setLoadingProgress(2);
 
 
@@ -255,12 +257,15 @@
 
                 await this.saveScreenshot();
                 
+                this.setLoadingProgress(5);
 
-                this.setLoadingProgress(7);
+                
 
                 // Transition the UI to the results screen
                 const screen = document.querySelector('#fetching-screen');
                 screen.classList.add('end-loading');
+
+                this.setLoadingProgress(7);
 
                 await new Promise(r => setTimeout(r, 500));
 
@@ -497,10 +502,10 @@
            let image = this.state.currentEvent.screenshot;
            
            try{
-              let colors = await getPrimaryColorsFromImage(image);
-              let newData = await createAbstractBlobBackground(colors);
+              let colors = await this.getPrimaryColorsFromImage(image);
+              let newData = await this.createAbstractBlobBackground(colors);
 
-              let url = await saveImageByData(newData,'backgroundBlob');
+              let url = await this.saveImageByData(newData,'backgroundBlob');
 
               this.state.currentEvent.colors = colors;
               this.state.currentEvent.backgroundBlobs = url;
@@ -559,9 +564,9 @@
           let image = this.state.currentEvent.screenshot;
            
           try{
-             let imageData = await applyAggressiveFilter(image, 50);
+             let imageData = await this.applyAggressiveFilter(image, 50);
  
-             let url = await saveImageByData(imageData,'backgroundFiltered');
+             let url = await this.saveImageByData(imageData,'backgroundFiltered');
 
              this.state.currentEvent.backgroundFiltered = url;
           }
