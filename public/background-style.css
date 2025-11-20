@@ -225,13 +225,17 @@ p,h1,h2,h3,li{
 }
 #background-screen .background-content{
 	width: auto;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
 #background-screen .background-content img{
   box-shadow: 0 0 9px 0px #00000014;
   height: calc(100vh - 155px);
-  width: 100%;
+  width: auto;
   object-fit: contain;
-  margin-bottom: 20px;
 }
 
 
