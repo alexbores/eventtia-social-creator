@@ -231,6 +231,7 @@ p,h1,h2,h3,li{
   height: calc(100vh - 155px);
   width: 100%;
   object-fit: contain;
+  margin-bottom: 20px;
 }
 
 
