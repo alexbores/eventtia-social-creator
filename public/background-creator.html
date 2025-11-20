@@ -403,7 +403,19 @@
             this.state.currentEvent.backgroundRefined = imageSaved.url;       
         },
 
+        
+        async checkMissingImages(){
 
+           try{
+                if(!this.state.currentData.backgroundBlobs){
+                  await this.initBackgroundBlob();
+                  this.renderBackground();
+                }
+           }
+           catch(error){
+            console.log(error);
+           }
+        },
  
         getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 3) {
             return new Promise((resolve, reject) => {
@@ -522,12 +534,14 @@
         },
         async initBackgroundBlob(){
            let image = this.state.currentEvent.screenshot;
-           
+           console.log(image);
            try{
               let blob = await this.urlStringToBlob(image);
+              console.log(blob);
               let colors = await this.getPrimaryColorsFromImage(blob);
+              console.log(colors);
               let newData = await this.createAbstractBlobBackground(colors);
-
+              console.log(newData);
               let url = await this.saveImageByData(newData,'backgroundBlob');
 
               this.state.currentEvent.colors = colors;
@@ -890,6 +904,8 @@
            this.showScreen("background-screen");
            this.renderBackground();
            this.renderEvents();
+
+           this.checkMissingImages();
         },
         saveData(key, data) {
             try {
