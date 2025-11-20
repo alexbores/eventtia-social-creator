@@ -601,8 +601,8 @@
                        const offset = i * 2;
                        
                        // Draw blurred image again, slightly offset
-                       ctx.drawImage(canvas, 0, 0, width, height, 
-                                     offset, offset, width - offset, height - offset);
+                       ctx.drawImage(canvas, 0, 0, this.width, this.height, 
+                                     offset, offset, this.width - offset, this.height - offset);
                    }
 
                    // Reset context properties
