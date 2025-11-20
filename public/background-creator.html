@@ -536,13 +536,17 @@
            let image = this.state.currentEvent.screenshot;
            console.log(image);
            try{
-              const response = await fetch(image);
-              if (!response.ok) {
-                  throw new Error(`Failed to fetch image: Status ${response.status}`);
-              }
-              const imageBlob = await response.blob();
+              const response = await this.fetchBinaryApi('/api/analyze', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ url: image, 
+                                         request: 'download_image', 
+                                         webData: image })
+              });
 
-              console.log(imageBlob);
+              console.log(response);
+              
+              const imageBlob = await response.blob();
 
               let colors = await this.getPrimaryColorsFromImage(imageBlob);
               console.log(colors);
