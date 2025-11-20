@@ -422,71 +422,78 @@
         },
  
         getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 5) {
-            return new Promise((resolve, reject) => {
-                // 1. Create temporary Blob URL
-                const blobUrl = URL.createObjectURL(imageBlob);
-                
-                const img = new Image();
-                // Since we are using a blob URL, crossOrigin is typically not needed 
-                // and can even cause issues if the original CORS failed. We'll remove it.
-                // img.crossOrigin = 'Anonymous';
-        
-                img.onload = function() {
-                    // Cleanup the temporary Blob URL immediately after loading the image data
-                    URL.revokeObjectURL(blobUrl); 
-                    
-                    // 2. Setup Canvas
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = this.width;
-                    canvas.height = this.height;
-                    ctx.drawImage(this, 0, 0);
-        
-                    try {
-                        // 3. Get Pixel Data (Rest of the analysis logic is unchanged and         correct)
-                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        const data = imageData.data;
-                        const colorMap = {};
-        
-                        // 4. Sample and Count Frequencies
-                        for (let i = 0; i < data.length; i += 4 * quality) {
-                            const r = data[i];
-                            const g = data[i + 1];
-                            const b = data[i + 2];
-                            const a = data[i + 3];
-        
-                            // Skip mostly transparent pixels (alpha < 128)
-                            if (a < 128) continue;
-        
-                            const rgbKey = `${r},${g},${b}`;
-                            colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
-                        }
-        
-                        // 5. Sort by frequency and 6. Convert to Hex
-                        const sortedColors = Object.entries(colorMap)
-                            .sort(([, countA], [, countB]) => countB - countA)
-                            .slice(0, maxColors);
-        
-                        const hexColors = sortedColors.map(([rgbKey]) => {
-                            const [r, g, b] = rgbKey.split(',').map(Number);
-                            return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice        (1).toUpperCase()}`;
-                        });
-                        
-                        resolve(hexColors);
-        
-                    } catch (e) {
-                        reject(new Error("Failed to process image data on canvas: " + e.message)        );
-                    }
-                };
-        
-                img.onerror = (e) => {
-                    URL.revokeObjectURL(blobUrl); // Cleanup on error too!
-                    reject(new Error("Failed to load image from Blob URL."));
-                };
-        
-                // Assign the Blob URL to the image source
-                img.src = blobUrl;
-            });
+           return new Promise((resolve, reject) => {
+               const blobUrl = URL.createObjectURL(imageBlob);
+               const img = new Image();
+               
+               // Define the quantization bucket size (e.g., 51. Colors range from 0 to 255. 
+               // 256 / 51 = ~5 distinct buckets per channel).
+               const QUANTIZATION_BUCKETS = 51; 
+
+               img.onload = function() {
+                   URL.revokeObjectURL(blobUrl); 
+                   
+                   const canvas = document.createElement('canvas');
+                   const ctx = canvas.getContext('2d');
+                   canvas.width = this.width;
+                   canvas.height = this.height;
+                   ctx.drawImage(this, 0, 0);
+
+                   try {
+                       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                       const data = imageData.data;
+                       const colorMap = {};
+
+                       // 4. Sample and Count Frequencies (with Quantization)
+                       for (let i = 0; i < data.length; i += 4 * quality) {
+                           let r = data[i];
+                           let g = data[i + 1];
+                           let b = data[i + 2];
+                           const a = data[i + 3];
+
+                           if (a < 128) continue;
+                           
+                           // === CRITICAL FIX: QUANTIZATION ===
+                           // Round the R, G, B values to the nearest bucket interval.
+                           r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           
+                           // Clamp values to 255 if rounding pushed them over
+                           r = Math.min(255, r);
+                           g = Math.min(255, g);
+                           b = Math.min(255, b);
+                           // === END QUANTIZATION ===
+                           
+                           const rgbKey = `${r},${g},${b}`;
+                           colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
+                       }
+
+                       // 5. Sort by frequency and 6. Convert to Hex
+                       const sortedColors = Object.entries(colorMap)
+                           .sort(([, countA], [, countB]) => countB - countA)
+                           .slice(0, maxColors);
+
+                       const hexColors = sortedColors.map(([rgbKey]) => {
+                           const [r, g, b] = rgbKey.split(',').map(Number);
+                           // The conversion still uses the rounded RGB values, which is the key.
+                           return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+                       });
+                       
+                       resolve(hexColors);
+                       
+                   } catch (e) {
+                       reject(new Error("Failed to process image data on canvas: " + e.message));
+                   }
+               };
+
+               img.onerror = (e) => {
+                   URL.revokeObjectURL(blobUrl);
+                   reject(new Error("Failed to load image from Blob URL."));
+               };
+               
+               img.src = blobUrl;
+           });
         },
         createAbstractBlobBackground(colorArray, width = 1344, height = 768, blobCount = 16) {
            if (!colorArray || colorArray.length === 0) {
