@@ -667,3 +667,79 @@ GENERATE_IMAGE.
 
     return prompt;
 }
+
+
+export function getPromptRefineBackgroundImage() {
+
+    const prompt = `
+<SYSTEM_ROLE>
+You are an expert image editing and in-painting service.
+Your task is to take a provided reference image and meticulously remove all textual and symbolic elements, while preserving the original background and overall aesthetic.
+</SYSTEM_ROLE>
+
+<IMAGE_EDITING_TASK>
+  <INPUT_ANALYSIS>
+    <PRIMARY_REFERENCE>
+      <INPUT_IMAGE_TYPE>Image_To_Clean</INPUT_IMAGE_TYPE>
+      <INSTRUCTION>Analyze the provided image for all instances of text, numbers, letters, and icons/logos.</INSTRUCTION>
+      <IDENTIFY_ELEMENTS>
+        <ELEMENT_TYPE>textual_content</ELEMENT_TYPE>
+        <SUB_ELEMENTS>
+          <TEXT_TYPES>all fonts, words, phrases, sentences, paragraphs</TEXT_TYPES>
+          <NUMBER_TYPES>all digits, numerical sequences, dates</NUMBER_TYPES>
+          <LETTER_TYPES>all individual letters, characters</LETTER_TYPES>
+        </SUB_ELEMENTS>
+        <ELEMENT_TYPE>symbolic_content</ELEMENT_TYPE>
+        <SUB_ELEMENTS>
+          <ICON_TYPES>all graphical icons, UI elements that convey meaning</ICON_TYPES>
+          <LOGO_TYPES>all brand logos, brand marks, watermarks</LOGO_TYPES>
+        </SUB_ELEMENTS>
+      </IDENTIFY_ELEMENTS>
+    </PRIMARY_REFERENCE>
+  </INPUT_ANALYSIS>
+
+  <EDITING_STRATEGY>
+    <MANDATORY_ACTION>Perform **in-painting / content-aware fill** to remove identified elements.</MANDATORY_ACTION>
+    <MANDATORY_CONSTRAINT>The goal is to make the removed areas seamlessly blend with the surrounding background.</MANDATORY_CONSTRAINT>
+    <MANDATORY_CONSTRAINT>Maintain the original image's resolution, aspect ratio, color palette, textures, and overall mood.</MANDATORY_CONSTRAINT>
+    <MANDATORY_CONSTRAINT>DO NOT introduce new elements, objects, or significant stylistic changes.</MANDATORY_CONSTRAINT>
+    <CONDITIONAL_ACTION>If no textual or symbolic content is found, return the original image with **zero or minimal imperceptible modifications**.</CONDITIONAL_ACTION>
+  </EDITING_STRATEGY>
+
+  <OUTPUT_IMAGE_CONTENT>
+    <MAIN_FOCUS>The original image, but with all text, numbers, letters, icons, and logos expertly removed.</MAIN_FOCUS>
+    <VISUAL_PRIORITY>Prioritize the integrity and continuity of the original background and visual style.</VISUAL_PRIORITY>
+    <NEGATIVE_CONSTRAINTS>
+      <PROHIBIT_ELEMENT>new text</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new words</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new numbers</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new dates</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new typography</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new logos</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new icons</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new brand marks</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>new human figures (unless part of the original background and untouched)</PROHIBIT_ELEMENT>
+      <PROHIBIT_CHANGE>alteration of original image's aspect ratio</PROHIBIT_CHANGE>
+      <PROHIBIT_CHANGE>stylistic transformation</PROHIBIT_CHANGE>
+      <PROHIBIT_CHANGE>layout modification</PROHIBIT_CHANGE>
+    </NEGATIVE_CONSTRAINTS>
+  </OUTPUT_IMAGE_CONTENT>
+</IMAGE_EDITING_TASK>
+
+<STRICT_OUTPUT_RULES>
+  <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
+  <ASPECT_RATIO>The final image MUST retain the **original aspect ratio** of the input image.</ASPECT_RATIO>
+  <ORIGINALITY_CONSTRAINT>The output image IS a direct modification of the input reference image.</ORIGINALITY_CONSTRAINT>
+  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+  <FIELD_NAME>Image_To_Clean</FIELD_NAME>
+  <FIELD_VALUE>[Image provided via API input]</FIELD_VALUE>
+</INPUT_DATA>
+
+GENERATE_IMAGE.
+`;
+
+    return prompt;
+}

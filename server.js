@@ -23,6 +23,7 @@ import { getPostHTML } from './analyzers/get_post_html.js';
 
 
 import { getBackgroundImage } from './analyzers/get_background_image.js';
+import { getRefineBackgroundImage } from './analyzers/get_refine_background_image.js';
 import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
 import { fileURLToPath } from 'url';
@@ -126,7 +127,7 @@ app.post('/api/analyze', async (req, res) => {
 
             
           break;
-      case 'web_screenshot':
+          case 'web_screenshot':
             // --- Step 1: Puppeteer block ---
             console.log(`Launching browser to get web data from: ${url}`);
             browser = await puppeteer.launch({
@@ -138,25 +139,23 @@ app.post('/api/analyze', async (req, res) => {
             });
             console.log('Browser launched successfully.');
 
-            const page = await browser.newPage();
+            const page2 = await browser.newPage();
 
             // Enable request interception
-            await page.setRequestInterception(true);
+            await page2.setRequestInterception(true);
             
             // Listen for each request and decide whether to continue or abort it
-            page.on('request', (req) => {
+            page2.on('request', (req) => {
                 const resourceType = req.resourceType();
                     req.continue();
             });
 
             console.log(`going to the url`);
-            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 2000000 });
+            await page2.goto(url, { waitUntil: 'domcontentloaded', timeout: 2000000 });
             // await autoScroll(page);
 
             console.log('Gettign the web data.');
-            response = await getWebScreenshot(page, config);
-
-            
+            response = await getWebScreenshot(page2, config);
           break;
           case 'event_data':
             console.log('Starting analysis of event data...');
@@ -214,6 +213,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'background_image':
             console.log('Starting creation of background image new...');
             response = await getBackgroundImage(webData);
+          break;
+          case 'refine_background_image':
+            console.log('Starting edition of background image...');
+            response = await getRefineBackgroundImage(webData);
           break;
         }
         

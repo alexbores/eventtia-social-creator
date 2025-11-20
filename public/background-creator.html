@@ -256,6 +256,7 @@
 
 
                 await this.getBackgroundImage();
+                await this.getRefinedBackgroundImage();
 
 
                 this.setLoadingProgress(8);
@@ -342,6 +343,31 @@
 
             // Update state with the new data
             this.state.currentEvent.background = imageSaved.url;       
+        },
+        async getRefinedBackgroundImage(){
+            let postData = {
+                
+                imageUrl: this.state.currentEvent.background, 
+            }
+
+            console.log(postData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'refine_background_image', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+        
+
+            let imageSaved = await this.saveImageByData(response.backgroundImage, this.getUUID());
+
+            console.log("Image Received and Saved:", imageSaved);
+
+            // Update state with the new data
+            this.state.currentEvent.backgroundRefined = imageSaved.url;       
         },
 
 
@@ -536,11 +562,14 @@
 
         renderBackground(){
             let imageUrl = this.state.currentEvent.background;
+            let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
             let url = this.state.currentEvent.url;
 
             this.elements.backHolder.innerHTML = `
               <img class="background-image" width="100%" height="100%"
                    src="${imageUrl}" >
+              <img class="background-image" width="100%" height="100%"
+                   src="${imageRefinedUrl}" >
             `;
 
             this.elements.eventUrlEl.innerHTML = `Url: <i>${url}</i>`;
