@@ -21,6 +21,9 @@ import { getIdentity } from './analyzers/get_identity.js';
 import { getPostImageNew } from './analyzers/get_post_image_new.js';
 import { getPostHTML } from './analyzers/get_post_html.js';
 
+
+import { getBackgroundImage } from './analyzers/get_background_image.js';
+
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -174,6 +177,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'identity':
             console.log('gettign identity...');
             response = await getIdentity(webData);
+          break;
+          case 'background_image':
+            console.log('Starting creation of background image new...');
+            response = await getBackgroundImage(webData);
           break;
         }
         

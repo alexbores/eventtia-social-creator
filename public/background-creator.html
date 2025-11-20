@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Creator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="./base.css">
+    <link rel="stylesheet" type="text/css" href="./background-style.css">
+</head>
+
+<body>
+    
+    
+
+    <section id="nav" class="hide">
+        <div class="content main-nav">
+            <h1 class="nav-title">Background Creator</h1>
+
+            <div class="options">
+                <button analyze-new-event class="button button-glared">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                  <span>Analyze New Event</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="url-screen">
+        <div class="content">
+            <button class="close button button-secondary" close-url-screen>X</button>
+            <h2 class="title">
+               Generate a background
+            </h2>
+            <p class="description text">
+                Paste your event website URL and let AI create a background.
+            </p>
+
+            <div class="input-card">
+                <form id="event-url-form">
+                  <input class="input" type="text" id="event-url-input" placeholder="www.your-event-website.com">
+
+                  <button analyze-url-btn class="button button-glared">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                    <span>Analyze Event & Generate Background</span>
+                  </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+
+    <section id="fetching-screen">
+        <img src="./back.png" class="back">
+        <div class="content">
+            <div class="loading-card">
+                <h2 class="title">
+                   Event web is being analyzed...
+                </h2>
+                <div class="progress-bar">
+                  <div class="progress-bar-inner"></div>
+                </div>
+            </div>
+
+            
+        </div>
+    </section>
+   
+
+
+    <section id="background-screen">
+            <div class="content">
+                <div class="top-bar">
+                    <div class="title-holder">
+                       <h3 class="posts-content-title">
+                         AI Generated Background: 
+                       </h3>
+                    </div>
+                </div>
+                <div class="background-content">
+                  
+                </div>
+            </div>
+    </section>
+    
+
+      
+
+
+</body>
+
+</html>
+
+<script>
+    const BackgroundManager = {
+        state: {
+            currentEvent:{
+              screenshot: null,
+              background: null,
+              url: null,
+              uid: '',
+            },
+
+            events:[],
+        },
+
+        elements: {}, 
+
+
+        async init() {
+            this.showScreen('url-screen');
+
+            this.setElements();
+            this.bindEvents();
+
+            this.checkStorage();
+        },
+
+        setElements() {
+            this.elements = {
+                urlScreen: document.querySelector('#url-screen'),
+                analyzeUrlForm: document.querySelector('#event-url-form'),
+                urlInput: document.querySelector('#event-url-input'),
+                analyzeUrlBtn: document.querySelector('[analyze-url-btn]'),
+
+
+
+                fetchingScreen: document.querySelector('#fetching-screen'),
+
+                
+                backHolder: document.querySelector('#background-screen .background-content'),
+
+
+                eventUrlEls: document.querySelectorAll('[event-url]'),
+
+            } 
+        },
+
+        bindEvents() {
+            this.elements.analyzeUrlForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const url = this.elements.urlInput.value;
+                if (url) {
+                    this.fetchAllData(url);
+                } else {
+                    console.log('Please enter a valid URL.');
+                }
+            });
+            
+
+            this.elements.downloadImgEl.addEventListener('click',(e)=>{
+               this.downloadCurrentImage();
+            });
+
+        },
+
+
+        async fetchApi(endpoint, options = {}) {
+            try {
+                options.credentials = 'include'; 
+
+                const response = await fetch(endpoint, options);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({
+                        error: 'An unknown server error occurred.'
+                    }));
+                    throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                }
+                return response.json();
+            } catch (error) {
+                console.error(`Failed to fetch ${endpoint}:`, error);
+                throw error;
+            }
+        },
+        async fetchBinaryApi(endpoint, options = {}) {
+           try {
+               options.credentials = 'include'; 
+
+               const response = await fetch(endpoint, options);
+               
+               if (!response.ok) {
+                   const errorData = await response.json().catch(() => ({
+                       error: 'Server responded with a non-JSON error format.'
+                   }));
+                   
+                   throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+               }
+               return response;
+
+           } catch (error) {
+               console.error(`Failed to fetch ${endpoint} (Binary Call):`, error);
+               throw error;
+           }
+        },
+
+
+        async fetchAllData(url) {
+            this.showScreen('fetching-screen');
+            
+            console.log(`Fetching data for: ${url}`);
+
+            this.setLoadingProgress(2);
+
+
+            let uid = this.generateUniqueCode();
+                
+            this.state.currentEvent.uid = uid;
+
+            this.state.events.push({
+                uid: uid,
+                eventData: this.state.currentEvent,
+            });
+
+            this.state.currentEvent.posts = [];
+
+            this.state.currentEvent.url = url;
+        
+            try {
+                
+                await this.getWebData();
+                this.setLoadingProgress(3);
+
+                await this.saveScreenshot();
+
+
+                this.setLoadingProgress(7);
+
+
+                await this.getBackgroundImage();
+
+
+                this.setLoadingProgress(8);
+                
+                this.saveData('full_state_data', this.state);
+
+                this.renderBackground();
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+
+                await new Promise(r => setTimeout(r, 500));
+
+                this.showScreen('background-screen');
+
+        
+            } catch (error) {
+                // --- Failure Path ---
+                console.error("Data fetch failed:", error.message);
+            }
+        },
+        
+
+        async getWebData(){
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'web_data',
+                                       webData: null })
+            });
+        
+            console.log("Web Data received", response);
+        
+            this.state.currentEvent.screenshot = response.screenshot;
+        },
+        async saveScreenshot(){
+            let imageUrl = this.state.currentEvent.screenshot;
+            let imageSaved = await this.saveImageByUrl(imageUrl);
+
+
+            this.state.currentEvent.screenshot = imageSaved.url;
+
+            console.log("screenshot saved");
+        },
+
+
+       
+
+        
+        async getBackgroundImage(){
+            let postData = {
+                
+                imageUrl: this.state.currentEvent.screenshot, 
+            }
+
+            console.log(postData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'background_image', 
+                                       webData: JSON.stringify(postData) })
+            });
+        
+            console.log("Image Received:", response);
+        
+
+            let imageSaved = await this.saveImageByData(response.postImage, this.getUUID());
+
+            // Update state with the new data
+            this.state.currentEvent.background = imageSaved.url;       
+        },
+
+
+        async downloadCurrentImage() {
+             // --- 1. Retrieve Data and URL ---
+             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
+             let image = this.state.currentEvent.currentPost.images[imageIndex];
+             let date = this.state.currentEvent.currentPost.date;
+             let name = this.state.currentEvent.eventData.eventName;
+         
+             // --- 2. Sanitize and Format Filename ---
+             let combinedName = `${name} ${date}`;
+             let sanitizedBaseName = combinedName.trim().toLowerCase();
+             sanitizedBaseName = sanitizedBaseName.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/\s+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/-+/g, '-');
+             sanitizedBaseName = sanitizedBaseName.replace(/^-|-$/g, '');
+         
+             // Get the final extension from the image URL to create a complete filename
+             const urlParts = image.split('.');
+             const extension = urlParts.pop().split('?')[0] || 'jpg';
+             const finalFileName = `${sanitizedBaseName}.${extension}`;
+         
+             // --- 3. Initiate Server-Side Proxy Download ---
+             try {
+
+                 const response = await this.fetchBinaryApi('/api/analyze', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                            request: 'download_image', 
+                                            webData: image })
+                 });
+
+                 console.log(response);
+                 
+                 const imageBlob = await response.blob();
+                 
+                 
+                 const blobUrl = URL.createObjectURL(imageBlob);
+                 const link = document.createElement('a');
+                 
+                 link.href = blobUrl;
+                 link.download = finalFileName;
+                 
+                 document.body.appendChild(link);
+                 link.click();
+                 
+                 document.body.removeChild(link);
+                 URL.revokeObjectURL(blobUrl);
+
+
+                 console.log(`Proxy download request sent for ${finalFileName}.`);
+         
+             } catch (error) {
+                 console.error("Client-side download initiation failed:", error);
+             }
+         },
+        
+
+        
+        async saveImageByUrl(imageUrl){
+
+            let newImageData = null;
+            try {
+              let imageBlob = await this.urlStringToBlob(imageUrl);
+
+              newImageData = await this.encodeLocalImage(imageBlob);
+            } catch (error) {
+              console.error("Image processing error:", error);
+              return;
+            }
+
+            newImageData['name'] = this.getImageName(imageUrl);
+
+            console.log(newImageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(newImageData) })
+            });
+
+            return response;
+        },
+        async saveImageByData(imageData,name){
+
+            imageData['name'] = name;
+
+            console.log(imageData);
+
+            const response = await this.fetchApi('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                       request: 'save_image', 
+                                       webData: JSON.stringify(imageData) })
+            });
+
+            return response;
+        },
+
+        async downloadImageFromUrl(url, fileName) {
+          try {
+              const response = await fetch(url);
+              
+              if (!response.ok) {
+                  throw new Error(`Failed to fetch image: Status ${response.status}`);
+              }
+
+              // 1. Get the image data as a Blob
+              const imageBlob = await response.blob();
+              
+              // 2. Create a temporary URL for the Blob
+              const blobUrl = URL.createObjectURL(imageBlob);
+
+              // 3. Create a temporary anchor element and click it
+              const link = document.createElement('a');
+              link.href = blobUrl;
+              link.download = fileName;
+              
+              // Trigger the download
+              document.body.appendChild(link);
+              link.click();
+              
+              // Clean up the temporary elements and object URL
+              document.body.removeChild(link);
+              URL.revokeObjectURL(blobUrl);
+
+              console.log(`Download initiated for ${fileName}.`);
+
+          } catch (error) {
+              console.error("Download failed:", error);
+          }
+        },
+
+        
+        // --- UI RENDERING ---
+        showScreen(screenName) { 
+            let screens = document.querySelectorAll('section');
+            screens.forEach(screen=>{
+              screen.classList.add('hide');
+            });
+
+            let screen = document.querySelector(`#${screenName}`);
+            screen.classList.remove('hide');
+            if(this.elements.urlScreen){
+                this.elements.urlScreen.classList.remove('modal');
+            }
+
+            if(screenName == 'fetching-screen'){
+                screen.classList.add('loading');
+            }
+            if(screenName == 'posts-screen'){
+                 document.querySelector('#nav').classList.remove('hide');
+            }
+        },
+        
+
+        
+        setLoadingProgress(val){
+           this.elements.fetchingScreen.setAttribute('progress',val);
+        },
+
+
+        renderBackground(){
+            let imageUrl = this.currentEvent.background;
+
+            this.elements.backHolder.innerHTML = `
+              <img class="background-image" width="100%" height="100%"
+                   src="${imageUrl}" >
+            `;
+
+        },
+
+
+
+        // saving and loading
+        checkStorage(){
+           let data = this.loadData('full_state_data');
+           if(data == null){
+             return;
+           }
+           
+           this.state = data;
+
+           if(!this.state.currentEvent.uid){
+             this.state.currentEvent = this.state.events[0].eventData;
+           }
+
+           this.showScreen("posts-screen");
+           this.renderPosts();
+           this.renderData();
+           this.renderEvents();
+        },
+        saveData(key, data) {
+            try {
+                // Convert the JavaScript object into a JSON string before saving.
+                const serializedData = JSON.stringify(data);
+                localStorage.setItem(key, serializedData);
+                console.log(`Data saved successfully for key: ${key}`);
+            } catch (error) {
+                console.error("Error saving data to localStorage:", error);
+            }
+        },
+        loadData(key) {
+            try {
+                const serializedData = localStorage.getItem(key);
+                
+                // Return null if no data is found for the key.
+                if (serializedData === null) {
+                    console.log(`No data found for key: ${key}`);
+                    return null;
+                }
+                
+                // Convert the JSON string back into a JavaScript object.
+                return JSON.parse(serializedData);
+            } catch (error) {
+                console.error("Error retrieving or parsing data from localStorage:", error);
+                return null;
+            }
+        },
+
+
+
+        // misc
+        generateUniqueCode() {
+          // 1. Get the current Unix timestamp in milliseconds.
+          const timestamp = Date.now();
+          
+          // 2. Convert the timestamp to a Base36 string (shorter, alphanumeric representation).
+          const timeBase36 = timestamp.toString(36);
+          
+          // 3. Generate a small random component (using a character from a random Base36 string)
+          // to ensure uniqueness when the function is executed in rapid succession.
+          const randomComponent = Math.random().toString(36).substring(2, 3);
+          
+          // Combine time and a small random factor.
+          return timeBase36 + randomComponent;
+        },
+
+        async encodeLocalImage(fileObject) {
+            return new Promise((resolve, reject) => {
+                
+                if (!fileObject) {
+                    return reject(new Error("No file object provided."));
+                }
+                
+                if (!(fileObject instanceof Blob)) { 
+                     return reject(new TypeError("Invalid input: Expected a File or Blob object."));
+                }
+        
+                const mimeType = fileObject.type;
+                const reader = new FileReader();
+        
+                reader.onload = () => {
+                    const dataUrl = reader.result;
+        
+                    const base64Index = dataUrl.indexOf(',');
+                    if (base64Index === -1) {
+                        return reject(new Error("Could not parse file data URL."));
+                    }
+                    
+                    const base64Data = dataUrl.substring(base64Index + 1);
+        
+                    resolve({
+                        data: base64Data,
+                        mimeType: mimeType
+                    });
+                };
+        
+                reader.onerror = (error) => {
+                    reject(new Error(`Error reading file: ${error.target.error.name}`));
+                };
+        
+                reader.readAsDataURL(fileObject);
+            });
+        },
+        async urlStringToBlob(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                throw new Error('Invalid URL string provided.');
+            }
+        
+            try {
+                console.log(`Fetching image from URL: ${imageUrl}`);
+                
+                // 1. Fetch the resource as a response stream
+                const response = await fetch(imageUrl);
+        
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch image: Status ${response.status}`);
+                }
+        
+               
+                const imageBlob = await response.blob();
+                
+                return imageBlob;
+        
+            } catch (error) {
+                console.error('Error converting URL to Blob:', error);
+                throw new Error(`Could not process image URL: ${error.message}`);
+            }
+        },
+
+        dataToUrl(imageData) {
+
+            if(imageData?.data == null || imageData?.mymeType == null){
+                return null;
+            }
+
+            const dataUrl = `data:${imageData?.mymeType};base64,${imageData?.data}`;
+            
+            return dataUrl;
+        },
+
+        getImageName(imageUrl) {
+            if (!imageUrl || typeof imageUrl !== 'string') {
+                return '';
+            }
+        
+            const parts = imageUrl.split('/');
+            let fileNameWithExtensionAndQuery = parts.pop() || '';
+
+            if (fileNameWithExtensionAndQuery === '') {
+                fileNameWithExtensionAndQuery = parts.pop() || '';
+            }
+        
+            const fileWithExtension = fileNameWithExtensionAndQuery.split('?')[0];
+        
+            const lastDotIndex = fileWithExtension.lastIndexOf('.');
+        
+            if (lastDotIndex !== -1) {
+                return fileWithExtension.substring(0, lastDotIndex);
+            }
+            
+            return fileWithExtension;
+        },
+
+        getUUID() {
+            const timeNow = Date.now();
+            const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            const randomPart2 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+            
+            const timeHex = timeNow.toString(16).padStart(12, '0');
+            const uuid = 
+                timeHex.substring(0, 8) + '-' + 
+                timeHex.substring(8, 12) + '-' + 
+                '4' + randomPart1.substring(0, 3) + '-' + 
+                'a' + randomPart1.substring(3, 6); 
+            
+            return uuid;
+        },
+
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        BackgroundManager.init();
+    });
+</script>
+
+
+

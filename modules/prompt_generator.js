@@ -553,12 +553,13 @@ Your task is to generate a single HTML file.
     * Include the image element in a creative way if possible, the image is not informational.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
     * \`<h1>\`: Large, primary title, use exact font: \`${titleFont}\` and take into account this styles \`${titleStyle}\`.
-    * \`<p>\`: medium, complement text, use exact font: \`${textFont}\`.
+    * \`<p>\`: big, complement text, use exact font: \`${textFont}\`.
     * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
-    * **Event Date Data:** ${eventDate}
+    * **Event Date Data:** \`<p class="date-text">\`: ${eventDate}.
     * **Event Title Data:** ${eventName}
     * **Event Complement Data:** ${postText} 
     * All text must NOT overflow the container of 1350px.
+    * All text must be easy to read if overlayed the main image.
 4.  **FONTS:**
     * **MUST** import fonts in the \`<style>\` tag using \`@import url(...);\` from google.
 5.  **LOGO_IMAGE: (MUST INCLUDE): **
@@ -596,3 +597,73 @@ GENERATE.
 }
 
 
+
+
+
+
+export function getPromptBackgroundImage() {
+
+    const prompt = `
+<SYSTEM_ROLE>
+You are an advanced image generation service.
+Your task is to create a compelling, brand-aligned background image.
+This image will be used as a background for a social media post, adhering strictly to a provided style reference.
+</SYSTEM_ROLE>
+
+<IMAGE_GENERATION_TASK>
+  <INPUT_ANALYSIS>
+    <PRIMARY_REFERENCE>
+      <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>
+      <INSTRUCTION>Analyze the provided screenshot for its aesthetic DNA.</INSTRUCTION>
+      <EXTRACT_ELEMENTS>
+        <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>
+          <SUB_ELEMENTS>
+            <COLOR_SCHEME>primary, secondary, accent colors</COLOR_SCHEME>
+            <COLOR_QUALITIES>vibrancy, saturation, luminosity</COLOR_QUALITIES>
+          </SUB_ELEMENTS>
+        <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>
+      </EXTRACT_ELEMENTS>
+    </PRIMARY_REFERENCE>
+  </INPUT_ANALYSIS>
+
+  <COMPOSITION_STRATEGY>
+    <MANDATORY_ACTION>Create a **brand new, original, abstract digital composition**.</MANDATORY_ACTION>
+    <MANDATORY_CONSTRAINT>DO NOT replicate the layout or text objects from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
+    <MANDATORY_FUNCTION>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_FUNCTION>
+  </COMPOSITION_STRATEGY>
+
+  <OUTPUT_IMAGE_CONTENT>
+    <MAIN_FOCUS>A dynamic, engaging, and visually appealing **background image** suitable for brand use.</MAIN_FOCUS>
+    <STYLE_ADHERENCE>All visual elements (colors, abstract shapes, textures, lighting, composition flow) MUST strictly adhere to the <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>, <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>, and <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE> identified from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</STYLE_ADHERENCE>
+    <NEGATIVE_CONSTRAINTS>
+      <PROHIBIT_ELEMENT>text</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>words</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>numbers</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>dates</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>typography</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>logos</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>icons</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>brand marks</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>human figures</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>recognizable objects</PROHIBIT_ELEMENT>
+    </NEGATIVE_CONSTRAINTS>
+  </OUTPUT_IMAGE_CONTENT>
+</IMAGE_GENERATION_TASK>
+
+<STRICT_OUTPUT_RULES>
+  <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
+  <ASPECT_RATIO>The final image aspect ratio MUST be **4:5**. No other ratio.</ASPECT_RATIO>
+  <ORIGINALITY_CONSTRAINT>The reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.</ORIGINALITY_CONSTRAINT>
+  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+  <FIELD_NAME>Style_Reference_Screenshot</FIELD_NAME>
+  <FIELD_VALUE>[Image provided via API input]</FIELD_VALUE>
+</INPUT_DATA>
+
+GENERATE_IMAGE.
+`;
+
+    return prompt;
+}
