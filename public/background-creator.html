@@ -552,9 +552,10 @@
               console.log(colors);
               let newData = await this.createAbstractBlobBackground(colors);
               console.log(newData);
-              let blob = await this.encodeLocalImage(newData);
+              let blob = await this.urlStringToBlob(newData);
               console.log(blob);
               let url = await this.saveImageByData(blob,'backgroundBlob');
+
 
               this.state.currentEvent.colors = colors;
               this.state.currentEvent.backgroundBlobs = url;
