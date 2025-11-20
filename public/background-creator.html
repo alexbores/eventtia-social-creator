@@ -536,7 +536,7 @@
            let image = this.state.currentEvent.screenshot;
            console.log(image);
            try{
-              const response = await fetch(imageUrl);
+              const response = await fetch(image);
               if (!response.ok) {
                   throw new Error(`Failed to fetch image: Status ${response.status}`);
               }
