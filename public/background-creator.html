@@ -294,8 +294,8 @@
                 this.renderBackground();
 
 
-                // await this.initFilteredBackground();
-                // this.renderBackground();
+                await this.initFilteredBackground();
+                this.renderBackground();
                 
 
                 await this.getBackgroundImage();
@@ -411,6 +411,10 @@
                   await this.initBackgroundBlob();
                   this.renderBackground();
                 }
+                if(!this.state.currentEvent.backgroundFiltered){
+                  await this.initFilteredBackground();
+                  this.renderBackground();
+                }
            }
            catch(error){
             console.error(error);
@@ -484,7 +488,7 @@
                 img.src = blobUrl;
             });
         },
-        createAbstractBlobBackground(colorArray, width = 1350, height = 1080, blobCount = 8) {
+        createAbstractBlobBackground(colorArray, width = 1344, height = 768, blobCount = 8) {
            if (!colorArray || colorArray.length === 0) {
                throw new Error("Color array cannot be empty.");
            }
