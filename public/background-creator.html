@@ -514,8 +514,8 @@
 
           this.state.currentEvent = selectedEvent[0].eventData;
 
-          this.renderData();
           this.renderBackground();
+          this.renderEvents()
         },
         renderEvents(){
             let events = '';
@@ -524,7 +524,7 @@
                     <option class="event-item" 
                        value="${event.uid}" 
                        ${(this.state.currentEvent.uid == event.uid)? ' selected' : ''} >
-                         ${event.eventData.eventData.url}
+                         ${event.eventData.url}
                     </option>
                  `;
             });
