@@ -421,7 +421,7 @@
            }
         },
  
-        getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 3) {
+        getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 5) {
             return new Promise((resolve, reject) => {
                 // 1. Create temporary Blob URL
                 const blobUrl = URL.createObjectURL(imageBlob);
@@ -488,7 +488,7 @@
                 img.src = blobUrl;
             });
         },
-        createAbstractBlobBackground(colorArray, width = 1344, height = 768, blobCount = 8) {
+        createAbstractBlobBackground(colorArray, width = 1344, height = 768, blobCount = 16) {
            if (!colorArray || colorArray.length === 0) {
                throw new Error("Color array cannot be empty.");
            }
