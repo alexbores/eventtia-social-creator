@@ -21,7 +21,12 @@
         <div class="content main-nav">
             <h1 class="nav-title">Background Creator</h1>
 
+            <p class="url-text" event-url></p>
+
             <div class="options">
+                <button download-image class="button">
+                  <span>Download Image</span>
+                </button>
                 <button analyze-new-event class="button button-glared">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
                   <span>Analyze New Event</span>
@@ -74,13 +79,6 @@
 
     <section id="background-screen">
             <div class="content">
-                <div class="top-bar">
-                    <div class="title-holder">
-                       <h3 class="posts-content-title">
-                         AI Generated Background: 
-                       </h3>
-                    </div>
-                </div>
                 <div class="background-content">
                   
                 </div>
@@ -135,7 +133,10 @@
                 backHolder: document.querySelector('#background-screen .background-content'),
 
 
-                eventUrlEls: document.querySelectorAll('[event-url]'),
+                eventUrlEl: document.querySelector('[event-url]'),
+
+
+                downloadImgEl: document.querySelector('[download-image]');
 
             } 
         },
@@ -152,10 +153,9 @@
             });
             
 
-            // this.elements.downloadImgEl.addEventListener('click',(e)=>{
-            //    this.downloadCurrentImage();
-            // });
-
+            this.elements.downloadImgEl.addEventListener('click',(e)=>{
+               this.downloadCurrentImage();
+            });
         },
 
 
@@ -310,13 +310,11 @@
 
         async downloadCurrentImage() {
              // --- 1. Retrieve Data and URL ---
-             let imageIndex = this.state.currentEvent.currentPost.selectedImage;
-             let image = this.state.currentEvent.currentPost.images[imageIndex];
-             let date = this.state.currentEvent.currentPost.date;
-             let name = this.state.currentEvent.eventData.eventName;
+             let image = this.state.currentEvent.background;
+             let name = this.state.currentEvent.uid;
          
              // --- 2. Sanitize and Format Filename ---
-             let combinedName = `${name} ${date}`;
+             let combinedName = `${name}`;
              let sanitizedBaseName = combinedName.trim().toLowerCase();
              sanitizedBaseName = sanitizedBaseName.replace(/[<>:"/\\|?*]|^\.+|\.+$/g, '-');
              sanitizedBaseName = sanitizedBaseName.replace(/\s+/g, '-');
@@ -460,7 +458,7 @@
             if(screenName == 'fetching-screen'){
                 screen.classList.add('loading');
             }
-            if(screenName == 'posts-screen'){
+            if(screenName == 'background-screen'){
                  document.querySelector('#nav').classList.remove('hide');
             }
         },
@@ -474,12 +472,14 @@
 
         renderBackground(){
             let imageUrl = this.state.currentEvent.background;
+            let url = this.state.currentEvent.url;
 
             this.elements.backHolder.innerHTML = `
               <img class="background-image" width="100%" height="100%"
                    src="${imageUrl}" >
             `;
 
+            this.elements.eventUrlEl.innerHTML = url;
         },
 
 
