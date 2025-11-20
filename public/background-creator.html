@@ -417,7 +417,7 @@
            }
         },
  
-        getPrimaryColorsFromImage(imageUrl, quality = 10, maxColors = 3) {
+        async getPrimaryColorsFromImage(imageUrl, quality = 10, maxColors = 3) {
             return new Promise((resolve, reject) => {
                 // 1. Create temporary Blob URL
 
