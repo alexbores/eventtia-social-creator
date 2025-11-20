@@ -772,35 +772,63 @@
             let imageUrl = this.state.currentEvent.background;
             let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
             let imageBlobsUrl = this.state.currentEvent.backgroundBlobs;
-            let imageRenderedUrl = this.state.currentEvent.backgroundRendered;
-
-            let backImg = '<div class="loader"></div>';
-            let backRefinedImg = '<div class="loader"></div>';
-            let backBlobImg = '<div class="loader"></div>';
-            let backRenderedImg = '<div class="loader"></div>';
+            let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
+           
+            let backImg = `<div class="img-holder">
+                              <h2>AI Background Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
+            let backRefinedImg = `<div class="img-holder">
+                              <h2>AI Refined Background Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
+            let backBlobImg = `<div class="img-holder">
+                              <h2>Blur Blobs Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
+            let backFilteredImg = `<div class="img-holder">
+                              <h2>Screenshot Filtered Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
 
 
             if(imageUrl != null){
-               backImg = `<img class="background-image" width="100%" height="100%"
-                   src="${imageUrl}" >`;
+               backImg = `<div class="img-holder">
+                              <h2>AI Background Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageUrl}" >
+                          </div>`;
             }
             if(imageRefinedUrl != null){
-               backRefinedImg = `<img class="background-image" width="100%" height="100%"
-                   src="${imageRefinedUrl}" >`;
+               backRefinedImg = `<div class="img-holder">
+                              <h2>AI Refined Background Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageRefinedUrl}" >
+                          </div>`;
             }
             if(imageBlobsUrl != null){
-               backBlobImg = `<img class="background-image" width="100%" height="100%"
-                   src="${imageBlobsUrl}" >`;
+               backBlobImg = `<div class="img-holder">
+                              <h2>Blur Blobs Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageBlobsUrl}" >
+                          </div>`;
             }
-            if(imageRenderedUrl != null){
-               backRenderedImg = `<img class="background-image" width="100%" height="100%"
-                   src="${imageRenderedUrl}" >`;
+            if(imageFilteredUrl != null){
+               backFilteredImg = `<div class="img-holder">
+                              <h2>Screenshot Filtered Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageFilteredUrl}" >
+                          </div>`;
             }
 
             this.elements.backHolder.innerHTML = `
 
                ${backBlobImg}
-               ${backRenderedImg}
+               ${backFilteredImg}
                ${backImg}
                ${backRefinedImg}
             `;
