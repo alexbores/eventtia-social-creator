@@ -152,9 +152,9 @@
             });
             
 
-            this.elements.downloadImgEl.addEventListener('click',(e)=>{
-               this.downloadCurrentImage();
-            });
+            // this.elements.downloadImgEl.addEventListener('click',(e)=>{
+            //    this.downloadCurrentImage();
+            // });
 
         },
 
@@ -214,8 +214,6 @@
                 uid: uid,
                 eventData: this.state.currentEvent,
             });
-
-            this.state.currentEvent.posts = [];
 
             this.state.currentEvent.url = url;
         
@@ -299,10 +297,11 @@
                                        webData: JSON.stringify(postData) })
             });
         
-            console.log("Image Received:", response);
         
 
             let imageSaved = await this.saveImageByData(response.backgroundImage, this.getUUID());
+
+            console.log("Image Received and Saved:", imageSaved);
 
             // Update state with the new data
             this.state.currentEvent.background = imageSaved.url;       
@@ -498,10 +497,8 @@
              this.state.currentEvent = this.state.events[0].eventData;
            }
 
-           this.showScreen("posts-screen");
-           this.renderPosts();
-           this.renderData();
-           this.renderEvents();
+           this.showScreen("background-screen");
+           this.renderBackground();
         },
         saveData(key, data) {
             try {
