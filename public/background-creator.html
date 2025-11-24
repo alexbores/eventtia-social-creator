@@ -592,7 +592,7 @@
             // 5. Return the resulting image as a data URL
             return canvas.toDataURL('image/webp', 0.8);
         },
-        createPercentageGradientBackground(colorData, width = 1344, height = 768) {
+        createGradientBackground(colorData, width = 1344, height = 768) {
             if (!colorData || colorData.length < 2) {
                 throw new Error("Color data must contain at least two entries for a gradient.");
             }
@@ -1028,6 +1028,7 @@
                ${backImg}
                ${backRefinedImg}
                ${backBlobImg}
+               ${backGradImg}
                ${backFilteredImg}
             `;
         },
