@@ -110,7 +110,7 @@ async function getAiAnalysis(data) {
             
             temperature: 0.8,
             thinkingConfig: {
-              thinkingBudget: "HIGH",
+              thinkingBudget: -1,
             },
         },
     };
