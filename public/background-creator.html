@@ -515,7 +515,7 @@
                 img.src = blobUrl;
             });
         },
-        createWeightedAbstractBlobBackground(colorData, width = 1344, height = 768, blobCount = 16) {
+        createAbstractBlobBackground(colorData, width = 1344, height = 768, blobCount = 16) {
             if (!colorData || colorData.length === 0) {
                 throw new Error("Color data array cannot be empty.");
             }
