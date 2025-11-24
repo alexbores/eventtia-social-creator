@@ -517,7 +517,7 @@ export function getPromptPostHTML(data) {
     if(referenceHTML != null){
         referencePrompt = `
           7.  **REFERENCE_HTML:
-              * Use this code as a reference to create the html, it should be similar on style and harmonius but not exactly the same:
+              * Use this code as a reference to create the html, use it as inspiration, it should be similar on style and harmonius but not exactly the same:
               * reference HTML: ${referenceHTML}
         `;
     }
@@ -553,7 +553,7 @@ Your task is to generate a single HTML file.
     * Include the image element in a creative way if possible, the image is not informational.
 3.  **TEXT_CONTENT (MUST INCLUDE):**
     * \`<h1>\`: Large, primary title, use exact font: \`${titleFont}\` and take into account this styles \`${titleStyle}\`.
-    * \`<p>\`: big, complement text, use exact font: \`${textFont}\`.
+    * \`<p>\`: big (minimun font-size: 2.3rem), complement text, use exact font: \`${textFont}\`.
     * \`<p class="cta">\`: Actionable text (Call-to-Action). not interactable.
     * **Event Date Data:** \`<p class="date-text">\`: ${eventDate}.
     * **Event Title Data:** ${eventName}

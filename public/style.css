@@ -490,6 +490,7 @@ p,h1,h2,h3,li{
 #posts-screen .post-card .post-content{
 	color: var(--color-gray-dark);
 	font-size: var(--font-size-text-xs);
+  width: 100%;
 }
 #posts-screen .post-card .type{
    border-radius: 500px;
