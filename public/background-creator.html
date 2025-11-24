@@ -423,7 +423,7 @@
            }
         },
  
-        getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 5) {
+        getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 2) {
             return new Promise((resolve, reject) => {
                 const blobUrl = URL.createObjectURL(imageBlob);
                 const img = new Image();
