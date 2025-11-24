@@ -65,7 +65,7 @@ async function getAiAnalysis(data) {
     // --- 3. CRITICAL CHANGES: API Configuration ---
 
     // CHANGE 2: Model Selection
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-3-pro-preview';
 
     // CHANGE 1: API Endpoint
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -110,7 +110,7 @@ async function getAiAnalysis(data) {
             
             temperature: 0.8,
             thinkingConfig: {
-              thinkingBudget: -1,
+              thinkingBudget: "HIGH",
             },
         },
     };

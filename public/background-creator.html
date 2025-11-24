@@ -109,6 +109,7 @@
               background: null,
               backgroundRefined: null,
               backgroundBlobs: null,
+              backgroundGrad: null,
               backgroundRendered: null,
               colors: null,
               url: null,
@@ -248,6 +249,7 @@
               background: null,
               backgroundRefined: null,
               backgroundBlobs: null,
+              backgroundGrad: null,
               backgroundRendered: null,
               colors: null,
               url: null,
@@ -294,11 +296,11 @@
                 this.renderBackground();
 
 
-                await this.initFilteredBackground();
-                this.renderBackground();
-                
-
                 await this.getBackgroundImage();
+                this.renderBackground();
+
+
+                await this.initFilteredBackground();
                 this.renderBackground();
 
 
@@ -411,10 +413,10 @@
                   await this.initBackgroundBlob();
                   this.renderBackground();
                 }
-                if(!this.state.currentEvent.backgroundFiltered){
-                  await this.initFilteredBackground();
-                  this.renderBackground();
-                }
+                // if(!this.state.currentEvent.backgroundFiltered){
+                //   await this.initFilteredBackground();
+                //   this.renderBackground();
+                // }
            }
            catch(error){
             console.error(error);
@@ -422,126 +424,218 @@
         },
  
         getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 5) {
-           return new Promise((resolve, reject) => {
-               const blobUrl = URL.createObjectURL(imageBlob);
-               const img = new Image();
-               
-               // Define the quantization bucket size (e.g., 51. Colors range from 0 to 255. 
-               // 256 / 51 = ~5 distinct buckets per channel).
-               const QUANTIZATION_BUCKETS = 51; 
-
-               img.onload = function() {
-                   URL.revokeObjectURL(blobUrl); 
-                   
-                   const canvas = document.createElement('canvas');
-                   const ctx = canvas.getContext('2d');
-                   canvas.width = this.width;
-                   canvas.height = this.height;
-                   ctx.drawImage(this, 0, 0);
-
-                   try {
-                       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                       const data = imageData.data;
-                       const colorMap = {};
-
-                       // 4. Sample and Count Frequencies (with Quantization)
-                       for (let i = 0; i < data.length; i += 4 * quality) {
-                           let r = data[i];
-                           let g = data[i + 1];
-                           let b = data[i + 2];
-                           const a = data[i + 3];
-
-                           if (a < 128) continue;
-                           
-                           // === CRITICAL FIX: QUANTIZATION ===
-                           // Round the R, G, B values to the nearest bucket interval.
-                           r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           
-                           // Clamp values to 255 if rounding pushed them over
-                           r = Math.min(255, r);
-                           g = Math.min(255, g);
-                           b = Math.min(255, b);
-                           // === END QUANTIZATION ===
-                           
-                           const rgbKey = `${r},${g},${b}`;
-                           colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
-                       }
-
-                       // 5. Sort by frequency and 6. Convert to Hex
-                       const sortedColors = Object.entries(colorMap)
-                           .sort(([, countA], [, countB]) => countB - countA)
-                           .slice(0, maxColors);
-
-                       const hexColors = sortedColors.map(([rgbKey]) => {
-                           const [r, g, b] = rgbKey.split(',').map(Number);
-                           // The conversion still uses the rounded RGB values, which is the key.
-                           return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-                       });
-                       
-                       resolve(hexColors);
-                       
-                   } catch (e) {
-                       reject(new Error("Failed to process image data on canvas: " + e.message));
-                   }
-               };
-
-               img.onerror = (e) => {
-                   URL.revokeObjectURL(blobUrl);
-                   reject(new Error("Failed to load image from Blob URL."));
-               };
-               
-               img.src = blobUrl;
-           });
+            return new Promise((resolve, reject) => {
+                const blobUrl = URL.createObjectURL(imageBlob);
+                const img = new Image();
+        
+                // Define the quantization bucket size
+                const QUANTIZATION_BUCKETS = 51;
+                
+                let totalSampledPixels = 0; // 1. Variable to track total samples
+        
+                img.onload = function() {
+                    URL.revokeObjectURL(blobUrl);
+        
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = this.width;
+                    canvas.height = this.height;
+                    ctx.drawImage(this, 0, 0);
+        
+                    try {
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        const colorMap = {};
+        
+                        // 4. Sample and Count Frequencies (with Quantization)
+                        for (let i = 0; i < data.length; i += 4 * quality) {
+                            let r = data[i];
+                            let g = data[i + 1];
+                            let b = data[i + 2];
+                            const a = data[i + 3];
+        
+                            // Ignore highly transparent pixels
+                            if (a < 128) continue;
+                            
+                            // Increment the total sampled count
+                            totalSampledPixels++; // 2. Increment counter for each valid sample
+                            
+                            // === CRITICAL FIX: QUANTIZATION ===
+                            r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                            g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                            b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                            
+                            // Clamp values to 255 if rounding pushed them over
+                            r = Math.min(255, r);
+                            g = Math.min(255, g);
+                            b = Math.min(255, b);
+                            // === END QUANTIZATION ===
+                            
+                            const rgbKey = `${r},${g},${b}`;
+                            colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
+                        }
+        
+                        // If no pixels were sampled (e.g., image was entirely transparent)
+                        if (totalSampledPixels === 0) {
+                            return resolve([]);
+                        }
+        
+                        // 5. Sort by frequency and slice to maxColors
+                        // The sorted array now contains [rgbKey, count]
+                        const sortedColors = Object.entries(colorMap)
+                            .sort(([, countA], [, countB]) => countB - countA)
+                            .slice(0, maxColors);
+        
+                        // 6. Convert to Hex and Calculate Percentage
+                        const finalColorsWithPercentage = sortedColors.map(([rgbKey, count]) =>         {
+                            const [r, g, b] = rgbKey.split(',').map(Number);
+                            const hexCode = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(        16).slice(1).toUpperCase()}`;
+                            
+                            // Calculate percentage
+                            const percentage = (count / totalSampledPixels) * 100;
+        
+                            return {
+                                hex: hexCode,
+                                percentage: parseFloat(percentage.toFixed(2)) // Round to 2         decimal places
+                            };
+                        });
+                        
+                        resolve(finalColorsWithPercentage);
+                        
+                    } catch (e) {
+                        reject(new Error("Failed to process image data on canvas: " + e.message)        );
+                    }
+                };
+        
+                img.onerror = (e) => {
+                    URL.revokeObjectURL(blobUrl);
+                    reject(new Error("Failed to load image from Blob URL."));
+                };
+                
+                img.src = blobUrl;
+            });
         },
-        createAbstractBlobBackground(colorArray, width = 1344, height = 768, blobCount = 16) {
-           if (!colorArray || colorArray.length === 0) {
-               throw new Error("Color array cannot be empty.");
-           }
-           
-           // 1. Setup Canvas
-           const canvas = document.createElement('canvas');
-           const ctx = canvas.getContext('2d');
-           canvas.width = width;
-           canvas.height = height;
-
-           // Set background to a neutral color (or the first color in the array)
-           ctx.fillStyle = colorArray[0];
-           ctx.fillRect(0, 0, width, height);
-           
-           // 2. Apply initial blur filter for smooth blending
-           // This affects everything drawn subsequently
-           ctx.filter = `blur(${Math.floor(width / 10)}px)`; 
-
-           // 3. Draw Blurred Blobs
-           for (let i = 0; i < blobCount; i++) {
-               // Randomly select a color from the input array
-               const color = colorArray[Math.floor(Math.random() * colorArray.length)];
-               
-               // Slightly lower the opacity of the blob colors for better blending
-               // We do this by calculating a semi-transparent RGBA value
-               let r, g, b;
-               
-               // Simple Hex to RGB conversion (assumes valid 6-digit hex input)
-               r = parseInt(color.substring(1, 3), 16);
-               g = parseInt(color.substring(3, 5), 16);
-               b = parseInt(color.substring(5, 7), 16);
-
-               ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${0.5 + Math.random() * 0.4})`; // Opacity 50-90%
-
-               // Random position, size, and shape (we'll stick to circles)
-               const x = Math.random() * width * 1.5 - width * 0.25; // Random position, extending slightly beyond bounds
-               const y = Math.random() * height * 1.5 - height * 0.25;
-               const radius = Math.random() * width * 0.3 + width * 0.1; // Radius 10% to 40% of width
-
-               ctx.beginPath();
-               ctx.arc(x, y, radius, 0, 2 * Math.PI);
-               ctx.fill();
-           }
-           
-           // 4. Return the resulting image as a data URL
-           return canvas.toDataURL('image/webp', 0.8); // Return as efficient WEBP image data
+        createWeightedAbstractBlobBackground(colorData, width = 1344, height = 768, blobCount = 16) {
+            if (!colorData || colorData.length === 0) {
+                throw new Error("Color data array cannot be empty.");
+            }
+        
+            // 1. Preprocessing: Create a weighted list for random selection.
+            // This allows us to select dominant colors more often.
+            const weightedColors = [];
+            let totalPercentage = 0;
+            
+            // Normalize percentages and build the list
+            colorData.forEach(data => totalPercentage += data.percentage);
+        
+            colorData.forEach(data => {
+                // Create an entry in the weighted list proportional to the percentage
+                const weight = Math.floor(data.percentage / totalPercentage * 100);
+                for (let i = 0; i < weight; i++) {
+                    weightedColors.push(data.hex);
+                }
+            });
+        
+            if (weightedColors.length === 0) {
+                // Fallback in case percentages didn't add up correctly
+                colorData.forEach(data => weightedColors.push(data.hex)); 
+            }
+            
+            // 2. Setup Canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+        
+            // Set background to the most dominant color
+            ctx.fillStyle = colorData[0].hex;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 3. Apply initial blur filter for smooth blending (Aggressive blur)
+            ctx.filter = `blur(${Math.floor(width / 10)}px)`;
+        
+            // 4. Draw Weighted Blurred Blobs
+            for (let i = 0; i < blobCount; i++) {
+                // Select color using the weighted list (dominant colors selected more often)
+                const hexColor = weightedColors[Math.floor(Math.random() * weightedColors.length        )];
+                
+                // Find the original percentage data for dynamic size/opacity control
+                const originalData = colorData.find(d => d.hex === hexColor) || { percentage: 0         };
+                
+                // --- Calculate Dynamic Properties ---
+                
+                // Map color dominance to blob radius (Dominant colors get larger blobs)
+                const normalizedDominance = (originalData.percentage / totalPercentage); // 0.0         to 1.0
+                const minRadius = width * 0.1;
+                const maxRadius = width * 0.4;
+                const radius = minRadius + (maxRadius - minRadius) * (normalizedDominance * 0.8         + Math.random() * 0.2); // Weighted random size
+        
+                // Map color dominance to fill style
+                let r = parseInt(hexColor.substring(1, 3), 16);
+                let g = parseInt(hexColor.substring(3, 5), 16);
+                let b = parseInt(hexColor.substring(5, 7), 16);
+                
+                // Slightly lower the opacity, but maybe keep dominant colors slightly more         opaque
+                const opacity = 0.5 + normalizedDominance * 0.2 + Math.random() * 0.2; // 50%         up to 90% opacity
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        
+                // Random position, potentially extending slightly beyond bounds
+                const x = Math.random() * width * 1.5 - width * 0.25; 
+                const y = Math.random() * height * 1.5 - height * 0.25;
+        
+                // Draw the blob
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // 5. Return the resulting image as a data URL
+            return canvas.toDataURL('image/webp', 0.8);
+        },
+        createPercentageGradientBackground(colorData, width = 1344, height = 768) {
+            if (!colorData || colorData.length < 2) {
+                throw new Error("Color data must contain at least two entries for a gradient.");
+            }
+            
+            // 1. Setup Canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+        
+            // 2. Create the Gradient Object (Diagonal: top-left (0,0) to bottom-right (width,         height))
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+        
+            // 3. Define Color Stops based on Cumulative Percentage
+            let cumulativePercentage = 0;
+            
+            colorData.forEach((data, index) => {
+                // Calculate the position (0.0 to 1.0) for the color stop.
+                // The first color starts at 0, the subsequent colors start where the previous         one ended.
+                const startStop = cumulativePercentage / 100;
+                
+                // Add the current color's percentage to the cumulative total
+                cumulativePercentage += data.percentage;
+        
+                // Add the color stop at the calculated position
+                gradient.addColorStop(startStop, data.hex);
+                
+                // For the *last* color, ensure it reaches the 100% mark
+                if (index === colorData.length - 1) {
+                     gradient.addColorStop(1.0, data.hex);
+                }
+            });
+        
+            // 4. Apply the Gradient
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 5. Apply a subtle blur filter for extra smoothness (Optional)
+            ctx.filter = `blur(1px)`; 
+            ctx.drawImage(canvas, 0, 0);
+        
+            // 6. Return the resulting image as a data URL
+            return canvas.toDataURL('image/webp', 0.9);
         },
         async initBackgroundBlob(){
            let image = this.state.currentEvent.screenshot;
@@ -554,21 +648,30 @@
                                          webData: image })
               });
 
-
               const imageBlob = await response.blob();
 
-              let colors = await this.getPrimaryColorsFromImage(imageBlob);
-              let newData = await this.createAbstractBlobBackground(colors);
+              let colorsData = await this.getPrimaryColorsFromImage(imageBlob);
 
-              let saved = await this.saveImageByUrl(newData,'backgroundBlob');
 
-              this.state.currentEvent.colors = colors;
-              this.state.currentEvent.backgroundBlobs = saved.url;
+              let newData = await this.createAbstractBlobBackground(colorsData);
+              let savedBlob = await this.saveImageByUrl(newData,'backgroundBlob');
+
+
+              let newDataGrad = await this.createGradientBackground(colorsData);
+              let savedGrad = await this.saveImageByUrl(newDataGrad,'backgroundGrad');
+
+
+              this.state.currentEvent.colors = colorsData;
+              this.state.currentEvent.backgroundBlobs = savedBlob.url;
+              this.state.currentEvent.backgroundGrad = savedGrad.url;
            }
            catch(error){
               console.error(error);
            }
         },
+
+
+        
 
 
 
@@ -591,7 +694,7 @@
                    canvas.height = height;
 
                    // 1. Apply Aggressive Blur Filter
-                   ctx.filter = `saturate(1.5) blur(40px)`;
+                   ctx.filter = `blur(40px)`;
                    ctx.drawImage(this, 0, 0);
 
                    // 2. Achieve "Smear" Effect (Repetitive Offset Drawing)
@@ -625,7 +728,7 @@
            });
         },
         async initFilteredBackground(){
-          let image = this.state.currentEvent.screenshot;
+          let image = this.state.currentEvent.background;
            
           try{
              const response = await this.fetchBinaryApi('/api/analyze', {
@@ -853,6 +956,7 @@
             let imageUrl = this.state.currentEvent.background;
             let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
             let imageBlobsUrl = this.state.currentEvent.backgroundBlobs;
+            let imageGradUrl = this.state.currentEvent.backgroundGrad;
             let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
 
             let imageScreenshot = this.state.currentEvent.screenshot;
@@ -869,6 +973,11 @@
                           `;
             let backBlobImg = `<div class="img-holder">
                               <h2>Blur Blobs Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
+            let backGradImg = `<div class="img-holder">
+                              <h2>Blur Gradient Image</h2>
                               <div class="loader"></div>
                            </div>
                           `;
@@ -896,6 +1005,13 @@
             if(imageBlobsUrl != null){
                backBlobImg = `<div class="img-holder">
                               <h2>Blur Blobs Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageBlobsUrl}" >
+                          </div>`;
+            }
+            if(imageGradUrl != null){
+               backGradImg = `<div class="img-holder">
+                              <h2>Blur Gradient Image</h2>
                               <img class="background-image" width="100%" height="100%"
                               src="${imageBlobsUrl}" >
                           </div>`;
