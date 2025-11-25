@@ -655,83 +655,91 @@
           // We use a high quality for a clean, solid color image
           return canvas.toDataURL('image/webp', 1.0); 
         },
-        createGeometricGradientBackground(colorData, width = 1344, height = 768) {
-           if (!colorData || colorData.length < 1) {
-               throw new Error("Color data array cannot be empty.");
-           }
+        createComplexGeometricGradientBackground(colorData, width = 1344, height = 768){
+          if (!colorData || colorData.length < 1) {
+              throw new Error("Color data array cannot be empty.");
+          }
 
-           const canvas = document.createElement('canvas');
-           const ctx = canvas.getContext('2d');
-           canvas.width = width;
-           canvas.height = height;
-           
-           // --- Preprocessing: Create weighted list for proportional color selection ---
-           const weightedColors = [];
-           let totalPercentage = 0;
-           colorData.forEach(data => totalPercentage += data.percentage);
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = width;
+          canvas.height = height;
+          
+          // --- Preprocessing: Create weighted list for proportional color selection ---
+          const weightedColors = [];
+          let totalPercentage = 0;
+          colorData.forEach(data => totalPercentage += data.percentage);
 
-           colorData.forEach(data => {
-               const weight = Math.floor(data.percentage / totalPercentage * 100);
-               for (let i = 0; i < weight; i++) {
-                   weightedColors.push(data.hex);
-               }
-           });
+          colorData.forEach(data => {
+              const weight = Math.floor(data.percentage / totalPercentage * 100);
+              for (let i = 0; i < weight; i++) {
+                  weightedColors.push(data.hex);
+              }
+          });
 
-           // --- 1. Initial Setup (Base Color) ---
-           ctx.fillStyle = colorData[0].hex; // Use the most dominant color as the base
-           ctx.fillRect(0, 0, width, height);
+          // --- 1. Initial Setup (Base Color) ---
+          ctx.fillStyle = colorData[0].hex; // Use the most dominant color as the base
+          ctx.fillRect(0, 0, width, height);
 
-           // --- 2. Pattern Generation Settings ---
-           const elementCount = 25; // More elements than blobs for a denser pattern
-           
-           // Global opacity for all elements, ensuring subtlety
-           ctx.globalAlpha = 0.18; // Slightly lower than blob background for sharper elements
-           
-           // Optional: Add a very light blur to soften edges of shapes, but keep them distinct
-           ctx.filter = `blur(${Math.floor(width / 300)}px)`; 
+          // --- 2. Pattern Generation Settings ---
+          const elementCount = 25; // Number of overlapping polygons
+          
+          ctx.globalAlpha = 0.18; 
+          ctx.filter = `blur(${Math.floor(width / 300)}px)`; 
 
-           // --- 3. Draw Geometric Shapes (Rotated Rectangles with Gradients) ---
-           for (let i = 0; i < elementCount; i++) {
-               // Select two random colors from the weighted list for the gradient
-               const color1 = weightedColors[Math.floor(Math.random() * weightedColors.length)];
-               const color2 = weightedColors[Math.floor(Math.random() * weightedColors.length)];
+          // --- Helper function to draw a polygon ---
+          function drawPolygon(context, x, y, radius, sides, rotation = 0) {
+              context.beginPath();
+              for (let i = 0; i < sides; i++) {
+                  const angle = rotation + (i * 2 * Math.PI) / sides;
+                  const px = x + radius * Math.cos(angle);
+                  const py = y + radius * Math.sin(angle);
+                  if (i === 0) {
+                      context.moveTo(px, py);
+                  } else {
+                      context.lineTo(px, py);
+                  }
+              }
+              context.closePath();
+              context.fill();
+          }
 
-               // Create a linear gradient for each shape
-               const gradient = ctx.createLinearGradient(0, 0, width, height); // Gradient across the entire canvas for variation
-               gradient.addColorStop(0, color1);
-               gradient.addColorStop(1, color2);
-               ctx.fillStyle = gradient;
+          // --- 3. Draw Geometric Shapes (Rotated Polygons with Gradients) ---
+          for (let i = 0; i < elementCount; i++) {
+              const color1 = weightedColors[Math.floor(Math.random() * weightedColors.length)];
+              const color2 = weightedColors[Math.floor(Math.random() * weightedColors.length)];
 
-               // Random position, width, height, and rotation
-               const rectWidth = Math.random() * width * 0.4 + width * 0.1; // 10% to 50% of canvas width
-               const rectHeight = Math.random() * height * 0.6 + height * 0.1; // 10% to 70% of canvas height
-               
-               const x = Math.random() * width * 1.2 - width * 0.1; // Position, extending slightly beyond bounds
-               const y = Math.random() * height * 1.2 - height * 0.1;
+              // Create a linear gradient for each shape, spanning broadly
+              const gradient = ctx.createLinearGradient(0, 0, width, height); 
+              gradient.addColorStop(0, color1);
+              gradient.addColorStop(1, color2);
+              ctx.fillStyle = gradient;
 
-               const rotation = Math.random() * Math.PI; // Random rotation in radians
+              // Random center position
+              const centerX = Math.random() * width * 1.2 - width * 0.1;
+              const centerY = Math.random() * height * 1.2 - height * 0.1;
 
-               // Save current context state
-               ctx.save();
-               
-               // Translate to the rectangle's center, rotate, then translate back
-               ctx.translate(x + rectWidth / 2, y + rectHeight / 2);
-               ctx.rotate(rotation);
-               ctx.translate(-(x + rectWidth / 2), -(y + rectHeight / 2));
+              // Random radius for the polygon
+              const minPolygonRadius = width * 0.1;
+              const maxPolygonRadius = width * 0.35;
+              const polygonRadius = Math.random() * (maxPolygonRadius - minPolygonRadius) + minPolygonRadius;
 
-               // Draw the rectangle
-               ctx.fillRect(x, y, rectWidth, rectHeight);
-               
-               // Restore context to previous state (undo translation and rotation)
-               ctx.restore();
-           }
-           
-           // --- 4. Final Polish and Cleanup ---
-           ctx.globalAlpha = 1.0; 
-           ctx.filter = 'none';
+              // Random number of sides (from 3 for triangle to 8 for octagon)
+              const sides = Math.floor(Math.random() * 6) + 3; // 3 to 8 sides
 
-           // 5. Return the resulting image as a data URL
-           return canvas.toDataURL('image/webp', 0.8);
+              // Random rotation
+              const rotation = Math.random() * Math.PI * 2; // Full 360-degree rotation
+
+              // Draw the polygon using the helper function
+              drawPolygon(ctx, centerX, centerY, polygonRadius, sides, rotation);
+          }
+          
+          // --- 4. Final Polish and Cleanup ---
+          ctx.globalAlpha = 1.0; 
+          ctx.filter = 'none';
+
+          // 5. Return the resulting image as a data URL
+          return canvas.toDataURL('image/webp', 0.8);
         },
         async initBackgroundCanvas(){
            let image = this.state.currentEvent.screenshot;
