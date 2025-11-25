@@ -655,7 +655,7 @@
           // We use a high quality for a clean, solid color image
           return canvas.toDataURL('image/webp', 1.0); 
         },
-        createComplexGeometricGradientBackground(colorData, width = 1344, height = 768){
+        createGeometricGradientBackground(colorData, width = 1344, height = 768){
           if (!colorData || colorData.length < 1) {
               throw new Error("Color data array cannot be empty.");
           }
