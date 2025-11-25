@@ -246,9 +246,9 @@ p,h1,h2,h3,li{
 #background-screen .background-content .colors-holder h3{
   font-size: 16px;
 }
-#background-screen .background-content .colors-holder h2 span{
-  height: 15px;
-  width: 15px;
+#background-screen .background-content .colors-holder h3 span{
+  height: 25px;
+  width: 25px;
   border-radius: 3;
   margin-right: 10px;
 }
