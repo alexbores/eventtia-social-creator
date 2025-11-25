@@ -411,10 +411,6 @@
         async checkMissingImages(){
 
            try{
-                if(!this.state.currentEvent.backgroundBlobs){
-                  await this.initBackgroundCanvas();
-                  this.renderBackground();
-                }
                 // if(!this.state.currentEvent.backgroundFiltered){
                 //   await this.initFilteredBackground();
                 //   this.renderBackground();
@@ -668,7 +664,7 @@
               let colorsData = await this.getPrimaryColorsFromImage(imageBlob);
 
 
-              let newDataAbs = await this.createAbstractBlobBackground(colorsData);
+              let newDataAbs = await this.createAbstractBackground(colorsData);
               let savedAbs = await this.saveImageByUrl(newDataAbs,'backgroundAbs');
 
 
