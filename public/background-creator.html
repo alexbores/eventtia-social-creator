@@ -422,97 +422,102 @@
         },
  
         getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 2) {
-            return new Promise((resolve, reject) => {
-                const blobUrl = URL.createObjectURL(imageBlob);
-                const img = new Image();
-        
-                // Define the quantization bucket size
-                const QUANTIZATION_BUCKETS = 51;
-                
-                let totalSampledPixels = 0; // 1. Variable to track total samples
-        
-                img.onload = function() {
-                    URL.revokeObjectURL(blobUrl);
-        
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = this.width;
-                    canvas.height = this.height;
-                    ctx.drawImage(this, 0, 0);
-        
-                    try {
-                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        const data = imageData.data;
-                        const colorMap = {};
-        
-                        // 4. Sample and Count Frequencies (with Quantization)
-                        for (let i = 0; i < data.length; i += 4 * quality) {
-                            let r = data[i];
-                            let g = data[i + 1];
-                            let b = data[i + 2];
-                            const a = data[i + 3];
-        
-                            // Ignore highly transparent pixels
-                            if (a < 128) continue;
-                            
-                            // Increment the total sampled count
-                            totalSampledPixels++; // 2. Increment counter for each valid sample
-                            
-                            // === CRITICAL FIX: QUANTIZATION ===
-                            r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                            g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                            b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                            
-                            // Clamp values to 255 if rounding pushed them over
-                            r = Math.min(255, r);
-                            g = Math.min(255, g);
-                            b = Math.min(255, b);
-                            // === END QUANTIZATION ===
-                            
-                            const rgbKey = `${r},${g},${b}`;
-                            colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
-                        }
-        
-                        // If no pixels were sampled (e.g., image was entirely transparent)
-                        if (totalSampledPixels === 0) {
-                            return resolve([]);
-                        }
-        
-                        // 5. Sort by frequency and slice to maxColors
-                        // The sorted array now contains [rgbKey, count]
-                        const sortedColors = Object.entries(colorMap)
-                            .sort(([, countA], [, countB]) => countB - countA)
-                            .slice(0, maxColors);
-        
-                        // 6. Convert to Hex and Calculate Percentage
-                        const finalColorsWithPercentage = sortedColors.map(([rgbKey, count]) =>         {
-                            const [r, g, b] = rgbKey.split(',').map(Number);
-                            const hexCode = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(        16).slice(1).toUpperCase()}`;
-                            
-                            // Calculate percentage
-                            const percentage = (count / totalSampledPixels) * 100;
-        
-                            return {
-                                hex: hexCode,
-                                percentage: parseFloat(percentage.toFixed(2)) // Round to 2         decimal places
-                            };
-                        });
-                        
-                        resolve(finalColorsWithPercentage);
-                        
-                    } catch (e) {
-                        reject(new Error("Failed to process image data on canvas: " + e.message)        );
-                    }
-                };
-        
-                img.onerror = (e) => {
-                    URL.revokeObjectURL(blobUrl);
-                    reject(new Error("Failed to load image from Blob URL."));
-                };
-                
-                img.src = blobUrl;
-            });
-        },
+           return new Promise((resolve, reject) => {
+               const blobUrl = URL.createObjectURL(imageBlob);
+               const img = new Image();
+               
+               const QUANTIZATION_BUCKETS = 51;
+               // TOLERANCE: Define a buffer (e.g., 20) around 0 and 255 to exclude near-black/near-white
+               const TOLERANCE_LOW = 20;  // Exclude colors where R, G, B are all below this value (near Black)
+               const TOLERANCE_HIGH = 235; // Exclude colors where R, G, B are all above this value (near White)
+               
+               let totalSampledPixels = 0;
+               
+               img.onload = function() {
+                   URL.revokeObjectURL(blobUrl);
+                   
+                   const canvas = document.createElement('canvas');
+                   const ctx = canvas.getContext('2d');
+                   canvas.width = this.width;
+                   canvas.height = this.height;
+                   ctx.drawImage(this, 0, 0);
+                   
+                   try {
+                       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                       const data = imageData.data;
+                       const colorMap = {};
+                       
+                       // 4. Sample and Count Frequencies (with Quantization and Exclusion)
+                       for (let i = 0; i < data.length; i += 4 * quality) {
+                           let r = data[i];
+                           let g = data[i + 1];
+                           let b = data[i + 2];
+                           const a = data[i + 3];
+                           
+                           // Ignore highly transparent pixels
+                           if (a < 128) continue;
+                           
+                           // === EXCLUSION CHECK (New Logic) ===
+                           const isNearBlack = (r < TOLERANCE_LOW) && (g < TOLERANCE_LOW) && (b < TOLERANCE_LOW);
+                           const isNearWhite = (r > TOLERANCE_HIGH) && (g > TOLERANCE_HIGH) && (b > TOLERANCE_HIGH);
+                           
+                           if (isNearBlack || isNearWhite) {
+                               continue; // Skip this pixel entirely
+                           }
+                           // ===================================
+                           
+                           totalSampledPixels++;
+                           
+                           // === QUANTIZATION ===
+                           r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
+                           
+                           r = Math.min(255, r);
+                           g = Math.min(255, g);
+                           b = Math.min(255, b);
+                           // ====================
+                           
+                           const rgbKey = `${r},${g},${b}`;
+                           colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
+                       }
+
+                       // If no meaningful pixels were sampled after exclusion
+                       if (totalSampledPixels === 0) {
+                           return resolve([]); 
+                       }
+                       
+                       // 5. Sort and 6. Convert to Hex/Percentage (Unchanged logic)
+                       const sortedColors = Object.entries(colorMap)
+                           .sort(([, countA], [, countB]) => countB - countA)
+                           .slice(0, maxColors);
+                       
+                       const finalColorsWithPercentage = sortedColors.map(([rgbKey, count]) => {
+                           const [r, g, b] = rgbKey.split(',').map(Number);
+                           const hexCode = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+                           const percentage = (count / totalSampledPixels) * 100;
+                           
+                           return {
+                               hex: hexCode,
+                               percentage: parseFloat(percentage.toFixed(2))
+                           };
+                       });
+                       
+                       resolve(finalColorsWithPercentage);
+                       
+                   } catch (e) {
+                       reject(new Error("Failed to process image data on canvas: " + e.message));
+                   }
+               };
+               
+               img.onerror = (e) => {
+                   URL.revokeObjectURL(blobUrl);
+                   reject(new Error("Failed to load image from Blob URL."));
+               };
+               
+               img.src = blobUrl;
+           });
+        }
         createAbstractBackground(colorData, width = 1344, height = 768) {
           if (!colorData || colorData.length < 1) {
               throw new Error("Color data array cannot be empty.");
