@@ -294,6 +294,7 @@
                 this.renderEvents();
 
                 
+                await this.getPrimaryColorsFromImage();
 
                 
                 await this.initBackgroundCanvas();
@@ -409,117 +410,31 @@
             this.state.currentEvent.backgroundRefined = imageSaved.url;       
         },
 
-        
-        async checkMissingImages(){
-
-           try{
-                // if(!this.state.currentEvent.backgroundFiltered){
-                //   await this.initFilteredBackground();
-                //   this.renderBackground();
-                // }
-           }
-           catch(error){
-            console.error(error);
-           }
-        },
  
-        getPrimaryColorsFromImage(imageBlob, quality = 10, maxColors = 2) {
-           return new Promise((resolve, reject) => {
-               const blobUrl = URL.createObjectURL(imageBlob);
-               const img = new Image();
-               
-               const QUANTIZATION_BUCKETS = 51;
-               // TOLERANCE: Define a buffer (e.g., 20) around 0 and 255 to exclude near-black/near-white
-               const TOLERANCE_LOW = 20;  // Exclude colors where R, G, B are all below this value (near Black)
-               const TOLERANCE_HIGH = 245; // Exclude colors where R, G, B are all above this value (near White)
-               
-               let totalSampledPixels = 0;
-               
-               img.onload = function() {
-                   URL.revokeObjectURL(blobUrl);
-                   
-                   const canvas = document.createElement('canvas');
-                   const ctx = canvas.getContext('2d');
-                   canvas.width = this.width;
-                   canvas.height = this.height;
-                   ctx.drawImage(this, 0, 0);
-                   
-                   try {
-                       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                       const data = imageData.data;
-                       const colorMap = {};
-                       
-                       // 4. Sample and Count Frequencies (with Quantization and Exclusion)
-                       for (let i = 0; i < data.length; i += 4 * quality) {
-                           let r = data[i];
-                           let g = data[i + 1];
-                           let b = data[i + 2];
-                           const a = data[i + 3];
-                           
-                           // Ignore highly transparent pixels
-                           if (a < 128) continue;
-                           
-                           // === EXCLUSION CHECK (New Logic) ===
-                           const isNearBlack = (r < TOLERANCE_LOW) && (g < TOLERANCE_LOW) && (b < TOLERANCE_LOW);
-                           const isNearWhite = (r > TOLERANCE_HIGH) && (g > TOLERANCE_HIGH) && (b > TOLERANCE_HIGH);
-                           
-                           if (isNearBlack || isNearWhite) {
-                               continue; // Skip this pixel entirely
-                           }
-                           // ===================================
-                           
-                           totalSampledPixels++;
-                           
-                           // === QUANTIZATION ===
-                           r = Math.round(r / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           g = Math.round(g / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           b = Math.round(b / QUANTIZATION_BUCKETS) * QUANTIZATION_BUCKETS;
-                           
-                           r = Math.min(255, r);
-                           g = Math.min(255, g);
-                           b = Math.min(255, b);
-                           // ====================
-                           
-                           const rgbKey = `${r},${g},${b}`;
-                           colorMap[rgbKey] = (colorMap[rgbKey] || 0) + 1;
-                       }
+        async getPrimaryColorsFromImage() {
+          let postData = {
+              
+              imageUrl: this.state.currentEvent.screenshot, 
+          }
 
-                       // If no meaningful pixels were sampled after exclusion
-                       if (totalSampledPixels === 0) {
-                           return resolve([]); 
-                       }
-                       
-                       // 5. Sort and 6. Convert to Hex/Percentage (Unchanged logic)
-                       const sortedColors = Object.entries(colorMap)
-                           .sort(([, countA], [, countB]) => countB - countA)
-                           .slice(0, maxColors);
-                       
-                       const finalColorsWithPercentage = sortedColors.map(([rgbKey, count]) => {
-                           const [r, g, b] = rgbKey.split(',').map(Number);
-                           const hexCode = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-                           const percentage = (count / totalSampledPixels) * 100;
-                           
-                           return {
-                               hex: hexCode,
-                               percentage: parseFloat(percentage.toFixed(2))
-                           };
-                       });
-                       
-                       resolve(finalColorsWithPercentage);
-                       
-                   } catch (e) {
-                       reject(new Error("Failed to process image data on canvas: " + e.message));
-                   }
-               };
-               
-               img.onerror = (e) => {
-                   URL.revokeObjectURL(blobUrl);
-                   reject(new Error("Failed to load image from Blob URL."));
-               };
-               
-               img.src = blobUrl;
-           });
+          console.log(postData);
+
+          const response = await this.fetchApi('/api/analyze', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: this.state.currentEvent.url, 
+                                     request: 'primary_colors', 
+                                     webData: JSON.stringify(postData) })
+          });
+        
+        
+          console.log("data colors: ", response);
+
+          // Update state with the new data
+          this.state.currentEvent.colors = response; 
         },
+
+
         createAbstractBackground(colorData, width = 1344, height = 768) {
           if (!colorData || colorData.length < 1) {
               throw new Error("Color data array cannot be empty.");
@@ -753,8 +668,6 @@
               });
 
               const imageBlob = await response.blob();
-
-              let colorsData = await this.getPrimaryColorsFromImage(imageBlob);
 
 
               let newDataAbs = await this.createAbstractBackground(colorsData);
@@ -1067,16 +980,26 @@
 
 
         renderBackground(){
+            let screenshot = this.state.currentEvent.screenshot;
             let imageUrl = this.state.currentEvent.background;
             let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
             let imageColorUrl = this.state.currentEvent.backgroundColor;
             let imageAbsUrl = this.state.currentEvent.backgroundAbstract;
             let imageGradUrl = this.state.currentEvent.backgroundGrad;
             let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
-            let imageGeoUrl = this.state.currentEvent.backgroundGeo;
+            // let imageGeoUrl = this.state.currentEvent.backgroundGeo;
 
-            let imageScreenshot = this.state.currentEvent.screenshot;
-           
+            let colors = this.state.currentEvent.colors;
+
+            let colorsHtml = `<div class="colors-holder">
+                             <h2>Colors Found</h2>
+                          </div>`;
+
+            let screenshotImg = `<div class="img-holder">
+                              <h2>Screenshot Image</h2>
+                              <div class="loader"></div>
+                           </div>
+                          `;
             let backImg = `<div class="img-holder">
                               <h2>AI Background Image</h2>
                               <div class="loader"></div>
@@ -1097,11 +1020,11 @@
                               <div class="loader"></div>
                            </div>
                           `;
-            let backAbsImg = `<div class="img-holder">
-                              <h2>Abstract Image</h2>
-                              <div class="loader"></div>
-                           </div>
-                          `;              
+            // let backAbsImg = `<div class="img-holder">
+            //                   <h2>Abstract Image</h2>
+            //                   <div class="loader"></div>
+            //                </div>
+            //               `;              
             let backFilteredImg = `<div class="img-holder">
                               <h2>Filtered Image</h2>
                               <div class="loader"></div>
@@ -1121,6 +1044,26 @@
             //                   src="${imageUrl}" >
             //               </div>`;
             // }
+            if(colors.length > 0){
+              colorsHtml = `<div class="colors-holder">
+                             <h2>Colors Found</h2>
+                             <h3 class="color-holder">
+                               <span style="background-color:${colors[0].hex}"></span>
+                               ${colors[0].hex} : ${colors[0].percentage}%
+                             </h3>
+                             <h3 class="color-holder">
+                               <span style="background-color:${colors[1].hex}"></span>
+                               ${colors[1].hex} : ${colors[1].percentage}%
+                             </h3>
+                          </div>`;
+            }
+            if(screenshotUrl != null){
+               screenshotImg = `<div class="img-holder">
+                              <h2>Screenshot Background Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${screenshotUrl}" >
+                          </div>`;
+            }
             if(imageRefinedUrl != null){
                backRefinedImg = `<div class="img-holder">
                               <h2>AI Refined Background Image</h2>
@@ -1135,13 +1078,13 @@
                               src="${imageColorUrl}" >
                           </div>`;
             }
-            if(imageAbsUrl != null){
-               backAbsImg = `<div class="img-holder">
-                              <h2>Abstract Image</h2>
-                              <img class="background-image" width="100%" height="100%"
-                              src="${imageAbsUrl}" >
-                          </div>`;
-            }
+            // if(imageAbsUrl != null){
+            //    backAbsImg = `<div class="img-holder">
+            //                   <h2>Abstract Image</h2>
+            //                   <img class="background-image" width="100%" height="100%"
+            //                   src="${imageAbsUrl}" >
+            //               </div>`;
+            // }
             if(imageGradUrl != null){
                backGradImg = `<div class="img-holder">
                               <h2>Blur Gradient Image</h2>
@@ -1165,11 +1108,12 @@
             }
 
             this.elements.backHolder.innerHTML = `
+               ${colorsHtml}
+               ${screenshotImg}
                ${backRefinedImg}
                ${backColorImg}
-               ${backAbsImg}
-               ${backGeoImg}
                ${backGradImg}
+               ${backGeoImg}
                ${backFilteredImg}
             `;
         },
@@ -1192,8 +1136,6 @@
            this.showScreen("background-screen");
            this.renderBackground();
            this.renderEvents();
-
-           // this.checkMissingImages();
         },
         saveData(key, data) {
             try {

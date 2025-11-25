@@ -743,3 +743,58 @@ GENERATE_IMAGE.
 
     return prompt;
 }
+
+
+
+
+export function getPromptPrimaryColors() {
+
+    const prompt = `<SYSTEM_ROLE>
+You are an expert Brand Identity Analyzer.
+Your task is to analyze the design system from the provided <INPUT_DATA> Image and output a strict JSON object.
+</SYSTEM_ROLE>
+
+<TASK_DEFINITION>
+2.  **Analyze** the visual hierarchy to determine which colors are dominant.
+4.  **Synthesize** findings into the specific JSON structure defined below.
+</TASK_DEFINITION>
+
+<EXTRACTION_LOGIC>
+**COLORS:**
+* **Primary Color:** The most dominant brand color. (Hex format, e.g., #FF5733), avoid getting whites and blacks if there are not part of the actual brand, get the percentage of usage of this color versus the secondary.
+* **Secondary Color:** The second most dominant used brand color (Hex format, e.g., #FF5733), avoid getting whites and blacks if there are not part of the actual brand, get the percentage of usage of this color versus the primary.
+
+
+</EXTRACTION_LOGIC>
+
+<JSON_OUTPUT_SCHEMA>
+{
+  "colors": [
+    {
+      "hex": "string (Hex Code for primary color)",
+      "percentage": "float (Percentage of primary color)"
+    },
+    {
+      "hex": "string (Hex Code for secondary color)",
+      "percentage": "float (Percentage of secondary color)"
+    }
+  ],
+}
+</JSON_OUTPUT_SCHEMA>
+
+<STRICT_OUTPUT_RULES>
+1.  **FORMAT:** Return ONLY valid, parseable JSON.
+2.  **NO WRAPPERS:** Do not use markdown code blocks (no \`\`\`json). Just the raw JSON string.
+3.  **NO CHATTER:** Do not include explanations, "Here is the JSON", or any other text.
+4.  **DEFAULTS:** If data is completely missing, default to: Colors: #000000/#FFFFFF, Fonts: "Inter"/"Inter".
+</STRICT_OUTPUT_RULES>
+
+<INPUT_DATA>
+* Style_Reference_Image: [Image provided via API input]
+</INPUT_DATA>
+
+ANALYZE AND RETURN JSON.
+`;
+
+    return prompt;
+}

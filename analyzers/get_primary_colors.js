@@ -6,8 +6,7 @@ import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
 
 import { getAIFetch } from '../modules/AI_fetcher.js';
-import { stripHtml } from '../modules/html_stripper.js';
-import { getPromptIdentity} from '../modules/prompt_generator.js';
+import { getPromptPrimaryColors} from '../modules/prompt_generator.js';
 import { getImageName,formatImage} from '../modules/image_handlers.js';
 
 /**
@@ -16,16 +15,16 @@ import { getImageName,formatImage} from '../modules/image_handlers.js';
  * @param {object} config - The centralized server configuration object.
  * @returns {Promise<object>} - The structured analysis report.
  */
-export async function getIdentity(data) {
+export async function getPrimaryColors(data) {
     
-    const { imageUrl, html} = JSON.parse(data);
+    const { imageUrl } = JSON.parse(data);
 
     
     
     let content = await getDesignContext(html);
     console.log('html for data identity extractor: '+html);
 
-    let eventIdentity = await getAiAnalysisIdentity(html,imageUrl);
+    let eventIdentity = await getAiAnalysisIdentity(imageUrl);
 
     console.log('identity :'+eventIdentity);
 
@@ -36,7 +35,7 @@ export async function getIdentity(data) {
 }
 
 
-async function getAiAnalysisIdentity(html,imageUrl) {
+async function getAiAnalysisIdentity(imageUrl) {
 
     let reference = null;
     
@@ -58,36 +57,36 @@ async function getAiAnalysisIdentity(html,imageUrl) {
     }
     
 
-    let prompt = getPromptIdentity(html);
+    let prompt = getPromptPrimaryColors(html);
 
 
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-3-pro-image-preview';
 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     
-    // CHANGE 4: Optimized generationConfig
     const responseSchema = {
-      type: "OBJECT",
-      properties: {
-        colors: {
-          type: "OBJECT",
-          properties: {
-            primary_color: { type: "STRING", description: "Dominant hex color" },
-            secondary_color: { type: "STRING", description: "Secondary hex color" }
-          },
-          required: ["primary_color", "secondary_color"]
+        type: "OBJECT",
+        properties: {
+            colors: {
+                type: "ARRAY",
+                description: "A list of dominant colors, including their hexadecimal code and proportional percentage of image dominance.",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        hex: {
+                            type: "STRING",
+                            description: "The Hex code for the detected color (e.g., #FF5733)."
+                        },
+                        percentage: {
+                            type: "NUMBER", // Use NUMBER for floating point values
+                            description: "The percentage of dominance for this color (e.g., 55.45)."
+                        }
+                    },
+                    required: ["hex", "percentage"]
+                }
+            }
         },
-        fonts: {
-          type: "OBJECT",
-          properties: {
-            title_font: { type: "STRING", description: "Heading font family" },
-            text_font: { type: "STRING", description: "Body font family" },
-            title_style: { type: "STRING", description: "Heading css styles" },
-          },
-          required: ["title_font", "text_font", "title_style"]
-        }
-      },
-      required: ["colors", "fonts"]
+        required: ["colors"]
     };
     
     // Then, create the request body
@@ -117,7 +116,7 @@ async function getAiAnalysisIdentity(html,imageUrl) {
         },
     };
     
-    console.log("AI analysis started: Calling UNARY endpoint :generateContent");
+    console.log("AI analysis colors generator started: Calling UNARY endpoint :generateContent");
 
     // --- 4. Execute the API Call ---
     try {

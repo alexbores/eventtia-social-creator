@@ -24,6 +24,7 @@ import { getPostHTML } from './analyzers/get_post_html.js';
 
 import { getBackgroundImage } from './analyzers/get_background_image.js';
 import { getRefineBackgroundImage } from './analyzers/get_refine_background_image.js';
+import { getPrimaryColors } from './analyzers/get_primary_colors.js';
 import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
 import { fileURLToPath } from 'url';
@@ -217,6 +218,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'refine_background_image':
             console.log('Starting edition of background image...');
             response = await getRefineBackgroundImage(webData);
+          break;
+          case 'primary_colors':
+            console.log('gettign primary colors...');
+            response = await getPrimaryColors(webData);
           break;
         }
         

@@ -231,6 +231,26 @@ p,h1,h2,h3,li{
   gap: 40px;
   flex-wrap: wrap;
   flex-direction: column;
+  width: 100%;
+}
+#background-screen .background-content .colors-holder{
+  width: 100%;
+  justify-content: start;
+  gap: 40px;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+#background-screen .background-content .colors-holder h2{
+  font-size: 18px;
+}
+#background-screen .background-content .colors-holder h3{
+  font-size: 16px;
+}
+#background-screen .background-content .colors-holder h2 span{
+  height: 15px;
+  width: 15px;
+  border-radius: 3;
+  margin-right: 10px;
 }
 #background-screen .background-content .img-holder{
   width: 100%;
@@ -241,6 +261,7 @@ p,h1,h2,h3,li{
 #background-screen .background-content .img-holder h2{
   font-size: 18px;
 }
+
 #background-screen .background-content img{
   box-shadow: 0 0 9px 0px #00000014;
   height: calc(100vh - 155px);
