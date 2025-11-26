@@ -19,10 +19,6 @@ export async function getPrimaryColors(data) {
     
     const { imageUrl } = JSON.parse(data);
 
-    
-    
-    let content = await getDesignContext(html);
-    console.log('html for data identity extractor: '+html);
 
     let eventIdentity = await getAiAnalysisIdentity(imageUrl);
 
@@ -174,47 +170,6 @@ async function getAiAnalysisIdentity(imageUrl) {
 }
 
 
-async function getDesignContext(html) {
-  const dom = new JSDOM(html);
-  const doc = dom.window.document;
-
-  // 1. Extract CSS (Critical for AI to identify colors/fonts)
-  const styleTags = doc.querySelectorAll('style');
-  let cssContext = '';
-  
-  styleTags.forEach(style => {
-    // Minify slightly by removing excessive whitespace
-    const cleanCss = style.textContent.replace(/\s+/g, ' ').trim();
-    if (cleanCss) {
-      cssContext += cleanCss + '\n';
-    }
-  });
-
-  // 2. Extract Content Hierarchy (H tags and P tags)
-  // We select them in a single query to preserve the visual order of the document.
-  const elements = doc.querySelectorAll('h1, h2, h3, h4, h5, h6, p');
-  let htmlContext = '';
-
-  elements.forEach(el => {
-    // Only include elements that actually have text
-    if (el.textContent.trim().length > 0) {
-      // .outerHTML is crucial: it keeps <h1 class="title">Text</h1>
-      // This allows the AI to match the class to the CSS extracted above.
-      htmlContext += el.outerHTML + '\n';
-    }
-  });
-
-  // 3. Construct the "Skeleton" HTML
-  const finalOutput = `
-<style>
-${cssContext}
-</style>
-<div id="extracted-content">
-${htmlContext}
-</div>`;
-
-  return finalOutput;
-}
 
 
 
