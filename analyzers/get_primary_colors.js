@@ -53,7 +53,7 @@ async function getAiAnalysisIdentity(imageUrl) {
     }
     
 
-    let prompt = getPromptPrimaryColors(html);
+    let prompt = getPromptPrimaryColors();
 
 
     const model = 'gemini-3-pro-image-preview';
