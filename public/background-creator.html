@@ -513,7 +513,12 @@
 
             
             colorData = colorData.slice().sort((a, b) => b.percentage - a.percentage);
-    
+            
+            colorData.unshift({ ...colorData[0] });
+
+            colorData[0].percentage = 20;
+            colorData[1].percentage = 50;
+            colorData[2].percentage = 30;
 
             // 1. Setup Canvas
 
