@@ -156,10 +156,6 @@ async function getAiAnalysisIdentity(imageUrl) {
         // Parse the JSON string to get the actual HTML
         const parsedJson = JSON.parse(responseText);
         
-        // Validate that we got what we asked for
-        if (!parsedJson.colors || !parsedJson.fonts) {
-             throw new Error('AI response missing colors or fonts properties.');
-        }
         
         return parsedJson;
 
