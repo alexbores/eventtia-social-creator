@@ -40,6 +40,7 @@ export async function getWebScreenshot(page, config) {
         });
         console.log(`Page forcefully scrolled to top.`);
         
+        await new Promise(r => setTimeout(r, 1000));
 
         const HARD_TIMEOUT = 20000; // 20 seconds maximum for the full attempt
 

@@ -431,7 +431,7 @@
           console.log("data colors: ", response);
 
           // Update state with the new data
-          this.state.currentEvent.colors = response; 
+          this.state.currentEvent.colors = response.colors; 
         },
 
 
@@ -661,7 +661,7 @@
 
            let colorsData = this.state.currentEvent.colors;
 
-           
+
            try{
               const response = await this.fetchBinaryApi('/api/analyze', {
                   method: 'POST',
