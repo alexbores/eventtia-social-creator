@@ -540,9 +540,9 @@
             
             newColorData.unshift({ ...newColorData[0] });
 
-            newColorData[0].percentage = 0;
-            newColorData[1].percentage = 60;
-            newColorData[2].percentage = 100;
+            // newColorData[0].percentage = 0;
+            // newColorData[1].percentage = 82;
+            // newColorData[2].percentage = 100;
 
             newColorData[1].hex = getMidColor(newColorData[0].hex, 
                                                 newColorData[2].hex
@@ -562,76 +562,33 @@
             // 1. Setup Canvas
 
             const canvas = document.createElement('canvas');
-
             const ctx = canvas.getContext('2d');
-
             canvas.width = width;
-
             canvas.height = height;
 
-        
-
-            // 2. Create the Gradient Object (Diagonal: top-left (0,0) to bottom-right (width,         height))
-
+            // 1. Create the diagonal gradient (Approx. 144deg)
             const gradient = ctx.createLinearGradient(0, 0, width, height);
 
-        
+            // 2. Add the stops exactly as defined in your CSS
+            // 0% -> rgba(14, 32, 46, 1)
+            gradient.addColorStop(0, newColorData[0].hex);
 
-            // 3. Define Color Stops based on Cumulative Percentage
+            // 82% -> rgba(50, 116, 116, 1)
+            gradient.addColorStop(0.82, newColorData[1].hex);
 
-            let cumulativePercentage = 0;
+            // 100% -> rgba(85, 200, 185, 1)
+            gradient.addColorStop(1.0, newColorData[2].hex);
 
-            
-
-            newColorData.forEach((data, index) => {
-
-                const startStop = cumulativePercentage / 100;
-
-                
-
-                // Add the current color's percentage to the cumulative total
-
-                cumulativePercentage += data.percentage;
-
-        
-
-                // Add the color stop at the calculated position
-
-                gradient.addColorStop(startStop, data.hex);
-
-                
-
-                // For the *last* color, ensure it reaches the 100% mark
-
-                if (index === colorData.length - 1) {
-
-                     gradient.addColorStop(1.0, data.hex);
-
-                }
-
-            });
-
-        
-
-            // 4. Apply the Gradient
-
+            // 3. Fill
             ctx.fillStyle = gradient;
-
             ctx.fillRect(0, 0, width, height);
 
-            
-
-            // 5. Apply a subtle blur filter for extra smoothness (Optional)
-
-            ctx.filter = `blur(5px)`; 
-
-            ctx.drawImage(canvas, 0, 0);
-
-        
-
-            // 6. Return the resulting image as a data URL
+            // Optional: Add your blur back if you like the soft look
+            // ctx.filter = 'blur(5px)';
+            // ctx.drawImage(canvas, 0, 0);
 
             return canvas.toDataURL('image/webp', 0.9);
+
 
         },
         createFullColorBackground(colorData, width = 1344, height = 768) {
