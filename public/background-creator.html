@@ -658,6 +658,10 @@
         },
         async initBackgroundCanvas(){
            let image = this.state.currentEvent.screenshot;
+
+           let colorsData = this.state.currentEvent.colors;
+
+           
            try{
               const response = await this.fetchBinaryApi('/api/analyze', {
                   method: 'POST',
