@@ -548,7 +548,7 @@
 
             let newColorData = colorData;
             let temp = newColorData[0].hex;
-            newColorData[0].hex = newColorData[1];
+            newColorData[0].hex = newColorData[1].hex;
             newColorData[1].hex = temp;
 
             console.log(newColorData);
