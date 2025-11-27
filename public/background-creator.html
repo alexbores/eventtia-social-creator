@@ -507,6 +507,8 @@
             if (!colorData || colorData.length < 2) {
                 throw new Error("Color data must contain at least two entries for a gradient.");
             }
+
+            let reversedData = colorData.slice().reverse();
             
             // 1. Setup Canvas
             const canvas = document.createElement('canvas');
@@ -520,9 +522,7 @@
             // 3. Define Color Stops based on Cumulative Percentage
             let cumulativePercentage = 0;
             
-            colorData.forEach((data, index) => {
-                // Calculate the position (0.0 to 1.0) for the color stop.
-                // The first color starts at 0, the subsequent colors start where the previous         one ended.
+            reversedData.forEach((data, index) => {
                 const startStop = cumulativePercentage / 100;
                 
                 // Add the current color's percentage to the cumulative total
@@ -532,7 +532,7 @@
                 gradient.addColorStop(startStop, data.hex);
                 
                 // For the *last* color, ensure it reaches the 100% mark
-                if (index === colorData.length - 1) {
+                if (index === reversedData.length - 1) {
                      gradient.addColorStop(1.0, data.hex);
                 }
             });
@@ -700,7 +700,38 @@
               console.error(error);
            }
         },
+         
+         async resetGradientBackground(){
+           let image = this.state.currentEvent.screenshot;
 
+           let colorsData = this.state.currentEvent.colors;
+
+
+           try{
+              const response = await this.fetchBinaryApi('/api/analyze', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ url: image, 
+                                         request: 'download_image', 
+                                         webData: image })
+              });
+
+              const imageBlob = await response.blob();
+
+
+              let newDataGrad = await this.createGradientBackground(colorsData);
+              let savedGrad = await this.saveImageByUrl(newDataGrad,'backgroundGrad');
+
+
+              this.state.currentEvent.backgroundGrad = savedGrad.url;
+
+
+              this.renderBackground();
+           }
+           catch(error){
+              console.error(error);
+           }
+        },
 
         
 
