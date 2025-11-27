@@ -504,60 +504,50 @@
           return canvas.toDataURL('image/webp', 0.8);
         },
         createGradientBackground(colorData, width = 1344, height = 768) {
-    if (!colorData || colorData.length < 2) {
-        throw new Error("Color data must contain at least two entries for a gradient.");
-    }
+            if (!colorData || colorData.length < 2) {
+                throw new Error("Color data must contain at least two entries for a gradient.");
+            }
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-
-    let cumulativePercentage = 0;
-    
-    // Define how "soft" the transition is. 
-    // 0.2 means the fade happens over 20% of the screen.
-    const fadeWidth = 0.2; 
-
-    colorData.forEach((data, index) => {
-        const currentHex = data.hex;
-        const nextData = colorData[index + 1];
-
-        // 1. Calculate where this color section ends
-        cumulativePercentage += data.percentage;
-        const boundary = cumulativePercentage / 100;
-
-        // 2. Logic for the FIRST color (The dominant one in your case)
-        if (index === 0) {
-            // Keep color SOLID until we get close to the boundary
-            // e.g., if boundary is 0.92, we stop solid green at 0.72
-            let solidEnd = Math.max(0, boundary - fadeWidth);
-            gradient.addColorStop(0, currentHex);       // Start
-            gradient.addColorStop(solidEnd, currentHex); // Keep solid
-        } 
+            let reversedData = colorData.slice().reverse();
+            
+            // 1. Setup Canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
         
-        // 3. Logic for the TRANSITION to the next color
-        if (nextData) {
-            // Force the gradient to finish fading EXACTLY at the boundary
-            // This creates the transition from Green(solidEnd) -> Red(boundary)
-            gradient.addColorStop(boundary, nextData.hex);
-        } else {
-            // Last color fills the rest
-             gradient.addColorStop(1.0, currentHex);
-        }
-    });
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Optional: stronger blur makes the transition even smoother
-    ctx.filter = `blur(4px)`; 
-    ctx.drawImage(canvas, 0, 0);
-
-    return canvas.toDataURL('image/webp', 0.9);
-},
+            // 2. Create the Gradient Object (Diagonal: top-left (0,0) to bottom-right (width,         height))
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+        
+            // 3. Define Color Stops based on Cumulative Percentage
+            let cumulativePercentage = 0;
+            
+            reversedData.forEach((data, index) => {
+                const startStop = cumulativePercentage / 100;
+                
+                // Add the current color's percentage to the cumulative total
+                cumulativePercentage += data.percentage;
+        
+                // Add the color stop at the calculated position
+                gradient.addColorStop(startStop, data.hex);
+                
+                // For the *last* color, ensure it reaches the 100% mark
+                if (index === reversedData.length - 1) {
+                     gradient.addColorStop(1.0, data.hex);
+                }
+            });
+        
+            // 4. Apply the Gradient
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 5. Apply a subtle blur filter for extra smoothness (Optional)
+            ctx.filter = `blur(1px)`; 
+            ctx.drawImage(canvas, 0, 0);
+        
+            // 6. Return the resulting image as a data URL
+            return canvas.toDataURL('image/webp', 0.9);
+        },
         createFullColorBackground(colorData, width = 1344, height = 768) {
           if (!colorData || colorData.length === 0) {
               throw new Error("Color data array cannot be empty.");
