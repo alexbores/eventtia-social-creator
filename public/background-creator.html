@@ -507,8 +507,11 @@
             if (!colorData || colorData.length < 2) {
                 throw new Error("Color data must contain at least two entries for a gradient.");
             }
-
-            let reversedData = colorData.slice().reverse();
+            
+            let reversedData = colorData;
+            if(colorData[0].percentage > colorData[1].percentage){
+              reversedData = colorData.slice().reverse();
+            }
             
             // 1. Setup Canvas
             const canvas = document.createElement('canvas');
@@ -542,7 +545,7 @@
             ctx.fillRect(0, 0, width, height);
             
             // 5. Apply a subtle blur filter for extra smoothness (Optional)
-            ctx.filter = `blur(1px)`; 
+            ctx.filter = `blur(5px)`; 
             ctx.drawImage(canvas, 0, 0);
         
             // 6. Return the resulting image as a data URL
