@@ -504,49 +504,92 @@
           return canvas.toDataURL('image/webp', 0.8);
         },
         createGradientBackground(colorData, width = 1344, height = 768) {
-    if (!colorData || colorData.length < 2) {
-        throw new Error("Color data must contain at least two entries for a gradient.");
-    }
 
-    // 1. Sort data so the Biggest percentage is always index [0]
-    // We create a copy with .slice() to avoid mutating the original array
-    const sortedData = colorData.slice().sort((a, b) => b.percentage - a.percentage);
+            if (!colorData || colorData.length < 2) {
+
+                throw new Error("Color data must contain at least two entries for a gradient.");
+
+            }
+
+            
+            colorData = colorData.slice().sort((a, b) => b.percentage - a.percentage);
     
-    const dominantColor = sortedData[0].hex;  // The one with the biggest %
-    const secondaryColor = sortedData[1].hex; // The one with the smallest %
 
-    // 2. Setup Canvas
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
+            // 1. Setup Canvas
 
-    // 3. Create Linear Gradient (Top-Left to Bottom-Right)
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
+            const canvas = document.createElement('canvas');
 
-    // 4. Define Fixed Stops (70% Dominant, 30% Transition/Secondary)
-    
-    // Start with Dominant Color
-    gradient.addColorStop(0, dominantColor);
-    
-    // Keep Dominant Color SOLID until 70% of the screen
-    gradient.addColorStop(0.7, dominantColor);
-    
-    // Finish with Secondary Color at 100%
-    // The gradient will fade from Dominant to Secondary between 70% and 100%
-    gradient.addColorStop(1.0, secondaryColor);
+            const ctx = canvas.getContext('2d');
 
-    // 5. Apply the Gradient
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+            canvas.width = width;
 
-    // 6. Apply blur for smoothness (Optional, helps soften the edge at 70%)
-    ctx.filter = `blur(10px)`; 
-    ctx.drawImage(canvas, 0, 0);
+            canvas.height = height;
 
-    // 7. Return image
-    return canvas.toDataURL('image/webp', 0.9);
-},
+        
+
+            // 2. Create the Gradient Object (Diagonal: top-left (0,0) to bottom-right (width,         height))
+
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+
+        
+
+            // 3. Define Color Stops based on Cumulative Percentage
+
+            let cumulativePercentage = 0;
+
+            
+
+            colorData.forEach((data, index) => {
+
+                const startStop = cumulativePercentage / 100;
+
+                
+
+                // Add the current color's percentage to the cumulative total
+
+                cumulativePercentage += data.percentage;
+
+        
+
+                // Add the color stop at the calculated position
+
+                gradient.addColorStop(startStop, data.hex);
+
+                
+
+                // For the *last* color, ensure it reaches the 100% mark
+
+                if (index === colorData.length - 1) {
+
+                     gradient.addColorStop(1.0, data.hex);
+
+                }
+
+            });
+
+        
+
+            // 4. Apply the Gradient
+
+            ctx.fillStyle = gradient;
+
+            ctx.fillRect(0, 0, width, height);
+
+            
+
+            // 5. Apply a subtle blur filter for extra smoothness (Optional)
+
+            ctx.filter = `blur(5px)`; 
+
+            ctx.drawImage(canvas, 0, 0);
+
+        
+
+            // 6. Return the resulting image as a data URL
+
+            return canvas.toDataURL('image/webp', 0.9);
+
+        },
         createFullColorBackground(colorData, width = 1344, height = 768) {
           if (!colorData || colorData.length === 0) {
               throw new Error("Color data array cannot be empty.");
