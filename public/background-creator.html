@@ -546,7 +546,11 @@
             //                                     newColorData[2].hex
             //                                    );
 
-            let newColorData = colorData;
+            let newColorData = [...colorData];
+            
+
+            newColorData = newColorData.slice().sort((a, b) => b.percentage - a.percentage);
+
             let temp = newColorData[0].hex;
             newColorData[0].hex = newColorData[1].hex;
             newColorData[1].hex = temp;
