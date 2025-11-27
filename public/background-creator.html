@@ -790,7 +790,7 @@
            });
         },
         async initFilteredBackground(){
-          let image = this.state.currentEvent.background;
+          let image = this.state.currentEvent.backgroundRefined;
            
           try{
              const response = await this.fetchBinaryApi('/api/analyze', {
