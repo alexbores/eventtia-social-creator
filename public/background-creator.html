@@ -1186,22 +1186,7 @@
             }
 
             
-            html += this.getMockups(); 
-
-
-            this.elements.backHolder.innerHTML = `
-               ${colorsHtml}
-               ${backRefinedImg}
-               ${backFilteredImg}
-            `;
-        },
-
-
-        getMockups(){
-           let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
-           let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
-           
-           let html = `
+            let mockups = `
              <div class="mockups-holder">
                  <iframe src="/layout-1?image=${imageFilteredUrl}"
                          sandbox="allow-scripts allow-same-origin">
@@ -1215,7 +1200,19 @@
                  </iframe>
              </div>
            `;
+
+
+            this.elements.backHolder.innerHTML = `
+               ${colorsHtml}
+               ${backRefinedImg}
+               ${backFilteredImg}
+
+               ${mockups}
+            `;
         },
+
+
+
 
 
 
