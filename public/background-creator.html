@@ -1192,25 +1192,25 @@
             
             let mockups = `
              <div class="mockups-holder">
-                 <iframe src="/layout-1.html?image=${imageFilteredUrl}&color=${primaryColor}"
+                 <iframe src="/layout-1.html?image=${encodeURIComponent(imageFilteredUrl)}&color=${encodeURIComponent(primaryColor)}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-2.html?image=${imageFilteredUrl}&color=${primaryColor}"
+                 <iframe src="/layout-2.html?image=${encodeURIComponent(imageFilteredUrl)}&color=${encodeURIComponent(primaryColor)}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-3.html?image=${imageRefinedUrl}"
+                 <iframe src="/layout-3.html?image=${encodeURIComponent(imageRefinedUrl)}"
                          sandbox="allow-scripts allow-same-origin"
                          class="layout-3">
                  </iframe>
              </div>
               <div class="mockups-holder">
-                 <iframe src="/layout-1.html?image=${imageRefinedUrl}&color=${primaryColor}"
+                 <iframe src="/layout-1.html?image=${encodeURIComponent(imageRefinedUrl)}&color=${encodeURIComponent(primaryColor)}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-2.html?image=${imageRefinedUrl}&color=${primaryColor}"
+                 <iframe src="/layout-2.html?image=${encodeURIComponent(imageRefinedUrl)}&color=${encodeURIComponent(primaryColor)}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-3.html?image=${imageFilteredUrl}"
+                 <iframe src="/layout-3.html?image=${encodeURIComponent(imageFilteredUrl)}"
                          sandbox="allow-scripts allow-same-origin"
                          class="layout-3">
                  </iframe>
