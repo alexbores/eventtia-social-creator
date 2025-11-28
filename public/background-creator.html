@@ -1066,12 +1066,18 @@
             let imageGradUrl = this.state.currentEvent.backgroundGrad;
             let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
             let imageGeoUrl = this.state.currentEvent.backgroundGeo;
-
+            
             let colors = this.state.currentEvent.colors;
+            
+            let primaryColor = '';
 
-            let newColorData = colors.slice().sort((a, b) => b.percentage - a.percentage);
+            if(colors && colors.length){
+              let newColorData = colors.slice().sort((a, b) => b.percentage - a.percentage);
 
-            let primaryColor = newColorData[0].hex;
+              primaryColor = newColorData[0].hex;
+            }
+
+
 
             let colorsHtml = `<div class="colors-holder">
                              <h2>Colors Found</h2>
