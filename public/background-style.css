@@ -303,9 +303,6 @@ p,h1,h2,h3,li{
   transform: scale(0.8);
   overflow: hidden;
 }
-#background-screen .background-content .mockups-holder iframe.layout-3{
-  width: 360px;
-}
 
 
 #url-screen{
