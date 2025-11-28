@@ -1069,6 +1069,10 @@
 
             let colors = this.state.currentEvent.colors;
 
+            let newColorData = colorData.slice().sort((a, b) => b.percentage - a.percentage);
+
+            let primaryColor = newColorData[0].hex;
+
             let colorsHtml = `<div class="colors-holder">
                              <h2>Colors Found</h2>
                           </div>`;
@@ -1188,10 +1192,10 @@
             
             let mockups = `
              <div class="mockups-holder">
-                 <iframe src="/layout-1.html?image=${imageFilteredUrl}"
+                 <iframe src="/layout-1.html?image=${imageFilteredUrl}&color=${primaryColor}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-2.html?image=${imageFilteredUrl}"
+                 <iframe src="/layout-2.html?image=${imageFilteredUrl}&color=${primaryColor}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
                  <iframe src="/layout-3.html?image=${imageRefinedUrl}"
@@ -1200,10 +1204,10 @@
                  </iframe>
              </div>
               <div class="mockups-holder">
-                 <iframe src="/layout-1.html?image=${imageRefinedUrl}"
+                 <iframe src="/layout-1.html?image=${imageRefinedUrl}&color=${primaryColor}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
-                 <iframe src="/layout-2.html?image=${imageRefinedUrl}"
+                 <iframe src="/layout-2.html?image=${imageRefinedUrl}&color=${primaryColor}"
                          sandbox="allow-scripts allow-same-origin">
                  </iframe>
                  <iframe src="/layout-3.html?image=${imageFilteredUrl}"
@@ -1216,6 +1220,7 @@
 
             this.elements.backHolder.innerHTML = `
                ${colorsHtml}
+               ${screenshotImg}
                ${backRefinedImg}
                ${backFilteredImg}
 
