@@ -1069,7 +1069,7 @@
 
             let colors = this.state.currentEvent.colors;
 
-            let newColorData = colorData.slice().sort((a, b) => b.percentage - a.percentage);
+            let newColorData = colors.slice().sort((a, b) => b.percentage - a.percentage);
 
             let primaryColor = newColorData[0].hex;
 
