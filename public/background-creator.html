@@ -1185,15 +1185,36 @@
                           </div>`;
             }
 
+            
+            html += this.getMockups(); 
+
+
             this.elements.backHolder.innerHTML = `
                ${colorsHtml}
-               ${screenshotImg}
                ${backRefinedImg}
-               ${backColorImg}
-               ${backGradImg}
-               ${backGeoImg}
                ${backFilteredImg}
             `;
+        },
+
+
+        getMockups(){
+           let imageFilteredUrl = this.state.currentEvent.backgroundFiltered;
+           let imageRefinedUrl = this.state.currentEvent.backgroundRefined;
+           
+           let html = `
+             <div class="mockups-holder">
+                 <iframe src="/layout-1?image=${imageFilteredUrl}"
+                         sandbox="allow-scripts allow-same-origin">
+                 </iframe>
+                 <iframe src="/layout-2?image=${imageFilteredUrl}"
+                         sandbox="allow-scripts allow-same-origin">
+                 </iframe>
+                 <iframe src="/layout-3?image=${imageRefinedUrl}"
+                         sandbox="allow-scripts allow-same-origin"
+                         class="layout-3">
+                 </iframe>
+             </div>
+           `;
         },
 
 
