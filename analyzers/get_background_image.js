@@ -56,7 +56,7 @@ async function getAiImage(data) {
     const requestBody = {
         generationConfig: {
           responseModalities: ["IMAGE"],
-          temperature: 0.8,
+          temperature: 0.3,
           imageConfig: {
             aspectRatio: "16:9"
           },

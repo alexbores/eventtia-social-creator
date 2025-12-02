@@ -605,43 +605,45 @@ export function getPromptBackgroundImage() {
 
     const prompt = `
 <SYSTEM_ROLE>
-You are an advanced, abstract digital artist and expert image generation service.
-Your task is to analyze a provided screenshot for its aesthetic properties (color, tone, texture) and generate a **brand new, original background image** that strictly adheres to that style.
+You are an expert abstract digital artist specialising in creating **pure, clean background textures**.
+Your sole task is to analyze the *aesthetic vibe* (colors, lighting, mood) of a reference image and generate a completely new, abstract background that embodies that vibe, ensuring it is 100% free of any symbolic or informational content.
 </SYSTEM_ROLE>
 
 <IMAGE_GENERATION_TASK>
   <INPUT_ANALYSIS>
     <PRIMARY_REFERENCE>
       <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>
-      <INSTRUCTION>Analyze the provided image for its core aesthetic components (color palette, saturation, lighting, and mood/tone).</INSTRUCTION>
+      <INSTRUCTION_STYLE>Extract only the abstract qualities: color palette, gradients, lighting, and textural feel.</INSTRUCTION_STYLE>
+      <INSTRUCTION_IGNORE>CRITICAL: Actively IGNORE all shapes that resemble letters, numbers, words, logos, or icons in the reference image. Do not treat them as features to be replicated.</INSTRUCTION_IGNORE>
     </PRIMARY_REFERENCE>
   </INPUT_ANALYSIS>
 
+  <CRITICAL_CONSTRAINT_ZERO_TOLERANCE>
+    <RULE>There is ZERO TOLERANCE for text or numbers in the final output.</RULE>
+    <ACTION>If the generative process attempts to create a shape that looks like a letter, number, or symbol, immediately dissolve that shape into pure abstract color and texture.</ACTION>
+    <RESULT_CHECK>The final image must be entirely asemic (having no semantic content like words or symbols).</RESULT_CHECK>
+  </CRITICAL_CONSTRAINT_ZERO_TOLERANCE>
+
   <COMPOSITION_STRATEGY>
-    <MANDATORY_ACTION>Create a **dynamic, abstract digital composition** that perfectly replicates the aesthetic of the reference screenshot.</MANDATORY_ACTION>
-    <MANDATORY_CONSTRAINT>The output MUST be a seamless **background texture/image** suitable for web design.</MANDATORY_CONSTRAINT>
-    <MANDATORY_CONSTRAINT>The final image MUST be highly refined during the generation process to ensure NO textual or symbolic content is visible.</MANDATORY_CONSTRAINT>
-    <MANDATORY_CONSTRAINT>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_CONSTRAINT>
+    <MANDATORY_ACTION>Create a **new, original abstract composition** based *only* on the extracted colors and mood.</MANDATORY_ACTION>
+    <MANDATORY_CONSTRAINT>The output must be a seamless, clean background texture suitable for web design.</MANDATORY_CONSTRAINT>
+    <STYLE_TRANSFER_MODE>Pure aesthetic replication only. Do NOT perform layout replication.</STYLE_TRANSFER_MODE>
   </COMPOSITION_STRATEGY>
 
   <OUTPUT_IMAGE_CONTENT>
-    <MAIN_FOCUS>A visually engaging, high-resolution **abstract background** image.</MAIN_FOCUS>
-    <STYLE_ADHERENCE>The colors, shading, texture, and emotional tone MUST strictly match the aesthetic identity extracted from the Style_Reference_Screenshot.</STYLE_ADHERENCE>
-    <REFINEMENT_ACTION>Ensure all traces of text, numbers, logos, icons, and symbols from the reference image are completely absent from the final output.</REFINEMENT_ACTION>
+    <MAIN_FOCUS>A clean, highly-refined abstract background texture.</MAIN_FOCUS>
+    <VISUAL_QUALITY>Smooth gradients, abstract shapes, and rich colors matching the reference, but with a "clean slate" appearance.</VISUAL_QUALITY>
     <NEGATIVE_CONSTRAINTS>
-      <PROHIBIT_ELEMENT>text, words, phrases, typography</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>numbers, digits, dates</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>logos, icons, brand marks</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>human figures, objects from the original reference image's layout</PROHIBIT_ELEMENT>
-      <PROHIBIT_CHANGE>replication of the layout or composition of the reference image</PROHIBIT_CHANGE>
+      <PROHIBIT_ABSOLUTE>text, words, letters, glyphs, typography of any kind</PROHIBIT_ABSOLUTE>
+      <PROHIBIT_ABSOLUTE>numbers, digits, dates, numerical sequences</PROHIBIT_ABSOLUTE>
+      <PROHIBIT_ABSOLUTE>logos, icons, symbols, watermarks, brand marks</PROHIBIT_ABSOLUTE>
     </NEGATIVE_CONSTRAINTS>
   </OUTPUT_IMAGE_CONTENT>
 </IMAGE_GENERATION_TASK>
 
 <STRICT_OUTPUT_RULES>
   <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
-  <ASPECT_RATIO>The final image aspect ratio MUST be **16:9**. No other ratio.</ASPECT_RATIO>
-  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
+  <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text or markdown.</NO_ADDITIONAL_OUTPUT>
 </STRICT_OUTPUT_RULES>
 
 <INPUT_DATA>
