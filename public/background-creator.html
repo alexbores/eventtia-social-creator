@@ -297,16 +297,16 @@
                 await this.getPrimaryColorsFromImage();
 
                 
-                await this.initBackgroundCanvas();
-                this.renderBackground();
+                // await this.initBackgroundCanvas();
+                // this.renderBackground();
 
 
                 await this.getBackgroundImage();
                 this.renderBackground();
 
 
-                await this.getRefinedBackgroundImage();
-                this.renderBackground();
+                // await this.getRefinedBackgroundImage();
+                // this.renderBackground();
 
 
                 await this.initFilteredBackground();
@@ -833,7 +833,7 @@
            });
         },
         async initFilteredBackground(){
-          let image = this.state.currentEvent.backgroundRefined;
+          let image = this.state.currentEvent.background;
            
           try{
              const response = await this.fetchBinaryApi('/api/analyze', {
@@ -1089,7 +1089,7 @@
                            </div>
                           `;
             let backImg = `<div class="img-holder">
-                              <h2>AI Background Image</h2>
+                              <h2>AI Fast Background Image</h2>
                               <div class="loader"></div>
                            </div>
                           `;
@@ -1127,7 +1127,7 @@
 
             if(imageUrl != null){
                backImg = `<div class="img-holder">
-                              <h2>AI Background Image</h2>
+                              <h2>AI Fast Background Image</h2>
                               <img class="background-image" width="100%" height="100%"
                               src="${imageUrl}" >
                           </div>`;
@@ -1254,7 +1254,6 @@
                ${colorsHtml}
                ${screenshotImg}
                ${backImg}
-               ${backRefinedImg}
                ${backFilteredImg}
 
                ${mockups}
