@@ -120,7 +120,286 @@
         </div>
     </main>
 
-    <!-- Scripts -->
-    <script type="module" src="./app.js"></script>
+   
 </body>
 </html>
+
+
+
+<script >
+    
+let images = []; // Array of objects: { id, file, originalSrc, processedSrc, status }
+
+// DOM Elements
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const imageContainer = document.getElementById('image-container');
+const processAllBtn = document.getElementById('process-all-btn');
+const attireSelect = document.getElementById('attire-select');
+const bgSelect = document.getElementById('bg-select');
+const headwearCheck = document.getElementById('headwear-check');
+
+// Event Listeners for Upload
+dropZone.addEventListener('click', () => fileInput.click());
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+    if (e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length) {
+        handleFiles(e.target.files);
+    }
+    fileInput.value = ''; // Reset
+});
+
+processAllBtn.addEventListener('click', processAllImages);
+
+// --- Logic ---
+
+function handleFiles(fileList) {
+    const files = Array.from(fileList);
+    
+    files.forEach(file => {
+        // Create local preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const id = crypto.randomUUID();
+            const imgData = {
+                id,
+                file,
+                originalSrc: e.target.result,
+                processedSrc: null,
+                status: 'idle', // idle, processing, success, error
+                error: null
+            };
+            images.push(imgData);
+            renderCard(imgData);
+            updateUI();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Render a single card and append it to the container
+function renderCard(imgData) {
+    const card = document.createElement('div');
+    card.id = `card-${imgData.id}`;
+    card.className = "flex-none w-[320px] h-[426px] snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
+
+    // Inner HTML Structure
+    card.innerHTML = `
+        <div class="relative w-full h-[340px] bg-slate-100 overflow-hidden">
+            <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="w-full h-full object-cover transition-all duration-500" />
+            
+            <!-- Loading Overlay -->
+            <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
+                <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
+                <span class="text-white font-medium text-sm">Standardizing...</span>
+            </div>
+
+            <!-- Error Overlay -->
+            <div id="error-${imgData.id}" class="absolute inset-0 bg-red-50/90 flex flex-col items-center justify-center z-20 px-4 text-center ${imgData.status === 'error' ? 'flex' : 'hidden'}">
+                <svg class="w-8 h-8 text-red-500 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p class="text-red-800 text-xs mb-2">Failed to process</p>
+                <button onclick="retryImage('${imgData.id}')" class="px-3 py-1 bg-white border border-red-200 text-red-600 rounded-full text-xs hover:bg-red-50">Retry</button>
+            </div>
+
+            <!-- Labels -->
+            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                ${imgData.status === 'success' ? 'Standardized' : 'Original'}
+            </div>
+            
+            <!-- Hover Compare Text -->
+            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
+                Hover to compare
+            </div>
+
+            <!-- Delete Button -->
+            <button onclick="removeImage('${imgData.id}')" class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-slate-500 hover:text-red-500 hover:bg-white transition-colors opacity-0 group-hover:opacity-100 z-30 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>
+        </div>
+
+        <div class="p-4 flex-1 flex items-center justify-between bg-white border-t border-slate-100">
+            <div class="truncate max-w-[60%]">
+                <p class="text-sm font-medium text-slate-700 truncate">${imgData.file.name}</p>
+                <p class="text-xs text-slate-400">${(imgData.file.size / 1024).toFixed(0)} KB</p>
+            </div>
+            ${imgData.status === 'success' 
+                ? `<a href="${imgData.processedSrc}" download="standardized-${imgData.file.name}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                   </a>`
+                : `<span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Pending</span>`
+            }
+        </div>
+    `;
+
+    // Comparison Hover Logic
+    if (imgData.status === 'success') {
+        const imgEl = card.querySelector(`#img-${imgData.id}`);
+        card.querySelector('div.relative').addEventListener('mouseenter', () => {
+            imgEl.src = imgData.originalSrc;
+        });
+        card.querySelector('div.relative').addEventListener('mouseleave', () => {
+            imgEl.src = imgData.processedSrc;
+        });
+    }
+
+    // Append to container
+    imageContainer.appendChild(card);
+}
+
+// Global scope helpers for onclick handlers in HTML string
+window.removeImage = (id) => {
+    images = images.filter(img => img.id !== id);
+    const card = document.getElementById(`card-${id}`);
+    if (card) card.remove();
+    updateUI();
+};
+
+window.retryImage = (id) => {
+    const imgData = images.find(i => i.id === id);
+    if (imgData) {
+        processSingleImage(imgData);
+    }
+};
+
+function updateUI() {
+    processAllBtn.disabled = images.length === 0;
+    
+    // Refresh cards if they were re-rendered (simple approach)
+    // In a real vanilla app we might diff, but here we just manage via ID updates if needed.
+    // For specific status updates, we'll target elements by ID directly in the process function.
+}
+
+async function processSingleImage(imgData) {
+    if (imgData.status === 'processing') return;
+
+    // Update State
+    imgData.status = 'processing';
+    imgData.error = null;
+    
+    // Update UI DOM
+    const card = document.getElementById(`card-${imgData.id}`);
+    if (card) {
+        const loading = card.querySelector(`#loading-${imgData.id}`);
+        const error = card.querySelector(`#error-${imgData.id}`);
+        const imgEl = card.querySelector(`#img-${imgData.id}`);
+        
+        loading.classList.remove('hidden');
+        loading.classList.add('flex');
+        error.classList.add('hidden');
+        error.classList.remove('flex');
+        imgEl.classList.add('blur-sm');
+    }
+
+    try {
+        const options = {
+            attireColor: attireSelect.value,
+            backgroundType: bgSelect.value,
+            removeHeadwear: headwearCheck.checked
+        };
+
+        const base64Data = imgData.originalSrc.split(',')[1];
+        const mimeType = imgData.originalSrc.split(';')[0].split(':')[1];
+
+        // Call "Backend"
+        const resultBase64 = await processImage(base64Data, mimeType, options);
+        
+        // Update State
+        imgData.status = 'success';
+        imgData.processedSrc = resultBase64;
+
+        // Re-render card to attach download links and hover events properly
+        if (card) {
+            const newCard = renderCardToString(imgData); // Helper to get HTML
+            // Actually, easier to just replace the element logic or re-render
+            // Let's manually update the existing DOM for better performance
+            const loading = card.querySelector(`#loading-${imgData.id}`);
+            const imgEl = card.querySelector(`#img-${imgData.id}`);
+            
+            loading.classList.add('hidden');
+            loading.classList.remove('flex');
+            imgEl.classList.remove('blur-sm');
+            imgEl.src = resultBase64;
+
+            // Update footer
+            const footer = card.lastElementChild;
+            footer.innerHTML = `
+                <div class="truncate max-w-[60%]">
+                    <p class="text-sm font-medium text-slate-700 truncate">${imgData.file.name}</p>
+                    <p class="text-xs text-slate-400">${(imgData.file.size / 1024).toFixed(0)} KB</p>
+                </div>
+                <a href="${resultBase64}" download="standardized-${imgData.file.name}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+            `;
+
+            // Attach hover listeners
+            const imageContainerDiv = card.querySelector('.relative');
+            imageContainerDiv.onmouseenter = () => { imgEl.src = imgData.originalSrc; };
+            imageContainerDiv.onmouseleave = () => { imgEl.src = imgData.processedSrc; };
+            
+            // Show "Standardized" label
+            const label = imageContainerDiv.querySelector('.absolute.top-3.left-3');
+            label.textContent = "Standardized";
+
+             // Show "Hover to compare"
+            const hoverLabel = imageContainerDiv.querySelector('.absolute.bottom-3');
+            hoverLabel.classList.remove('hidden');
+            hoverLabel.classList.add('block');
+        }
+
+    } catch (err) {
+        console.error(err);
+        imgData.status = 'error';
+        imgData.error = err.message;
+        
+        if (card) {
+            const loading = card.querySelector(`#loading-${imgData.id}`);
+            const error = card.querySelector(`#error-${imgData.id}`);
+            const imgEl = card.querySelector(`#img-${imgData.id}`);
+            
+            loading.classList.add('hidden');
+            loading.classList.remove('flex');
+            error.classList.remove('hidden');
+            error.classList.add('flex');
+            imgEl.classList.remove('blur-sm');
+        }
+    }
+}
+
+async function processAllImages() {
+    processAllBtn.disabled = true;
+    processAllBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+    
+    const pendingImages = images.filter(img => img.status === 'idle' || img.status === 'error');
+    
+    // Process in batches of 3
+    const BATCH_SIZE = 3;
+    for (let i = 0; i < pendingImages.length; i += BATCH_SIZE) {
+        const batch = pendingImages.slice(i, i + BATCH_SIZE);
+        await Promise.all(batch.map(img => processSingleImage(img)));
+    }
+
+    processAllBtn.disabled = false;
+    processAllBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg> Standardize All`;
+}
+
+
+</script>
