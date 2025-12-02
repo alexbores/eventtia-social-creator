@@ -1125,13 +1125,13 @@
                           `;
 
 
-            // if(imageUrl != null){
-            //    backImg = `<div class="img-holder">
-            //                   <h2>AI Background Image</h2>
-            //                   <img class="background-image" width="100%" height="100%"
-            //                   src="${imageUrl}" >
-            //               </div>`;
-            // }
+            if(imageUrl != null){
+               backImg = `<div class="img-holder">
+                              <h2>AI Background Image</h2>
+                              <img class="background-image" width="100%" height="100%"
+                              src="${imageUrl}" >
+                          </div>`;
+            }
             if(colors != null && colors.length > 0){
               colorsHtml = `<div class="colors-holder">
                              <h2>Colors Found</h2>
@@ -1253,6 +1253,7 @@
             this.elements.backHolder.innerHTML = `
                ${colorsHtml}
                ${screenshotImg}
+               ${backImg}
                ${backRefinedImg}
                ${backFilteredImg}
 
