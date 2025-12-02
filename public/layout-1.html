@@ -106,7 +106,10 @@
             display: flex;
             flex-direction: column;
             gap: 40px;
-                backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        body.white-back .tickets-container{
+            background-color: #ffffff;
         }
 
         /* Individual Ticket Item */
@@ -150,6 +153,15 @@
             padding: 5px 15px;
             font-weight: 600;
             color: #0d2340;
+        }
+
+        body.white-back .ticket-name,
+        body.white-back .ticket-desc,
+        body.white-back .ticket-price{
+            color: #0d2340;
+        }
+        body.white-back .counter{
+            
         }
 
         .counter span {
@@ -302,11 +314,14 @@
         // 2. Extract the value of the "image" parameter
         const imageUrl = params.get('image');
         const primaryColor = params.get('color');
+        const isWhite = params.get('white-back');
     
         // 3. Find the element with the attribute 'image-holder'
         const targetElement = document.querySelector('[image-holder]');
 
         const ctaElement = document.querySelector('[cta-button]');
+
+        const bodyElement = document.querySelector('body');
     
         // 4. Safety Check: Only run if we found both the element and the URL param
         if (targetElement && imageUrl) {
@@ -315,6 +330,10 @@
 
         if (ctaElement && primaryColor) {
             ctaElement.style.backgroundColor = primaryColor;
+        }
+
+        if (bodyElement && isWhite) {
+            bodyElement.classList.add('white-back');
         }
     });
 </script>

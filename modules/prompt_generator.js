@@ -605,47 +605,35 @@ export function getPromptBackgroundImage() {
 
     const prompt = `
 <SYSTEM_ROLE>
-You are an advanced image generation service.
-Your task is to create a compelling, brand-aligned background image.
-This image will be used as a background, adhering strictly to a provided style reference.
+You are an advanced, abstract digital artist and expert image generation service.
+Your task is to analyze a provided screenshot for its aesthetic properties (color, tone, texture) and generate a **brand new, original background image** that strictly adheres to that style.
 </SYSTEM_ROLE>
 
 <IMAGE_GENERATION_TASK>
   <INPUT_ANALYSIS>
     <PRIMARY_REFERENCE>
       <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>
-      <INSTRUCTION>Analyze the provided screenshot for its aesthetic DNA.</INSTRUCTION>
-      <EXTRACT_ELEMENTS>
-        <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>
-          <SUB_ELEMENTS>
-            <COLOR_SCHEME>primary, secondary, accent colors</COLOR_SCHEME>
-            <COLOR_QUALITIES>vibrancy, saturation, luminosity</COLOR_QUALITIES>
-          </SUB_ELEMENTS>
-        <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>
-      </EXTRACT_ELEMENTS>
+      <INSTRUCTION>Analyze the provided image for its core aesthetic components (color palette, saturation, lighting, and mood/tone).</INSTRUCTION>
     </PRIMARY_REFERENCE>
   </INPUT_ANALYSIS>
 
   <COMPOSITION_STRATEGY>
-    <MANDATORY_ACTION>Create a **brand new, original, abstract digital composition**.</MANDATORY_ACTION>
-    <MANDATORY_CONSTRAINT>DO NOT replicate the layout or text objects from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</MANDATORY_CONSTRAINT>
-    MANDATORY_CONSTRAINT>DO NOT add text, numbers or icons of any type to the final image.</MANDATORY_CONSTRAINT>
-    <MANDATORY_FUNCTION>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_FUNCTION>
+    <MANDATORY_ACTION>Create a **dynamic, abstract digital composition** that perfectly replicates the aesthetic of the reference screenshot.</MANDATORY_ACTION>
+    <MANDATORY_CONSTRAINT>The output MUST be a seamless **background texture/image** suitable for web design.</MANDATORY_CONSTRAINT>
+    <MANDATORY_CONSTRAINT>The final image MUST be highly refined during the generation process to ensure NO textual or symbolic content is visible.</MANDATORY_CONSTRAINT>
+    <MANDATORY_CONSTRAINT>The output is a **style-transfer-ONLY** task, focused on aesthetic replication, NOT an image-editing or layout-duplication task.</MANDATORY_CONSTRAINT>
   </COMPOSITION_STRATEGY>
 
   <OUTPUT_IMAGE_CONTENT>
-    <MAIN_FOCUS>A dynamic, engaging, and visually appealing **background image** suitable for brand use.</MAIN_FOCUS>
-    <STYLE_ADHERENCE>All visual elements (colors, abstract shapes, textures, lighting, composition flow) MUST strictly adhere to the <ELEMENT_TYPE>color_palette</ELEMENT_TYPE>, <ELEMENT_TYPE>mood_tone</ELEMENT_TYPE>, and <ELEMENT_TYPE>key_visual_motifs</ELEMENT_TYPE> identified from the <INPUT_IMAGE_TYPE>Style_Reference_Screenshot</INPUT_IMAGE_TYPE>.</STYLE_ADHERENCE>
+    <MAIN_FOCUS>A visually engaging, high-resolution **abstract background** image.</MAIN_FOCUS>
+    <STYLE_ADHERENCE>The colors, shading, texture, and emotional tone MUST strictly match the aesthetic identity extracted from the Style_Reference_Screenshot.</STYLE_ADHERENCE>
+    <REFINEMENT_ACTION>Ensure all traces of text, numbers, logos, icons, and symbols from the reference image are completely absent from the final output.</REFINEMENT_ACTION>
     <NEGATIVE_CONSTRAINTS>
-      <PROHIBIT_ELEMENT>text</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>words</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>numbers</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>dates</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>typography</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>logos</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>icons</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>brand marks</PROHIBIT_ELEMENT>
-      <PROHIBIT_ELEMENT>human figures</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>text, words, phrases, typography</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>numbers, digits, dates</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>logos, icons, brand marks</PROHIBIT_ELEMENT>
+      <PROHIBIT_ELEMENT>human figures, objects from the original reference image's layout</PROHIBIT_ELEMENT>
+      <PROHIBIT_CHANGE>replication of the layout or composition of the reference image</PROHIBIT_CHANGE>
     </NEGATIVE_CONSTRAINTS>
   </OUTPUT_IMAGE_CONTENT>
 </IMAGE_GENERATION_TASK>
@@ -653,7 +641,6 @@ This image will be used as a background, adhering strictly to a provided style r
 <STRICT_OUTPUT_RULES>
   <OUTPUT_FORMAT>Generate a single image.</OUTPUT_FORMAT>
   <ASPECT_RATIO>The final image aspect ratio MUST be **16:9**. No other ratio.</ASPECT_RATIO>
-  <ORIGINALITY_CONSTRAINT>The reference image is for STYLE_INSPIRATION ONLY. DO NOT edit, alter, or use the layout/composition of the reference image.</ORIGINALITY_CONSTRAINT>
   <NO_ADDITIONAL_OUTPUT>DO NOT include any explanatory text, comments, or markdown (e.g., \`\`\`json\`\`\`) before or after the image generation.</NO_ADDITIONAL_OUTPUT>
 </STRICT_OUTPUT_RULES>
 
