@@ -27,6 +27,9 @@ import { getRefineBackgroundImage } from './analyzers/get_refine_background_imag
 import { getPrimaryColors } from './analyzers/get_primary_colors.js';
 import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
+
+import { getStandarizedSpeaker } from './get_standarized_speaker.js';
+
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -222,6 +225,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'primary_colors':
             console.log('gettign primary colors...');
             response = await getPrimaryColors(webData);
+          break;
+          case 'get_speaker_photo':
+            console.log('getting speaker photo...');
+            response = await getStandarizedSpeaker(webData);
           break;
         }
         

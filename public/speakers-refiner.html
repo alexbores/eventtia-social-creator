@@ -17,47 +17,40 @@
         }
       }
     </script>
-    <!-- Import Map for Gemini SDK -->
-    <script type="importmap">
-    {
-      "imports": {
-        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
-      }
-    }
-    </script>
     <style>
-        /* Custom scrollbar for the horizontal container */
-        .horizontal-scroll::-webkit-scrollbar {
-            height: 8px;
-        }
-        .horizontal-scroll::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        .horizontal-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .horizontal-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .horizontal-scroll::-webkit-scrollbar { height: 8px; }
+        .horizontal-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .horizontal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .horizontal-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
 
-    <!-- Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-[1920px] mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <h1 class="text-xl font-bold tracking-tight">Speaker <span class="text-primary">Standardizer</span></h1>
+                
+                <div class="flex items-center space-x-2 border-l border-slate-200 pl-4 ml-4">
+                    <div class="relative">
+                        <select id="project-select" class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-48 p-2.5 pr-8 truncate transition-colors hover:bg-slate-100 cursor-pointer"></select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                    <button type="button" id="new-project-btn" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="New Project">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    </button>
+                    <button type="button" id="edit-project-btn" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Rename Project">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow flex flex-col p-6 max-w-[1920px] mx-auto w-full space-y-6">
-
-        <!-- Controls Section -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <div class="flex flex-col md:flex-row gap-6 items-end">
                 <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -86,18 +79,550 @@
                     </div>
                 </div>
                 
-                <button id="process-all-btn" disabled class="h-10 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                <button type="button" id="process-all-btn" disabled class="h-10 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
                     Standardize All
                 </button>
             </div>
         </div>
 
-        <!-- Scrollable Container -->
         <div class="flex-grow flex flex-col bg-slate-100 rounded-xl border border-slate-200 overflow-hidden relative">
             <div id="image-container" class="horizontal-scroll flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
+                </div>
+        </div>
+    </main>
+
+    <div id="input-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100 mx-4">
+            <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4">Title</h3>
+            <input type="text" id="modal-input" class="w-full border border-slate-300 rounded-lg px-4 py-2 mb-6 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow" placeholder="Project Name">
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="modal-cancel" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors">Cancel</button>
+                <button type="button" id="modal-confirm" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-colors shadow-sm">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- FRONTEND LOGIC (ImageProcessor) ---
+        const ImageProcessor = {
+            STORAGE_KEY: 'speaker_standardizer_data',
+            state: {
+                projects: [], 
+                currentProjectId: null,
+                get currentProject() {
+                    return this.projects.find(p => p.id === this.currentProjectId);
+                }
+            },
+
+            elements: {},
+            modalCallback: null,
+
+            async init() {
+                try {
+                    this.setElements();
+                    this.bindEvents();
+                    this.exposeGlobalHelpers();
+                    this.checkStorage();
+                } catch (err) {
+                    console.error("Initialization Error:", err);
+                }
+            },
+
+            setElements() {
+                this.elements = {
+                    imageContainer: document.getElementById('image-container'),
+                    processAllBtn: document.getElementById('process-all-btn'),
+                    attireSelect: document.getElementById('attire-select'),
+                    bgSelect: document.getElementById('bg-select'),
+                    headwearCheck: document.getElementById('headwear-check'),
+                    
+                    projectSelect: document.getElementById('project-select'),
+                    newProjectBtn: document.getElementById('new-project-btn'),
+                    editProjectBtn: document.getElementById('edit-project-btn'),
+                    
+                    modal: document.getElementById('input-modal'),
+                    modalTitle: document.getElementById('modal-title'),
+                    modalInput: document.getElementById('modal-input'),
+                    modalCancel: document.getElementById('modal-cancel'),
+                    modalConfirm: document.getElementById('modal-confirm'),
+                    
+                    getDropZone: () => document.getElementById('drop-zone'),
+                    getFileInput: () => document.getElementById('file-input'),
+                };
+            },
+
+            bindEvents() {
+                if (this.elements.modalCancel) this.elements.modalCancel.addEventListener('click', () => this.hideModal());
+                if (this.elements.modalConfirm) {
+                    this.elements.modalConfirm.addEventListener('click', () => {
+                        if (this.modalCallback) {
+                            const val = this.elements.modalInput.value.trim();
+                            if (val) this.modalCallback(val);
+                        }
+                        this.hideModal();
+                    });
+                }
+                if (this.elements.modalInput) {
+                    this.elements.modalInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') this.elements.modalConfirm.click();
+                    });
+                }
+
+                if (this.elements.newProjectBtn) {
+                    this.elements.newProjectBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.showInputModal("Create New Project", `Project ${this.state.projects.length + 1}`, (title) => {
+                            this.saveState(); 
+                            this.createProject(title);
+                        });
+                    });
+                }
+
+                if (this.elements.editProjectBtn) {
+                    this.elements.editProjectBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (!this.state.currentProject) return;
+                        this.showInputModal("Rename Project", this.state.currentProject.title, (newTitle) => {
+                            this.state.currentProject.title = newTitle;
+                            this.saveState();
+                            this.updateProjectUI();
+                        });
+                    });
+                }
+
+                if (this.elements.projectSelect) {
+                    this.elements.projectSelect.addEventListener('change', (e) => this.switchProject(e.target.value));
+                }
+
+                if (this.elements.processAllBtn) {
+                    this.elements.processAllBtn.addEventListener('click', (e) => {
+                         e.preventDefault();
+                         this.processAllImages();
+                    });
+                }
+            },
+            
+            showInputModal(title, defaultValue, callback) {
+                this.elements.modalTitle.textContent = title;
+                this.elements.modalInput.value = defaultValue;
+                this.modalCallback = callback;
+                this.elements.modal.classList.remove('hidden');
+                this.elements.modal.classList.add('flex');
+                setTimeout(() => this.elements.modalInput.focus(), 50);
+            },
+
+            hideModal() {
+                this.elements.modal.classList.add('hidden');
+                this.elements.modal.classList.remove('flex');
+                this.modalCallback = null;
+            },
+            
+            bindUploadEvents() {
+                 const dropZone = this.elements.getDropZone();
+                 const fileInput = this.elements.getFileInput();
+                 if (!dropZone || !fileInput) return;
+
+                dropZone.addEventListener('click', () => fileInput.click());
+                fileInput.onchange = (e) => {
+                    if (e.target.files.length) this.handleFiles(e.target.files);
+                    fileInput.value = ''; 
+                };
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+                });
+                dropZone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                    if (e.dataTransfer.files.length) this.handleFiles(e.dataTransfer.files);
+                });
+            },
+
+            exposeGlobalHelpers() {
+                window.removeImage = (id) => this.removeImage(id);
+                window.retryImage = (id) => this.retryImage(id);
+            },
+
+            // --- Storage Logic ---
+            checkStorage() {
+               let data = this.loadData(this.STORAGE_KEY);
+               if (data) {
+                 this.state.projects = data.projects || [];
+                 this.state.currentProjectId = data.currentProjectId;
+               }
+               
+               if (this.state.projects.length === 0) {
+                   this.createProject("My First Project", false); 
+               } else {
+                   const exists = this.state.projects.find(p => p.id === this.state.currentProjectId);
+                   if (!exists && this.state.projects.length > 0) {
+                       this.state.currentProjectId = this.state.projects[0].id;
+                       this.saveState(); 
+                   }
+               }
+               this.updateProjectUI();
+               this.renderImages();
+               this.updateUI(); 
+            },
+
+            saveData(key, data) {
+                try {
+                    const serializedData = JSON.stringify(data);
+                    localStorage.setItem(key, serializedData);
+                } catch (error) {
+                    console.error("Error saving data:", error);
+                    if (error.name === 'QuotaExceededError') alert("Storage full!");
+                }
+            },
+
+            loadData(key) {
+                try {
+                    const serializedData = localStorage.getItem(key);
+                    if (serializedData === null) return null;
+                    return JSON.parse(serializedData);
+                } catch (error) {
+                    return null;
+                }
+            },
+            
+            saveState() {
+                this.saveData(this.STORAGE_KEY, {
+                    projects: this.state.projects,
+                    currentProjectId: this.state.currentProjectId
+                });
+            },
+
+            // --- Project Logic ---
+            createProject(title, save = true) {
+                const id = this.getUUID();
+                const newProject = {
+                    id,
+                    title: title || id,
+                    images: []
+                };
+                this.state.projects.push(newProject);
+                this.state.currentProjectId = id;
+                if (save) this.saveState();
+                this.updateProjectUI();
+                this.renderImages();
+                this.updateUI();
+            },
+
+            switchProject(id) {
+                this.saveState(); 
+                this.state.currentProjectId = id;
+                this.saveState();
+                this.updateProjectUI(); 
+                this.renderImages();
+                this.updateUI();
+            },
+
+            updateProjectUI() {
+                const select = this.elements.projectSelect;
+                select.innerHTML = '';
+                this.state.projects.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.title;
+                    if (p.id === this.state.currentProjectId) option.selected = true;
+                    select.appendChild(option);
+                });
+            },
+
+            // --- Image Handling Logic ---
+            handleFiles(fileList) {
+                if (!this.state.currentProject) return;
+
+                const files = Array.from(fileList);
                 
-                <!-- Upload Card (Always First) -->
+                files.forEach(file => {
+                    // We keep the file object in memory for the initial upload
+                    // The originalSrc (DataURL) is used for immediate preview
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const id = this.getUUID();
+                        const imgData = {
+                            id,
+                            fileName: file.name,
+                            fileSize: file.size,
+                            fileObject: file, // Store file object for upload
+                            originalSrc: e.target.result, 
+                            processedSrc: null, 
+                            status: 'idle', 
+                            error: null
+                        };
+                        
+                        this.state.currentProject.images.push(imgData);
+                        this.saveState(); 
+                        this.appendImageCard(imgData); 
+                        this.updateUI(); 
+                    };
+                    reader.readAsDataURL(file);
+                });
+            },
+
+            removeImage(id) {
+                if (!this.state.currentProject) return;
+                this.state.currentProject.images = this.state.currentProject.images.filter(img => img.id !== id);
+                this.saveState();
+                const card = document.getElementById(`card-${id}`);
+                if (card) card.remove();
+                this.updateUI();
+            },
+
+            retryImage(id) {
+                if (!this.state.currentProject) return;
+                const imgData = this.state.currentProject.images.find(i => i.id === id);
+                if (imgData) this.processSingleImage(imgData);
+            },
+
+            updateUI() {
+                const currentProj = this.state.currentProject;
+                const images = currentProj ? currentProj.images : [];
+                this.elements.processAllBtn.disabled = images.length === 0;
+                
+                const isDefaultTitle = currentProj && currentProj.title === "My First Project";
+                const hasImages = images.length > 0;
+                const canCreateNew = hasImages || !isDefaultTitle;
+
+                if (this.elements.newProjectBtn) {
+                    this.elements.newProjectBtn.disabled = !canCreateNew;
+                    this.elements.newProjectBtn.title = canCreateNew ? "Create New Project" : "Add images to current project first";
+                }
+            },
+
+            // --- API & Processing Utilities ---
+
+            async fetchApi(endpoint, options = {}) {
+                try {
+                    options.credentials = 'include'; 
+                    const response = await fetch(endpoint, options);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: 'An unknown server error occurred.' }));
+                        throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    console.error(`Failed to fetch ${endpoint}:`, error);
+                    throw error;
+                }
+            },
+
+            // 1. Convert URL to Blob
+            async urlStringToBlob(imageUrl) {
+                if (!imageUrl || typeof imageUrl !== 'string') throw new Error('Invalid URL string provided.');
+                try {
+                    const response = await fetch(imageUrl);
+                    if (!response.ok) throw new Error(`Failed to fetch image: Status ${response.status}`);
+                    return await response.blob();
+                } catch (error) {
+                    throw new Error(`Could not process image URL: ${error.message}`);
+                }
+            },
+
+            // 2. Encode Blob/File to Base64 struct
+            async encodeLocalImage(fileObject) {
+                return new Promise((resolve, reject) => {
+                    if (!fileObject) return reject(new Error("No file object provided."));
+                    if (!(fileObject instanceof Blob)) return reject(new TypeError("Invalid input: Expected a File or Blob object."));
+                    
+                    const mimeType = fileObject.type;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const dataUrl = reader.result;
+                        const base64Index = dataUrl.indexOf(',');
+                        if (base64Index === -1) return reject(new Error("Could not parse file data URL."));
+                        const base64Data = dataUrl.substring(base64Index + 1);
+                        resolve({ data: base64Data, mimeType: mimeType });
+                    };
+                    reader.onerror = (error) => reject(new Error(`Error reading file: ${error.target.error.name}`));
+                    reader.readAsDataURL(fileObject);
+                });
+            },
+
+            // 3. Save Image from URL (fetches, encodes, then sends)
+            async saveImageByUrl(imageUrl) {
+                let newImageData = null;
+                try {
+                    let imageBlob = await this.urlStringToBlob(imageUrl);
+                    newImageData = await this.encodeLocalImage(imageBlob);
+                } catch (error) {
+                    console.error("Image processing error:", error);
+                    throw error;
+                }
+                newImageData['name'] = this.getImageName(imageUrl) || `image-${this.getUUID()}`;
+                console.log("Saving by URL data:", newImageData);
+
+                return await this.fetchApi('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        url: this.state.currentProject.id, 
+                        request: 'save_image', 
+                        webData: JSON.stringify(newImageData) 
+                    })
+                });
+            },
+
+            // 4. Save Image from Data Object (already encoded)
+            async saveImageByData(imageData, name) {
+                imageData['name'] = name;
+                console.log("Saving by Data:", imageData);
+
+                return await this.fetchApi('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        url: this.state.currentProject.id, 
+                        request: 'save_image', 
+                        webData: JSON.stringify(imageData) 
+                    })
+                });
+            },
+            
+            // Helper to parse DataURL string to object
+            parseDataUrl(dataUrl) {
+                if (!dataUrl || !dataUrl.startsWith('data:')) return null;
+                const [meta, data] = dataUrl.split(',');
+                const mimeType = meta.split(':')[1].split(';')[0];
+                return { data: data, mimeType: mimeType };
+            },
+
+            // --- Main Processing Logic ---
+
+            async processSingleImage(imgData) {
+                if (imgData.status === 'processing') return;
+
+                imgData.status = 'processing';
+                imgData.error = null;
+                this.updateCardDOM(imgData);
+
+                try {
+                    // STEP 1: Save Original Image
+                    // We try to use the File object if available (faster/cleaner), otherwise fall back to URL
+                    let savedOriginalResponse;
+                    const filename = `original_${imgData.id}`;
+                    
+                    if (imgData.fileObject) {
+                        // Use the file object stored during handleFiles
+                        const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
+                        savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
+                    } else {
+                        // Fallback if loaded from local storage (no fileObject)
+                        // Note: saveImageByUrl expects a remote URL, but if originalSrc is dataURL, we need to handle that.
+                        if (imgData.originalSrc.startsWith('data:')) {
+                             const parsed = this.parseDataUrl(imgData.originalSrc);
+                             savedOriginalResponse = await this.saveImageByData(parsed, filename);
+                        } else {
+                             savedOriginalResponse = await this.saveImageByUrl(imgData.originalSrc);
+                        }
+                    }
+
+                    console.log("Original Saved:", savedOriginalResponse);
+                    
+                    // STEP 2: Call Analysis API (get_speaker_photo)
+                    const processingOptions = {
+                        imageUrl: savedOriginalResponse.url, 
+                        attireColor: this.elements.attireSelect.value,
+                        backgroundType: this.elements.bgSelect.value,
+                        removeHeadwear: this.elements.headwearCheck.checked,
+                    };
+
+                    console.log("Requesting Analysis:", processingOptions);
+
+                    const analysisResponse = await this.fetchApi('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            url: this.state.currentProject.id, 
+                            request: 'get_speaker_photo', 
+                            webData: JSON.stringify(processingOptions) 
+                        })
+                    });
+
+                    // STEP 3: Save the Resulting Image
+                    // Assuming analysisResponse contains a property with the new image (e.g. 'image', 'generatedImage', or 'backgroundImage')
+                    // Adjust 'analysisResponse.image' based on your actual server response key
+                    const resultImageRaw = analysisResponse.image || analysisResponse.generatedImage || analysisResponse.backgroundImage;
+                    
+                    if (!resultImageRaw) throw new Error("Server returned no image data.");
+
+                    let encodedResult;
+                    if (resultImageRaw.startsWith('data:')) {
+                         encodedResult = this.parseDataUrl(resultImageRaw);
+                    } else {
+                         // If server returned a URL, we might need to fetch it to save it, or just use it.
+                         // But the requirements say "save the new one". Assuming it comes back as base64/dataURL.
+                         // If it comes back as URL, we use urlStringToBlob -> encode.
+                         let blob = await this.urlStringToBlob(resultImageRaw);
+                         encodedResult = await this.encodeLocalImage(blob);
+                    }
+
+                    const savedResultResponse = await this.saveImageByData(encodedResult, `processed_${imgData.id}`);
+                    console.log("Result Saved:", savedResultResponse);
+
+                    // STEP 4: Update UI
+                    imgData.status = 'success';
+                    imgData.processedSrc = savedResultResponse.url; // Use Server URL
+                    
+                    this.saveState();
+                    this.updateCardDOM(imgData);
+
+                } catch (err) {
+                    console.error("Processing failed:", err);
+                    imgData.status = 'error';
+                    imgData.error = err.message || "Processing failed";
+                    this.saveState();
+                    this.updateCardDOM(imgData);
+                }
+            },
+
+            async processAllImages() {
+                if (!this.state.currentProject) return;
+
+                const btn = this.elements.processAllBtn;
+                btn.disabled = true;
+                btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+                
+                const pendingImages = this.state.currentProject.images.filter(img => img.status === 'idle' || img.status === 'error');
+                
+                const BATCH_SIZE = 3;
+                for (let i = 0; i < pendingImages.length; i += BATCH_SIZE) {
+                    const batch = pendingImages.slice(i, i + BATCH_SIZE);
+                    await Promise.all(batch.map(img => this.processSingleImage(img)));
+                }
+
+                btn.disabled = false;
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg> Standardize All`;
+            },
+
+            // --- Utilities ---
+            getUUID() {
+                const timeNow = Date.now();
+                const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+                const timeHex = timeNow.toString(16).padStart(12, '0');
+                return timeHex.substring(0, 8) + '-' + '4' + randomPart1.substring(0, 3); 
+            },
+
+            getImageName(imageUrl) {
+                if (!imageUrl || typeof imageUrl !== 'string') return '';
+                const parts = imageUrl.split('/');
+                let fileName = parts.pop() || '';
+                if (fileName === '') fileName = parts.pop() || '';
+                return fileName.split('?')[0];
+            },
+
+            // --- Rendering Logic ---
+            renderImages() {
+                const container = this.elements.imageContainer;
+                
+                // Static Upload Card HTML
+                const uploadCardHTML = `
                 <div class="flex-none w-[320px] h-[426px] snap-center">
                     <div id="drop-zone" class="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
                         <input type="file" id="file-input" multiple accept="image/*" class="hidden">
@@ -107,299 +632,137 @@
                         <h3 class="text-lg font-semibold text-slate-800">Add Photos</h3>
                         <p class="text-sm text-slate-500 mt-2">Drag & drop or click to upload</p>
                     </div>
-                </div>
-
-                <!-- JS will inject Image Cards here -->
+                </div>`;
                 
-            </div>
-            
-            <!-- Empty State Helper (Visible when only upload card exists) -->
-            <div id="empty-state-msg" class="absolute pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-400 font-medium hidden">
-                Add images to start standardizing
-            </div>
-        </div>
-    </main>
+                container.innerHTML = uploadCardHTML;
+                this.bindUploadEvents();
 
-   
+                if (this.state.currentProject && this.state.currentProject.images) {
+                    this.state.currentProject.images.forEach(img => {
+                        this.appendImageCard(img);
+                    });
+                }
+                this.updateUI();
+            },
+
+            appendImageCard(imgData) {
+                const card = document.createElement('div');
+                card.id = `card-${imgData.id}`;
+                card.className = "flex-none w-[320px] h-[426px] snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
+
+                card.innerHTML = `
+                    <div class="relative w-full h-[340px] bg-slate-100 overflow-hidden">
+                        <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="w-full h-full object-cover transition-all duration-500" />
+                        
+                        <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
+                            <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
+                            <span class="text-white font-medium text-sm">Standardizing...</span>
+                        </div>
+
+                        <div id="error-${imgData.id}" class="absolute inset-0 bg-red-50/90 flex flex-col items-center justify-center z-20 px-4 text-center ${imgData.status === 'error' ? 'flex' : 'hidden'}">
+                            <svg class="w-8 h-8 text-red-500 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <p class="text-red-800 text-xs mb-2">Failed to process</p>
+                            <button onclick="retryImage('${imgData.id}')" class="px-3 py-1 bg-white border border-red-200 text-red-600 rounded-full text-xs hover:bg-red-50">Retry</button>
+                        </div>
+
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                            ${imgData.status === 'success' ? 'Standardized' : 'Original'}
+                        </div>
+                        
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
+                            Hover to compare
+                        </div>
+
+                        <button onclick="removeImage('${imgData.id}')" class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-slate-500 hover:text-red-500 hover:bg-white transition-colors opacity-0 group-hover:opacity-100 z-30 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="p-4 flex-1 flex items-center justify-between bg-white border-t border-slate-100">
+                        <div class="truncate max-w-[60%]">
+                            <p class="text-sm font-medium text-slate-700 truncate">${imgData.fileName || 'Image'}</p>
+                            <p class="text-xs text-slate-400">${imgData.fileSize ? (imgData.fileSize / 1024).toFixed(0) + ' KB' : ''}</p>
+                        </div>
+                        ${this.renderFooterAction(imgData)}
+                    </div>
+                `;
+
+                if (imgData.status === 'success') {
+                    this.attachHoverEffects(card, imgData);
+                }
+
+                this.elements.imageContainer.appendChild(card);
+            },
+
+            renderFooterAction(imgData) {
+                if (imgData.status === 'success') {
+                    return `
+                        <a href="${imgData.processedSrc}" download="standardized-${imgData.fileName || 'image.jpg'}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </a>
+                    `;
+                }
+                return `<span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Pending</span>`;
+            },
+
+            attachHoverEffects(card, imgData) {
+                const imgEl = card.querySelector(`#img-${imgData.id}`);
+                const relativeContainer = card.querySelector('div.relative');
+                relativeContainer.addEventListener('mouseenter', () => {
+                    imgEl.src = imgData.originalSrc; 
+                });
+                relativeContainer.addEventListener('mouseleave', () => {
+                    imgEl.src = imgData.processedSrc;
+                });
+            },
+
+            updateCardDOM(imgData) {
+                const card = document.getElementById(`card-${imgData.id}`);
+                if (!card) return;
+                const loading = card.querySelector(`#loading-${imgData.id}`);
+                const error = card.querySelector(`#error-${imgData.id}`);
+                const imgEl = card.querySelector(`#img-${imgData.id}`);
+
+                if (imgData.status === 'processing') {
+                    loading.classList.remove('hidden');
+                    loading.classList.add('flex');
+                    error.classList.add('hidden');
+                    error.classList.remove('flex');
+                    imgEl.classList.add('blur-sm');
+                } else if (imgData.status === 'success') {
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    imgEl.classList.remove('blur-sm');
+                    imgEl.src = imgData.processedSrc;
+                    
+                    const footer = card.lastElementChild;
+                    footer.innerHTML = `
+                        <div class="truncate max-w-[60%]">
+                            <p class="text-sm font-medium text-slate-700 truncate">${imgData.fileName || 'Image'}</p>
+                            <p class="text-xs text-slate-400">${imgData.fileSize ? (imgData.fileSize / 1024).toFixed(0) + ' KB' : ''}</p>
+                        </div>
+                        ${this.renderFooterAction(imgData)}
+                    `;
+                    const label = card.querySelector('.absolute.top-3.left-3');
+                    label.textContent = "Standardized";
+                    const hoverLabel = card.querySelector('.absolute.bottom-3');
+                    hoverLabel.classList.remove('hidden');
+                    hoverLabel.classList.add('block');
+                    this.attachHoverEffects(card, imgData);
+                } else if (imgData.status === 'error') {
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    error.classList.remove('hidden');
+                    error.classList.add('flex');
+                    imgEl.classList.remove('blur-sm');
+                }
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            ImageProcessor.init();
+        });
+    </script>
 </body>
 </html>
-
-
-
-<script >
-    
-let images = []; // Array of objects: { id, file, originalSrc, processedSrc, status }
-
-// DOM Elements
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-const imageContainer = document.getElementById('image-container');
-const processAllBtn = document.getElementById('process-all-btn');
-const attireSelect = document.getElementById('attire-select');
-const bgSelect = document.getElementById('bg-select');
-const headwearCheck = document.getElementById('headwear-check');
-
-// Event Listeners for Upload
-dropZone.addEventListener('click', () => fileInput.click());
-
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
-});
-
-dropZone.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
-});
-
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
-    if (e.dataTransfer.files.length) {
-        handleFiles(e.dataTransfer.files);
-    }
-});
-
-fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length) {
-        handleFiles(e.target.files);
-    }
-    fileInput.value = ''; // Reset
-});
-
-processAllBtn.addEventListener('click', processAllImages);
-
-// --- Logic ---
-
-function handleFiles(fileList) {
-    const files = Array.from(fileList);
-    
-    files.forEach(file => {
-        // Create local preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const id = crypto.randomUUID();
-            const imgData = {
-                id,
-                file,
-                originalSrc: e.target.result,
-                processedSrc: null,
-                status: 'idle', // idle, processing, success, error
-                error: null
-            };
-            images.push(imgData);
-            renderCard(imgData);
-            updateUI();
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-// Render a single card and append it to the container
-function renderCard(imgData) {
-    const card = document.createElement('div');
-    card.id = `card-${imgData.id}`;
-    card.className = "flex-none w-[320px] h-[426px] snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
-
-    // Inner HTML Structure
-    card.innerHTML = `
-        <div class="relative w-full h-[340px] bg-slate-100 overflow-hidden">
-            <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="w-full h-full object-cover transition-all duration-500" />
-            
-            <!-- Loading Overlay -->
-            <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
-                <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
-                <span class="text-white font-medium text-sm">Standardizing...</span>
-            </div>
-
-            <!-- Error Overlay -->
-            <div id="error-${imgData.id}" class="absolute inset-0 bg-red-50/90 flex flex-col items-center justify-center z-20 px-4 text-center ${imgData.status === 'error' ? 'flex' : 'hidden'}">
-                <svg class="w-8 h-8 text-red-500 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p class="text-red-800 text-xs mb-2">Failed to process</p>
-                <button onclick="retryImage('${imgData.id}')" class="px-3 py-1 bg-white border border-red-200 text-red-600 rounded-full text-xs hover:bg-red-50">Retry</button>
-            </div>
-
-            <!-- Labels -->
-            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded pointer-events-none">
-                ${imgData.status === 'success' ? 'Standardized' : 'Original'}
-            </div>
-            
-            <!-- Hover Compare Text -->
-            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
-                Hover to compare
-            </div>
-
-            <!-- Delete Button -->
-            <button onclick="removeImage('${imgData.id}')" class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-slate-500 hover:text-red-500 hover:bg-white transition-colors opacity-0 group-hover:opacity-100 z-30 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-            </button>
-        </div>
-
-        <div class="p-4 flex-1 flex items-center justify-between bg-white border-t border-slate-100">
-            <div class="truncate max-w-[60%]">
-                <p class="text-sm font-medium text-slate-700 truncate">${imgData.file.name}</p>
-                <p class="text-xs text-slate-400">${(imgData.file.size / 1024).toFixed(0)} KB</p>
-            </div>
-            ${imgData.status === 'success' 
-                ? `<a href="${imgData.processedSrc}" download="standardized-${imgData.file.name}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                   </a>`
-                : `<span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Pending</span>`
-            }
-        </div>
-    `;
-
-    // Comparison Hover Logic
-    if (imgData.status === 'success') {
-        const imgEl = card.querySelector(`#img-${imgData.id}`);
-        card.querySelector('div.relative').addEventListener('mouseenter', () => {
-            imgEl.src = imgData.originalSrc;
-        });
-        card.querySelector('div.relative').addEventListener('mouseleave', () => {
-            imgEl.src = imgData.processedSrc;
-        });
-    }
-
-    // Append to container
-    imageContainer.appendChild(card);
-}
-
-// Global scope helpers for onclick handlers in HTML string
-window.removeImage = (id) => {
-    images = images.filter(img => img.id !== id);
-    const card = document.getElementById(`card-${id}`);
-    if (card) card.remove();
-    updateUI();
-};
-
-window.retryImage = (id) => {
-    const imgData = images.find(i => i.id === id);
-    if (imgData) {
-        processSingleImage(imgData);
-    }
-};
-
-function updateUI() {
-    processAllBtn.disabled = images.length === 0;
-    
-    // Refresh cards if they were re-rendered (simple approach)
-    // In a real vanilla app we might diff, but here we just manage via ID updates if needed.
-    // For specific status updates, we'll target elements by ID directly in the process function.
-}
-
-async function processSingleImage(imgData) {
-    if (imgData.status === 'processing') return;
-
-    // Update State
-    imgData.status = 'processing';
-    imgData.error = null;
-    
-    // Update UI DOM
-    const card = document.getElementById(`card-${imgData.id}`);
-    if (card) {
-        const loading = card.querySelector(`#loading-${imgData.id}`);
-        const error = card.querySelector(`#error-${imgData.id}`);
-        const imgEl = card.querySelector(`#img-${imgData.id}`);
-        
-        loading.classList.remove('hidden');
-        loading.classList.add('flex');
-        error.classList.add('hidden');
-        error.classList.remove('flex');
-        imgEl.classList.add('blur-sm');
-    }
-
-    try {
-        const options = {
-            attireColor: attireSelect.value,
-            backgroundType: bgSelect.value,
-            removeHeadwear: headwearCheck.checked
-        };
-
-        const base64Data = imgData.originalSrc.split(',')[1];
-        const mimeType = imgData.originalSrc.split(';')[0].split(':')[1];
-
-        // Call "Backend"
-        const resultBase64 = await processImage(base64Data, mimeType, options);
-        
-        // Update State
-        imgData.status = 'success';
-        imgData.processedSrc = resultBase64;
-
-        // Re-render card to attach download links and hover events properly
-        if (card) {
-            const newCard = renderCardToString(imgData); // Helper to get HTML
-            // Actually, easier to just replace the element logic or re-render
-            // Let's manually update the existing DOM for better performance
-            const loading = card.querySelector(`#loading-${imgData.id}`);
-            const imgEl = card.querySelector(`#img-${imgData.id}`);
-            
-            loading.classList.add('hidden');
-            loading.classList.remove('flex');
-            imgEl.classList.remove('blur-sm');
-            imgEl.src = resultBase64;
-
-            // Update footer
-            const footer = card.lastElementChild;
-            footer.innerHTML = `
-                <div class="truncate max-w-[60%]">
-                    <p class="text-sm font-medium text-slate-700 truncate">${imgData.file.name}</p>
-                    <p class="text-xs text-slate-400">${(imgData.file.size / 1024).toFixed(0)} KB</p>
-                </div>
-                <a href="${resultBase64}" download="standardized-${imgData.file.name}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                </a>
-            `;
-
-            // Attach hover listeners
-            const imageContainerDiv = card.querySelector('.relative');
-            imageContainerDiv.onmouseenter = () => { imgEl.src = imgData.originalSrc; };
-            imageContainerDiv.onmouseleave = () => { imgEl.src = imgData.processedSrc; };
-            
-            // Show "Standardized" label
-            const label = imageContainerDiv.querySelector('.absolute.top-3.left-3');
-            label.textContent = "Standardized";
-
-             // Show "Hover to compare"
-            const hoverLabel = imageContainerDiv.querySelector('.absolute.bottom-3');
-            hoverLabel.classList.remove('hidden');
-            hoverLabel.classList.add('block');
-        }
-
-    } catch (err) {
-        console.error(err);
-        imgData.status = 'error';
-        imgData.error = err.message;
-        
-        if (card) {
-            const loading = card.querySelector(`#loading-${imgData.id}`);
-            const error = card.querySelector(`#error-${imgData.id}`);
-            const imgEl = card.querySelector(`#img-${imgData.id}`);
-            
-            loading.classList.add('hidden');
-            loading.classList.remove('flex');
-            error.classList.remove('hidden');
-            error.classList.add('flex');
-            imgEl.classList.remove('blur-sm');
-        }
-    }
-}
-
-async function processAllImages() {
-    processAllBtn.disabled = true;
-    processAllBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
-    
-    const pendingImages = images.filter(img => img.status === 'idle' || img.status === 'error');
-    
-    // Process in batches of 3
-    const BATCH_SIZE = 3;
-    for (let i = 0; i < pendingImages.length; i += BATCH_SIZE) {
-        const batch = pendingImages.slice(i, i + BATCH_SIZE);
-        await Promise.all(batch.map(img => processSingleImage(img)));
-    }
-
-    processAllBtn.disabled = false;
-    processAllBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg> Standardize All`;
-}
-
-
-</script>
