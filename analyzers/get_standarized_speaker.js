@@ -3,9 +3,7 @@ import fs from 'fs';
 
 
 import fetch from 'node-fetch';
-import { JSDOM } from 'jsdom';
 
-import { generateImage } from '../modules/AI_fetcher.js';
 import { getPromptStandarizedSpeaker} from '../modules/prompt_generator.js';
 import { getImageName,formatImage} from '../modules/image_handlers.js';
 
@@ -56,7 +54,7 @@ async function getAiImage(data) {
     
     const requestBody = {
         generationConfig: {
-          responseModalities: ["TEXT", "IMAGE"],
+          responseModalities: ["TEXT","IMAGE"],
           temperature: 0.3,
           imageConfig: {
             aspectRatio: "4:5"
