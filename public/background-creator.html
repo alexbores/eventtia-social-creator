@@ -236,7 +236,7 @@
             this.elements.backHolder.addEventListener('click',e =>{
                 const trigger = e.target.closest('[change-image]');
 
-                if (trigger && this.elements.backgroundsHolderEl.contains(trigger)) {
+                if (trigger && this.elements.backHolder.contains(trigger)) {
                     
                     this.openImageUploader();
                 }
