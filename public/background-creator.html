@@ -388,7 +388,10 @@
 
         async initFetchFromScreenshot() {
             this.showScreen('fetching-screen');
-            screen.classList.remove('end-loading');
+            
+            const screen = document.querySelector('#fetching-screen');
+            screen.classList.add('end-loading');
+
 
             this.setLoadingProgress(2);
 
@@ -1173,6 +1176,9 @@
             screen.classList.remove('hide');
             if(this.elements.urlScreen){
                 this.elements.urlScreen.classList.remove('modal');
+            }
+            if(this.elements.modalUploaderEl){
+                this.elements.modalUploaderEl.classList.remove('modal');
             }
 
             if(screenName == 'fetching-screen'){
