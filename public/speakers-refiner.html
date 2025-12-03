@@ -103,8 +103,7 @@
         </div>
     </div>
 
-    <script type="module">
-        // --- FRONTEND LOGIC (ImageProcessor) ---
+    <script>
         const ImageProcessor = {
             STORAGE_KEY: 'speaker_standardizer_data',
             state: {
@@ -547,7 +546,7 @@
 
                     console.log(analysisResponse);
 
-                    const resultImageRaw = analysisResponse.image || analysisResponse.generatedImage || analysisResponse.backgroundImage;
+                    const resultImageRaw = analysisResponse.speaker;
                     
                     if (!resultImageRaw) throw new Error("Server returned no image data.");
 
