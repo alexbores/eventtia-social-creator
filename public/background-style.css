@@ -513,7 +513,7 @@ p,h1,h2,h3,li{
    height: auto;
     min-height: unset;
 }
-#modal-uploader.modal .close{
+#modal-uploader  .close{
   border-radius: 50%;
    width: 35px;
    max-width: 35px;
