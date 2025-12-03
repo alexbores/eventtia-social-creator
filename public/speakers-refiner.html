@@ -87,7 +87,7 @@
         </div>
 
         <div class="flex-grow flex flex-col bg-slate-100 rounded-xl border border-slate-200 overflow-hidden relative">
-            <div id="image-container" class="horizontal-scroll flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
+            <div id="image-container" class="flex-wrap flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
                 </div>
         </div>
     </main>
@@ -376,6 +376,7 @@
             retryImage(id) {
                 if (!this.state.currentProject) return;
                 const imgData = this.state.currentProject.images.find(i => i.id === id);
+                console.log(imgData);
                 if (imgData) this.processSingleImage(imgData);
             },
 
