@@ -481,7 +481,7 @@ p,h1,h2,h3,li{
   padding-bottom: 60px;
   justify-content: center;
 
-  display: hide;
+  display: none;
 }
 #modal-uploader.modal{
   display: flex;
