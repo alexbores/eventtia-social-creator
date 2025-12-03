@@ -83,6 +83,33 @@
         </div>
     </section>
    
+    
+    <section id="modal-uploader">
+        <div class="content">
+            <button class="close button button-secondary" close-url-screen-uploader>
+              X
+            </button>
+            <p class="description text">
+                Upload the screenshot
+            </p>
+
+            <div class="input-card">
+                <form id="event-upload-form">
+                  <input 
+                          id="event-upload-input" 
+                          class="input" 
+                          type="file" 
+                          accept="image/*"
+                      >
+
+                  <button analyze-upload-btn class="button button-glared">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                    <span>Analyze Screenshot & Generate Backgrounds</span>
+                  </button>
+                </form>
+            </div>
+        </div>
+    </section>
 
 
     <section id="background-screen">
@@ -92,7 +119,7 @@
                 </div>
             </div>
     </section>
-    
+
 
       
 
@@ -145,6 +172,8 @@
                 closeUrlScreen: document.querySelector('[close-url-screen]'),
 
 
+
+
                 fetchingScreen: document.querySelector('#fetching-screen'),
 
                 
@@ -159,6 +188,13 @@
 
                 eventsListEl: document.querySelector('[events-list]'),
 
+
+
+                modalUploaderEl: document.querySelector('#modal-uploader'),
+
+                closeUrlUploaderScreen: document.querySelector('[close-url-screen-uploader]'),
+
+                uploadInput: document.querySelector('#event-upload-input'),
             } 
         },
 
@@ -190,6 +226,29 @@
             this.elements.eventsListEl.addEventListener('change',()=>{
                   this.selectEvent();
             });
+
+ 
+            this.elements.closeUrlScreen.addEventListener('click',()=>{
+                this.elements.closeUrlUploaderScreen.classList.remove('modal');
+            });
+            this.elements.backHolder.addEventListener('click',e =>{
+                const trigger = e.target.closest('[change-image]');
+
+                if (trigger && this.elements.backgroundsHolderEl.contains(trigger)) {
+                    
+                    this.openImageUploader();
+                }
+            });
+
+            this.elements.analyzeUploadForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (url) {
+                    this.initFetchFromScreenshot();
+                } else {
+                    console.log('Please enter a valid image.');
+                }
+            });
+            
         },
 
 
@@ -253,6 +312,7 @@
               backgroundAbstract: null,
               backgroundGrad: null,
               backgroundRendered: null,
+              backgroundFiltered: null,
               backgroundColor: null,
               backgroundGeo: null,
               colors: null,
@@ -322,6 +382,69 @@
                 console.error("Data fetch failed:", error.message);
             }
         },
+
+        async initFetchFromScreenshot() {
+            this.showScreen('fetching-screen');
+            
+
+            this.setLoadingProgress(2);
+
+
+            this.state.currentEvent.background = null;
+            this.state.currentEvent.backgroundFiltered = null;
+
+            this.state.currentEvent.screenshot = null;
+
+
+            this.renderBackground();
+
+            this.state.currentEvent.screenshot = this.state.elements.uploadInput.files[0];
+        
+            try {
+                
+
+                await this.saveScreenshot();
+                
+                this.setLoadingProgress(5);
+
+                
+
+                // Transition the UI to the results screen
+                const screen = document.querySelector('#fetching-screen');
+                screen.classList.add('end-loading');
+
+                this.setLoadingProgress(7);
+
+                await new Promise(r => setTimeout(r, 500));
+
+                this.showScreen('background-screen');
+                this.renderEvents();
+
+                
+                await this.getPrimaryColorsFromImage();
+
+                
+                // await this.initBackgroundCanvas();
+                // this.renderBackground();
+
+
+                await this.getBackgroundImage();
+                this.renderBackground();
+
+
+                await this.initFilteredBackground();
+                this.renderBackground();
+
+
+                
+                this.saveData('full_background_data', this.state);
+
+        
+            } catch (error) {
+                // --- Failure Path ---
+                console.error("Data fetch failed:", error.message);
+            }
+        },
         
 
         async getWebData(){
@@ -348,7 +471,11 @@
         },
 
 
-       
+        openImageUploader(){
+            this.elements.modalUploaderEl.classList.add('modal');
+            
+            
+        }
 
         analyzeNewEvent(){
             // this.showScreen('url-screen');
@@ -1128,6 +1255,10 @@
             if(imageUrl != null){
                backImg = `<div class="img-holder">
                               <h2>AI Fast Background Image</h2>
+                              <button change-image 
+                                    class="button button-glared">
+                                      Change Image
+                              </button>
                               <img class="background-image" width="100%" height="100%"
                               src="${imageUrl}" >
                           </div>`;
@@ -1175,10 +1306,11 @@
             // }
             if(imageGradUrl != null){
                backGradImg = `<div class="img-holder">
-                              <h2>Blur Gradient Image</h2>
-                              <img class="background-image" width="100%" height="100%"
-                              src="${imageGradUrl}" >
-                          </div>`;
+                                 <h2>Blur Gradient Image</h2>
+                                 
+                                 <img class="background-image" width="100%" height="100%"
+                                 src="${imageGradUrl}" >
+                             </div>`;
             }
             if(imageFilteredUrl != null){
                backFilteredImg = `<div class="img-holder">
