@@ -244,7 +244,8 @@
 
             this.elements.analyzeUploadForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (url) {
+                const file = this.elements.uploadInput.files[0]; 
+                if (file) {
                     this.initFetchFromScreenshot();
                 } else {
                     console.log('Please enter a valid image.');
@@ -400,7 +401,7 @@
 
             this.renderBackground();
 
-            this.state.currentEvent.screenshot = this.state.elements.uploadInput.files[0];
+            this.state.currentEvent.screenshot = this.elements.uploadInput.files[0];
         
             try {
                 
