@@ -388,7 +388,7 @@
 
         async initFetchFromScreenshot() {
             this.showScreen('fetching-screen');
-            
+            screen.classList.remove('end-loading');
 
             this.setLoadingProgress(2);
 
@@ -400,17 +400,20 @@
 
 
             this.renderBackground();
+            
+            
 
             this.state.currentEvent.screenshot = this.elements.uploadInput.files[0];
         
             try {
                 
+                
 
+                let tempUrl = URL.createObjectURL(this.state.currentEvent.screenshot);
                 await this.saveScreenshot();
+                URL.revokeObjectURL(tempUrl);
                 
                 this.setLoadingProgress(5);
-
-                
 
                 // Transition the UI to the results screen
                 const screen = document.querySelector('#fetching-screen');
