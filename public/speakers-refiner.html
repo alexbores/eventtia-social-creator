@@ -1,49 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speaker Standarizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#4F46E5', // Indigo 600
-              secondary: '#64748B', // Slate 500
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#64748B', // Slate 500
+                    }
+                }
             }
-          }
         }
-      }
     </script>
     <style>
-        .horizontal-scroll::-webkit-scrollbar { height: 8px; }
-        .horizontal-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .horizontal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .horizontal-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-[1920px] mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <h1 class="text-xl font-bold tracking-tight">Speaker <span class="text-primary">Standarizer</span></h1>
-                
+
                 <div class="flex items-center space-x-2 border-l border-slate-200 pl-4 ml-4">
                     <div class="relative">
-                        <select id="project-select" class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-48 p-2.5 pr-8 truncate transition-colors hover:bg-slate-100 cursor-pointer"></select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        <select id="project-select"
+                            class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-48 p-2.5 pr-8 truncate transition-colors hover:bg-slate-100 cursor-pointer"></select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                            </svg>
                         </div>
                     </div>
-                    <button type="button" id="new-project-btn" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="New Project">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    <button type="button" id="new-project-btn"
+                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="New Project">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                        </svg>
                     </button>
-                    <button type="button" id="edit-project-btn" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Rename Project">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                    <button type="button" id="edit-project-btn"
+                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="Rename Project">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -56,7 +90,8 @@
                 <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Attire Style</label>
-                        <select id="attire-select" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                        <select id="attire-select"
+                            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                             <option value="dark">Classic Dark Suit</option>
                             <option value="navy">Navy Blue Suit</option>
                             <option value="grey">Charcoal Grey Suit</option>
@@ -64,7 +99,8 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Background</label>
-                        <select id="bg-select" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                        <select id="bg-select"
+                            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                             <option value="studio-grey">Studio Gradient Grey</option>
                             <option value="white">Pure White</option>
                             <option value="office-blur">Blurred Office</option>
@@ -73,32 +109,52 @@
                     <div class="flex items-center h-full pb-2">
                         <label class="inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="headwear-check" class="sr-only peer" checked>
-                            <div class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <div
+                                class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+                            </div>
                             <span class="ms-3 text-sm font-medium text-slate-700">Remove Headwear</span>
                         </label>
                     </div>
                 </div>
-                
-                <button type="button" id="process-all-btn" disabled class="h-10 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+
+                <button type="button" id="process-all-btn" disabled
+                    class="h-10 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z" />
+                        <path d="m14 7 3 3" />
+                        <path d="M5 6v4" />
+                        <path d="M19 14v4" />
+                        <path d="M10 2v2" />
+                        <path d="M7 8H3" />
+                        <path d="M21 16h-4" />
+                        <path d="M11 3H9" />
+                    </svg>
                     Standardize All
                 </button>
             </div>
         </div>
 
         <div class="flex-grow flex flex-col bg-slate-100 rounded-xl border border-slate-200 overflow-hidden relative">
-            <div id="image-container" class="flex-wrap flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
-                </div>
+            <div id="image-container"
+                class="flex-wrap flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
+            </div>
         </div>
     </main>
 
-    <div id="input-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+    <div id="input-modal"
+        class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100 mx-4">
             <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4">Title</h3>
-            <input type="text" id="modal-input" class="w-full border border-slate-300 rounded-lg px-4 py-2 mb-6 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow" placeholder="Project Name">
+            <input type="text" id="modal-input"
+                class="w-full border border-slate-300 rounded-lg px-4 py-2 mb-6 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                placeholder="Project Name">
             <div class="flex justify-end space-x-3">
-                <button type="button" id="modal-cancel" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors">Cancel</button>
-                <button type="button" id="modal-confirm" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-colors shadow-sm">Save</button>
+                <button type="button" id="modal-cancel"
+                    class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors">Cancel</button>
+                <button type="button" id="modal-confirm"
+                    class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-colors shadow-sm">Save</button>
             </div>
         </div>
     </div>
@@ -107,7 +163,7 @@
         const ImageProcessor = {
             STORAGE_KEY: 'speaker_standardizer_data',
             state: {
-                projects: [], 
+                projects: [],
                 currentProjectId: null,
                 get currentProject() {
                     return this.projects.find(p => p.id === this.currentProjectId);
@@ -135,17 +191,17 @@
                     attireSelect: document.getElementById('attire-select'),
                     bgSelect: document.getElementById('bg-select'),
                     headwearCheck: document.getElementById('headwear-check'),
-                    
+
                     projectSelect: document.getElementById('project-select'),
                     newProjectBtn: document.getElementById('new-project-btn'),
                     editProjectBtn: document.getElementById('edit-project-btn'),
-                    
+
                     modal: document.getElementById('input-modal'),
                     modalTitle: document.getElementById('modal-title'),
                     modalInput: document.getElementById('modal-input'),
                     modalCancel: document.getElementById('modal-cancel'),
                     modalConfirm: document.getElementById('modal-confirm'),
-                    
+
                     getDropZone: () => document.getElementById('drop-zone'),
                     getFileInput: () => document.getElementById('file-input'),
                 };
@@ -172,7 +228,7 @@
                     this.elements.newProjectBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         this.showInputModal("Create New Project", `Project ${this.state.projects.length + 1}`, (title) => {
-                            this.saveState(); 
+                            this.saveState();
                             this.createProject(title);
                         });
                     });
@@ -196,12 +252,12 @@
 
                 if (this.elements.processAllBtn) {
                     this.elements.processAllBtn.addEventListener('click', (e) => {
-                         e.preventDefault();
-                         this.processAllImages();
+                        e.preventDefault();
+                        this.processAllImages();
                     });
                 }
             },
-            
+
             showInputModal(title, defaultValue, callback) {
                 this.elements.modalTitle.textContent = title;
                 this.elements.modalInput.value = defaultValue;
@@ -216,16 +272,16 @@
                 this.elements.modal.classList.remove('flex');
                 this.modalCallback = null;
             },
-            
+
             bindUploadEvents() {
-                 const dropZone = this.elements.getDropZone();
-                 const fileInput = this.elements.getFileInput();
-                 if (!dropZone || !fileInput) return;
+                const dropZone = this.elements.getDropZone();
+                const fileInput = this.elements.getFileInput();
+                if (!dropZone || !fileInput) return;
 
                 dropZone.addEventListener('click', () => fileInput.click());
                 fileInput.onchange = (e) => {
                     if (e.target.files.length) this.handleFiles(e.target.files);
-                    fileInput.value = ''; 
+                    fileInput.value = '';
                 };
                 dropZone.addEventListener('dragover', (e) => {
                     e.preventDefault();
@@ -249,24 +305,24 @@
 
             // --- Storage Logic ---
             checkStorage() {
-               let data = this.loadData(this.STORAGE_KEY);
-               if (data) {
-                 this.state.projects = data.projects || [];
-                 this.state.currentProjectId = data.currentProjectId;
-               }
-               
-               if (this.state.projects.length === 0) {
-                   this.createProject("My First Project", false); 
-               } else {
-                   const exists = this.state.projects.find(p => p.id === this.state.currentProjectId);
-                   if (!exists && this.state.projects.length > 0) {
-                       this.state.currentProjectId = this.state.projects[0].id;
-                       this.saveState(); 
-                   }
-               }
-               this.updateProjectUI();
-               this.renderImages();
-               this.updateUI(); 
+                let data = this.loadData(this.STORAGE_KEY);
+                if (data) {
+                    this.state.projects = data.projects || [];
+                    this.state.currentProjectId = data.currentProjectId;
+                }
+
+                if (this.state.projects.length === 0) {
+                    this.createProject("My First Project", false);
+                } else {
+                    const exists = this.state.projects.find(p => p.id === this.state.currentProjectId);
+                    if (!exists && this.state.projects.length > 0) {
+                        this.state.currentProjectId = this.state.projects[0].id;
+                        this.saveState();
+                    }
+                }
+                this.updateProjectUI();
+                this.renderImages();
+                this.updateUI();
             },
 
             saveData(key, data) {
@@ -288,7 +344,7 @@
                     return null;
                 }
             },
-            
+
             saveState() {
                 this.saveData(this.STORAGE_KEY, {
                     projects: this.state.projects,
@@ -313,10 +369,10 @@
             },
 
             switchProject(id) {
-                this.saveState(); 
+                this.saveState();
                 this.state.currentProjectId = id;
                 this.saveState();
-                this.updateProjectUI(); 
+                this.updateProjectUI();
                 this.renderImages();
                 this.updateUI();
             },
@@ -338,7 +394,7 @@
                 if (!this.state.currentProject) return;
 
                 const files = Array.from(fileList);
-                
+
                 files.forEach(file => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
@@ -347,18 +403,18 @@
                             id,
                             fileName: file.name,
                             fileSize: file.size,
-                            fileObject: file, 
-                            originalSrc: e.target.result, 
+                            fileObject: file,
+                            originalSrc: e.target.result,
                             originalServerUrl: null, // NEW FIELD: Track server URL
-                            processedSrc: null, 
-                            status: 'idle', 
+                            processedSrc: null,
+                            status: 'idle',
                             error: null
                         };
-                        
+
                         this.state.currentProject.images.push(imgData);
-                        this.saveState(); 
-                        this.appendImageCard(imgData); 
-                        this.updateUI(); 
+                        this.saveState();
+                        this.appendImageCard(imgData);
+                        this.updateUI();
                     };
                     reader.readAsDataURL(file);
                 });
@@ -384,7 +440,7 @@
                 const currentProj = this.state.currentProject;
                 const images = currentProj ? currentProj.images : [];
                 this.elements.processAllBtn.disabled = images.length === 0;
-                
+
                 const isDefaultTitle = currentProj && currentProj.title === "My First Project";
                 const hasImages = images.length > 0;
                 const canCreateNew = hasImages || !isDefaultTitle;
@@ -399,7 +455,7 @@
 
             async fetchApi(endpoint, options = {}) {
                 try {
-                    options.credentials = 'include'; 
+                    options.credentials = 'include';
                     const response = await fetch(endpoint, options);
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: 'An unknown server error occurred.' }));
@@ -429,7 +485,7 @@
                 return new Promise((resolve, reject) => {
                     if (!fileObject) return reject(new Error("No file object provided."));
                     if (!(fileObject instanceof Blob)) return reject(new TypeError("Invalid input: Expected a File or Blob object."));
-                    
+
                     const mimeType = fileObject.type;
                     const reader = new FileReader();
                     reader.onload = () => {
@@ -460,10 +516,10 @@
                 return await this.fetchApi('/api/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        url: this.state.currentProject.id, 
-                        request: 'save_image', 
-                        webData: JSON.stringify(newImageData) 
+                    body: JSON.stringify({
+                        url: this.state.currentProject.id,
+                        request: 'save_image',
+                        webData: JSON.stringify(newImageData)
                     })
                 });
             },
@@ -476,10 +532,10 @@
                 return await this.fetchApi('/api/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        url: this.state.currentProject.id, 
-                        request: 'save_image', 
-                        webData: JSON.stringify(imageData) 
+                    body: JSON.stringify({
+                        url: this.state.currentProject.id,
+                        request: 'save_image',
+                        webData: JSON.stringify(imageData)
                     })
                 });
             },
@@ -510,20 +566,19 @@
                     if (!currentServerUrl) {
                         let savedOriginalResponse;
                         const filename = `original_${imgData.id}`;
-                        
-                        if (imgData.fileObject) {
-                            // Scenario A: Fresh Upload (Best Quality)
-                            // We have the raw File object from the input
-                            const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
-                            savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
-                        } 
-                        else if (imgData.originalSrc && imgData.originalSrc.startsWith('data:')) {
+                        if (imgData.originalSrc && imgData.originalSrc.startsWith('data:')) {
                             // Scenario B: Retry after Page Reload
                             // The File object is lost, but we have the Data URL in memory/storage.
                             // We MUST parse the string directly; do NOT use encodeLocalImage here.
                             const parsedData = this.parseDataUrl(imgData.originalSrc);
                             savedOriginalResponse = await this.saveImageByData(parsedData, filename);
-                        } 
+                        }
+                        else if (imgData.fileObject) {
+                            // Scenario A: Fresh Upload (Best Quality)
+                            // We have the raw File object from the input
+                            const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
+                            savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
+                        }
                         else {
                             throw new Error("No valid image source found to upload.");
                         }
@@ -531,12 +586,12 @@
                         // Save this URL so we don't re-upload if we retry again later
                         currentServerUrl = savedOriginalResponse.url;
                         imgData.originalServerUrl = currentServerUrl;
-                        this.saveState(); 
+                        this.saveState();
                         console.log("Original Image Saved to Server:", currentServerUrl);
                     } else {
                         console.log("Skipping upload, using existing server URL:", currentServerUrl);
                     }
-                    
+
                     // --- STEP 2: CALL ANALYSIS API ---
                     const processingOptions = {
                         imageUrl: currentServerUrl, // Pass the server URL we just ensured exists
@@ -550,27 +605,27 @@
                     const analysisResponse = await this.fetchApi('/api/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            url: this.state.currentProject.id, 
-                            request: 'get_speaker_photo', 
-                            webData: JSON.stringify(processingOptions) 
+                        body: JSON.stringify({
+                            url: this.state.currentProject.id,
+                            request: 'get_speaker_photo',
+                            webData: JSON.stringify(processingOptions)
                         })
                     });
 
                     // --- STEP 3: SAVE RESULTING IMAGE ---
                     const resultImageRaw = analysisResponse.speaker; // Assuming this is a Data URL string
-                    
+
                     if (!resultImageRaw) throw new Error("Server processed the request but returned no image data.");
 
-                    
+
 
                     const savedResultResponse = await this.saveImageByData(resultImageRaw, `processed_${imgData.id}`);
                     console.log("Processed Result Saved:", savedResultResponse);
 
                     // --- STEP 4: UPDATE UI ---
                     imgData.status = 'success';
-                    imgData.processedSrc = savedResultResponse.url; 
-                    
+                    imgData.processedSrc = savedResultResponse.url;
+
                     this.saveState();
                     this.updateCardDOM(imgData);
 
@@ -578,7 +633,7 @@
                     console.error("Processing failed:", err);
                     imgData.status = 'error';
                     imgData.error = err.message || "Processing failed";
-                    
+
                     // Save state so we remember the error (and the originalServerUrl if we got that far)
                     this.saveState();
                     this.updateCardDOM(imgData);
@@ -591,9 +646,9 @@
                 const btn = this.elements.processAllBtn;
                 btn.disabled = true;
                 btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
-                
+
                 const pendingImages = this.state.currentProject.images.filter(img => img.status === 'idle' || img.status === 'error');
-                
+
                 const BATCH_SIZE = 3;
                 for (let i = 0; i < pendingImages.length; i += BATCH_SIZE) {
                     const batch = pendingImages.slice(i, i + BATCH_SIZE);
@@ -609,7 +664,7 @@
                 const timeNow = Date.now();
                 const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
                 const timeHex = timeNow.toString(16).padStart(12, '0');
-                return timeHex.substring(0, 8) + '-' + '4' + randomPart1.substring(0, 3); 
+                return timeHex.substring(0, 8) + '-' + '4' + randomPart1.substring(0, 3);
             },
 
             getImageName(imageUrl) {
@@ -623,7 +678,7 @@
             // --- Rendering Logic ---
             renderImages() {
                 const container = this.elements.imageContainer;
-                
+
                 // Static Upload Card HTML
                 const uploadCardHTML = `
                 <div class="flex-none w-[320px] h-[426px] snap-center">
@@ -636,7 +691,7 @@
                         <p class="text-sm text-slate-500 mt-2">Drag & drop or click to upload</p>
                     </div>
                 </div>`;
-                
+
                 container.innerHTML = uploadCardHTML;
                 this.bindUploadEvents();
 
@@ -712,7 +767,7 @@
                 const imgEl = card.querySelector(`#img-${imgData.id}`);
                 const relativeContainer = card.querySelector('div.relative');
                 relativeContainer.addEventListener('mouseenter', () => {
-                    imgEl.src = imgData.originalSrc; 
+                    imgEl.src = imgData.originalSrc;
                 });
                 relativeContainer.addEventListener('mouseleave', () => {
                     imgEl.src = imgData.processedSrc;
@@ -737,7 +792,7 @@
                     loading.classList.remove('flex');
                     imgEl.classList.remove('blur-sm');
                     imgEl.src = imgData.processedSrc;
-                    
+
                     const footer = card.lastElementChild;
                     footer.innerHTML = `
                         <div class="truncate max-w-[60%]">
@@ -768,4 +823,5 @@
         });
     </script>
 </body>
+
 </html>
