@@ -413,6 +413,8 @@
                 
 
                 let tempUrl = URL.createObjectURL(this.state.currentEvent.screenshot);
+
+                this.state.currentEvent.screenshot = tempUrl;
                 await this.saveScreenshot();
                 URL.revokeObjectURL(tempUrl);
                 
