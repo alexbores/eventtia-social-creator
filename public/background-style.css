@@ -480,6 +480,11 @@ p,h1,h2,h3,li{
   padding-top: 40px;
   padding-bottom: 60px;
   justify-content: center;
+
+  display: hide;
+}
+#modal-uploader.modal{
+  display: flex;
 }
 #modal-uploader .content{
    padding: 0 60px;
