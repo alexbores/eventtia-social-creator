@@ -340,8 +340,6 @@
                 const files = Array.from(fileList);
                 
                 files.forEach(file => {
-                    // We keep the file object in memory for the initial upload
-                    // The originalSrc (DataURL) is used for immediate preview
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const id = this.getUUID();
@@ -349,8 +347,9 @@
                             id,
                             fileName: file.name,
                             fileSize: file.size,
-                            fileObject: file, // Store file object for upload
+                            fileObject: file, 
                             originalSrc: e.target.result, 
+                            originalServerUrl: null, // NEW FIELD: Track server URL
                             processedSrc: null, 
                             status: 'idle', 
                             error: null
@@ -502,37 +501,50 @@
                 this.updateCardDOM(imgData);
 
                 try {
-                    // STEP 1: Save Original Image
-                    // We try to use the File object if available (faster/cleaner), otherwise fall back to URL
-                    let savedOriginalResponse;
-                    const filename = `original_${imgData.id}`;
-                    
-                    if (imgData.fileObject) {
-                        // Use the file object stored during handleFiles
-                        const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
-                        savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
-                    } else {
-                        // Fallback if loaded from local storage (no fileObject)
-                        // Note: saveImageByUrl expects a remote URL, but if originalSrc is dataURL, we need to handle that.
-                        if (imgData.originalSrc.startsWith('data:')) {
-                             const parsed = this.parseDataUrl(imgData.originalSrc);
-                             savedOriginalResponse = await this.saveImageByData(parsed, filename);
-                        } else {
-                             savedOriginalResponse = await this.saveImageByUrl(imgData.originalSrc);
-                        }
-                    }
+                    // --- STEP 1: RESOLVE/SAVE ORIGINAL IMAGE ---
+                    // We need a server URL for the analysis API. 
+                    // Check if we already have one from a previous attempt.
+                    let currentServerUrl = imgData.originalServerUrl;
 
-                    console.log("Original Saved:", savedOriginalResponse);
+                    if (!currentServerUrl) {
+                        let savedOriginalResponse;
+                        const filename = `original_${imgData.id}`;
+                        
+                        if (imgData.fileObject) {
+                            // Scenario A: Fresh Upload (Best Quality)
+                            // We have the raw File object from the input
+                            const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
+                            savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
+                        } 
+                        else if (imgData.originalSrc && imgData.originalSrc.startsWith('data:')) {
+                            // Scenario B: Retry after Page Reload
+                            // The File object is lost, but we have the Data URL in memory/storage.
+                            // We MUST parse the string directly; do NOT use encodeLocalImage here.
+                            const parsedData = this.parseDataUrl(imgData.originalSrc);
+                            savedOriginalResponse = await this.saveImageByData(parsedData, filename);
+                        } 
+                        else {
+                            throw new Error("No valid image source found to upload.");
+                        }
+
+                        // Save this URL so we don't re-upload if we retry again later
+                        currentServerUrl = savedOriginalResponse.url;
+                        imgData.originalServerUrl = currentServerUrl;
+                        this.saveState(); 
+                        console.log("Original Image Saved to Server:", currentServerUrl);
+                    } else {
+                        console.log("Skipping upload, using existing server URL:", currentServerUrl);
+                    }
                     
-                    // STEP 2: Call Analysis API (get_speaker_photo)
+                    // --- STEP 2: CALL ANALYSIS API ---
                     const processingOptions = {
-                        imageUrl: savedOriginalResponse.url, 
+                        imageUrl: currentServerUrl, // Pass the server URL we just ensured exists
                         attireColor: this.elements.attireSelect.value,
                         backgroundType: this.elements.bgSelect.value,
                         removeHeadwear: this.elements.headwearCheck.checked,
                     };
 
-                    console.log("Requesting Analysis:", processingOptions);
+                    console.log("Requesting Analysis...", processingOptions);
 
                     const analysisResponse = await this.fetchApi('/api/analyze', {
                         method: 'POST',
@@ -544,21 +556,19 @@
                         })
                     });
 
-                    console.log(analysisResponse.speaker);
-
-                    const resultImageRaw = analysisResponse.speaker;
+                    // --- STEP 3: SAVE RESULTING IMAGE ---
+                    const resultImageRaw = analysisResponse.speaker; // Assuming this is a Data URL string
                     
-                    if (!resultImageRaw) throw new Error("Server returned no image data.");
+                    if (!resultImageRaw) throw new Error("Server processed the request but returned no image data.");
 
-                  
+                    
 
                     const savedResultResponse = await this.saveImageByData(resultImageRaw, `processed_${imgData.id}`);
-                    console.log("Result Saved:", savedResultResponse);
+                    console.log("Processed Result Saved:", savedResultResponse);
 
-
-                    // STEP 4: Update UI
+                    // --- STEP 4: UPDATE UI ---
                     imgData.status = 'success';
-                    imgData.processedSrc = savedResultResponse.url; // Use Server URL
+                    imgData.processedSrc = savedResultResponse.url; 
                     
                     this.saveState();
                     this.updateCardDOM(imgData);
@@ -567,6 +577,8 @@
                     console.error("Processing failed:", err);
                     imgData.status = 'error';
                     imgData.error = err.message || "Processing failed";
+                    
+                    // Save state so we remember the error (and the originalServerUrl if we got that far)
                     this.saveState();
                     this.updateCardDOM(imgData);
                 }
