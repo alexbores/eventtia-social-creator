@@ -550,16 +550,11 @@
                     
                     if (!resultImageRaw) throw new Error("Server returned no image data.");
 
-                    let encodedResult;
-                    if (resultImageRaw.startsWith('data:')) {
-                         encodedResult = this.parseDataUrl(resultImageRaw);
-                    } else {
-                         let blob = await this.urlStringToBlob(resultImageRaw);
-                         encodedResult = await this.encodeLocalImage(blob);
-                    }
+                  
 
-                    const savedResultResponse = await this.saveImageByData(encodedResult, `processed_${imgData.id}`);
+                    const savedResultResponse = await this.saveImageByData(resultImageRaw, `processed_${imgData.id}`);
                     console.log("Result Saved:", savedResultResponse);
+
 
                     // STEP 4: Update UI
                     imgData.status = 'success';
