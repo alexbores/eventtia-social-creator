@@ -28,7 +28,7 @@ import { getPrimaryColors } from './analyzers/get_primary_colors.js';
 import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
 
-import { getStandarizedSpeaker } from './get_standarized_speaker.js';
+import { getStandarizedSpeaker } from './analyzers/get_standarized_speaker.js';
 
 import { fileURLToPath } from 'url';
 
