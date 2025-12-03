@@ -545,9 +545,8 @@
                         })
                     });
 
-                    // STEP 3: Save the Resulting Image
-                    // Assuming analysisResponse contains a property with the new image (e.g. 'image', 'generatedImage', or 'backgroundImage')
-                    // Adjust 'analysisResponse.image' based on your actual server response key
+                    console.log(analysisResponse);
+
                     const resultImageRaw = analysisResponse.image || analysisResponse.generatedImage || analysisResponse.backgroundImage;
                     
                     if (!resultImageRaw) throw new Error("Server returned no image data.");
@@ -556,9 +555,6 @@
                     if (resultImageRaw.startsWith('data:')) {
                          encodedResult = this.parseDataUrl(resultImageRaw);
                     } else {
-                         // If server returned a URL, we might need to fetch it to save it, or just use it.
-                         // But the requirements say "save the new one". Assuming it comes back as base64/dataURL.
-                         // If it comes back as URL, we use urlStringToBlob -> encode.
                          let blob = await this.urlStringToBlob(resultImageRaw);
                          encodedResult = await this.encodeLocalImage(blob);
                     }
