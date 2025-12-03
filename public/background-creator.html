@@ -86,7 +86,7 @@
     
     <section id="modal-uploader">
         <div class="content">
-            <button class="close button button-secondary" close-url-screen-uploader>
+            <button class="close button button-secondary" close-upload-screen>
               X
             </button>
             <p class="description text">
@@ -192,7 +192,7 @@
 
                 modalUploaderEl: document.querySelector('#modal-uploader'),
 
-                closeUrlUploaderScreen: document.querySelector('[close-url-screen-uploader]'),
+                closeUploaderScreen: document.querySelector('[close-upload-screen]'),
 
                 uploadInput: document.querySelector('#event-upload-input'),
 
@@ -230,8 +230,8 @@
             });
 
  
-            this.elements.closeUrlScreen.addEventListener('click',()=>{
-                this.elements.closeUrlUploaderScreen.classList.remove('modal');
+            this.elements.closeUploaderScreen.addEventListener('click',()=>{
+                this.elements.modalUploaderEl.classList.remove('modal');
             });
             this.elements.backHolder.addEventListener('click',e =>{
                 const trigger = e.target.closest('[change-image]');
