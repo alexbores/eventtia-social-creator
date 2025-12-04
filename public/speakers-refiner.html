@@ -462,28 +462,83 @@
                 const files = Array.from(fileList);
 
                 files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const id = this.getUUID();
-                        const imgData = {
-                            id,
-                            fileName: file.name,
-                            fileSize: file.size,
-                            fileObject: file,
-                            originalSrc: e.target.result,
-                            originalServerUrl: null,
-                            processedSrc: null,
-                            status: 'idle',
-                            error: null
-                        };
-
-                        this.state.currentProject.images.push(imgData);
-                        this.saveState();
-                        this.appendImageCard(imgData);
-                        this.updateUI();
+                    // 1. Create temporary Blob URL for immediate display
+                    const tempUrl = URL.createObjectURL(file);
+                    const id = this.getUUID();
+                    
+                    const imgData = {
+                        id,
+                        fileName: file.name,
+                        fileSize: file.size,
+                        fileObject: file, // Keep reference for upload
+                        originalSrc: tempUrl, // Temporary display
+                        originalServerUrl: null,
+                        processedSrc: null,
+                        status: 'uploading', // New status
+                        error: null
                     };
-                    reader.readAsDataURL(file);
+
+                    this.state.currentProject.images.push(imgData);
+                    // Do NOT save state yet (avoids saving blob URL)
+                    this.appendImageCard(imgData);
+                    this.updateUI();
+
+                    // 2. Trigger background upload
+                    this.uploadImage(file, imgData);
                 });
+            },
+
+            async uploadImage(file, imgData) {
+                try {
+                    console.log(`Uploading ${file.name}...`);
+                    
+                    // Convert to Base64 for the API
+                    const encodedImage = await this.encodeLocalImage(file);
+                    
+                    // Prepare payload for save_image
+                    const payload = {
+                        data: encodedImage.data,
+                        mimeType: encodedImage.mimeType,
+                        name: file.name.split('.')[0] // Remove extension as saveImage adds it
+                    };
+
+                    const response = await this.fetchApi('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            url: 'upload-action', // Placeholder
+                            request: 'save_image',
+                            webData: JSON.stringify(payload)
+                        })
+                    });
+
+                    if (response && response.url) {
+                        console.log(`Upload successful: ${response.url}`);
+                        
+                        // Update image data with permanent server URL
+                        imgData.originalSrc = response.url;
+                        imgData.originalServerUrl = response.url;
+                        imgData.status = 'idle'; // Ready for processing
+                        
+                        // Clean up blob URL to free memory
+                        // URL.revokeObjectURL(imgData.originalSrc); // Be careful if UI is still using it, but src change should handle it
+                        
+                        // Update UI to use new URL
+                        const imgEl = document.getElementById(`img-${imgData.id}`);
+                        if (imgEl) imgEl.src = response.url;
+
+                        // NOW save state with the URL
+                        this.saveState();
+                    } else {
+                        throw new Error("Server returned no URL.");
+                    }
+
+                } catch (error) {
+                    console.error(`Upload failed for ${file.name}:`, error);
+                    imgData.status = 'error';
+                    imgData.error = "Upload failed";
+                    this.updateUI(); // Reflect error state if needed
+                }
             },
 
             removeImage(id) {
