@@ -260,11 +260,14 @@
 
                 // Color Picker Events
                 if (this.elements.colorPicker && this.elements.colorInput) {
+                    // Create debounced update function
+                    const debouncedBackgroundUpdate = this.debounce(() => this.updateAllImageBackgrounds(), 50);
+
                     // Sync Picker -> Input
                     this.elements.colorPicker.addEventListener('input', (e) => {
                         this.elements.colorInput.value = e.target.value.toUpperCase();
                         this.state.brandColor = e.target.value;
-                        this.updateAllImageBackgrounds(); // Update backgrounds in real-time
+                        debouncedBackgroundUpdate(); 
                         this.saveState();
                     });
 
@@ -274,7 +277,7 @@
                         if (val.startsWith('#') && (val.length === 4 || val.length === 7)) {
                             this.elements.colorPicker.value = val;
                             this.state.brandColor = val;
-                            this.updateAllImageBackgrounds(); // Update backgrounds in real-time
+                            debouncedBackgroundUpdate(); 
                             this.saveState();
                         }
                     });
@@ -885,6 +888,15 @@
                     imgEl.src = imgData.processedSrc;
                     imgEl.style.backgroundColor = this.state.brandColor; // Re-apply background
                 });
+            },
+
+            debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), wait);
+                };
             },
 
             updateAllImageBackgrounds() {

@@ -801,7 +801,7 @@ export function getPromptStandarizedSpeaker(data) {
       1. CRITICAL: Keep the person's clothing or attire
       2. Replace the background with a full greenscreen #00FF00.
       3. CRITICAL: Keep the person's face, facial features, expression, and skin tone EXACTLY the same. Do not change the identity.
-      4. Ensure the face is not cutted out and is well centered viewing into the camera, the photography style must be body and head shot but no hands shown.
+      4. Ensure the face is not cutted out and is well centered viewing into the camera and standing up straight, the photography type must be a professional Medium Shot / Waist Shot and no hands shown.
       5. Ensure high quality, photorealistic lighting and texture.
       6. Output image must be the exact same aspect ratio as input.
       7. Return ONLY the image.
