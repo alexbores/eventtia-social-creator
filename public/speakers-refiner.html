@@ -71,6 +71,35 @@
             z-index: 2;
             position: relative;
         }
+        /* Upload Spinner Styles */
+        .upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .upload-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4F46E5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -488,10 +517,41 @@
                 });
             },
 
+            async waitForUpload(imgData) {
+                if (imgData.status !== 'uploading') return;
+                console.log(`Waiting for upload: ${imgData.fileName}`);
+                
+                return new Promise((resolve) => {
+                    const checkInterval = setInterval(() => {
+                        if (imgData.status !== 'uploading') {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 500); // Check every 500ms
+                    
+                    // Timeout after 60 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        if (imgData.status === 'uploading') {
+                            console.warn(`Upload timeout for ${imgData.fileName}`);
+                            imgData.status = 'error'; // Force error state
+                            resolve();
+                        }
+                    }, 60000);
+                });
+            },
+
             async uploadImage(file, imgData) {
                 try {
                     console.log(`Uploading ${file.name}...`);
                     
+                    // Show spinner
+                    const card = document.getElementById(`card-${imgData.id}`);
+                    if (card) {
+                        const overlay = card.querySelector('.upload-overlay');
+                        if (overlay) overlay.classList.add('active');
+                    }
+
                     // Convert to Base64 for the API
                     const encodedImage = await this.encodeLocalImage(file);
                     
@@ -521,11 +581,17 @@
                         imgData.status = 'idle'; // Ready for processing
                         
                         // Clean up blob URL to free memory
-                        // URL.revokeObjectURL(imgData.originalSrc); // Be careful if UI is still using it, but src change should handle it
+                        // URL.revokeObjectURL(imgData.originalSrc); 
                         
                         // Update UI to use new URL
                         const imgEl = document.getElementById(`img-${imgData.id}`);
                         if (imgEl) imgEl.src = response.url;
+
+                        // Hide spinner
+                        if (card) {
+                            const overlay = card.querySelector('.upload-overlay');
+                            if (overlay) overlay.classList.remove('active');
+                        }
 
                         // NOW save state with the URL
                         this.saveState();
@@ -537,7 +603,15 @@
                     console.error(`Upload failed for ${file.name}:`, error);
                     imgData.status = 'error';
                     imgData.error = "Upload failed";
-                    this.updateUI(); // Reflect error state if needed
+                    
+                    // Hide spinner on error
+                    const card = document.getElementById(`card-${imgData.id}`);
+                    if (card) {
+                        const overlay = card.querySelector('.upload-overlay');
+                        if (overlay) overlay.classList.remove('active');
+                    }
+                    
+                    this.updateUI(); 
                 }
             },
 
@@ -672,6 +746,16 @@
             // --- Main Processing Logic ---
 
             async processSingleImage(imgData) {
+                // Wait for upload if still uploading
+                if (imgData.status === 'uploading') {
+                    await this.waitForUpload(imgData);
+                    // Re-check status after wait
+                    if (imgData.status === 'error') {
+                        console.error(`Skipping ${imgData.fileName} due to upload failure.`);
+                        return;
+                    }
+                }
+
                 if (imgData.status === 'processing') return;
 
                 imgData.status = 'processing';
@@ -772,11 +856,19 @@
                 btn.disabled = true;
                 btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
 
-                const pendingImages = this.state.currentProject.images.filter(img => img.status === 'idle' || img.status === 'error');
+                // Filter images that need processing (idle or error or uploading)
+                const imagesToProcess = this.state.currentProject.images.filter(img => img.status === 'idle' || img.status === 'error' || img.status === 'uploading');
+
+                if (imagesToProcess.length === 0) {
+                    alert("No images to process.");
+                    this.elements.processAllBtn.disabled = false;
+                    this.elements.processAllBtn.textContent = "Standardize All";
+                    return;
+                }
 
                 const BATCH_SIZE = 3;
-                for (let i = 0; i < pendingImages.length; i += BATCH_SIZE) {
-                    const batch = pendingImages.slice(i, i + BATCH_SIZE);
+                for (let i = 0; i < imagesToProcess.length; i += BATCH_SIZE) {
+                    const batch = imagesToProcess.slice(i, i + BATCH_SIZE);
                     await Promise.all(batch.map(img => this.processSingleImage(img)));
                 }
 
@@ -893,6 +985,11 @@
                     <div class="image-card relative bg-slate-100 overflow-hidden">
                         <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
                         
+                        <!-- Upload Spinner -->
+                        <div class="upload-overlay absolute inset-0 bg-white/80 flex items-center justify-center z-30 transition-opacity duration-300 ${imgData.status === 'uploading' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
+                            <div class="spinner w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                        </div>
+
                         <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
                             <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
                             <span class="text-white font-medium text-sm">Standardizing...</span>
@@ -968,13 +1065,11 @@
 
             updateAllImageBackgrounds() {
                 if (!this.state.currentProject) return;
-                this.state.currentProject.images.forEach(img => {
-                    if (img.status === 'success') {
-                        const card = document.getElementById(`card-${img.id}`);
-                        if (card) {
-                            card.style.backgroundColor = this.state.brandColor;
-                        }
-                    }
+
+                let cardsWrapper = document.querySelectorAll('.#image-container .card-wrapper');
+
+                cardsWrapper.forEach(card => {
+                    card.style.backgroundColor = this.state.brandColor;
                 });
             },
 
