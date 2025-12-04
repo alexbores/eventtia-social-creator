@@ -41,6 +41,21 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        #image-container .card-wrapper{
+            width: 33.33%;
+            height: 100%;
+        }
+
+        #image-container .image-card{
+            width: 100%;
+            height: auto;
+        }
+
+        #image-container .image-card img{
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
@@ -246,6 +261,7 @@
                     this.elements.colorPicker.addEventListener('input', (e) => {
                         this.elements.colorInput.value = e.target.value.toUpperCase();
                         this.state.brandColor = e.target.value;
+                        this.updateAllImageBackgrounds(); // Update backgrounds in real-time
                         this.saveState();
                     });
 
@@ -255,6 +271,7 @@
                         if (val.startsWith('#') && (val.length === 4 || val.length === 7)) {
                             this.elements.colorPicker.value = val;
                             this.state.brandColor = val;
+                            this.updateAllImageBackgrounds(); // Update backgrounds in real-time
                             this.saveState();
                         }
                     });
@@ -266,6 +283,7 @@
                          if (/^#[0-9A-F]{6}$/i.test(val)) {
                              this.state.brandColor = val;
                              this.elements.colorPicker.value = val;
+                             this.updateAllImageBackgrounds(); // Update backgrounds in real-time
                              this.saveState();
                          } else {
                              // Revert to state if invalid
@@ -616,6 +634,9 @@
                         // Save this URL so we don't re-upload if we retry again later
                         currentServerUrl = savedOriginalResponse.url;
                         imgData.originalServerUrl = currentServerUrl;
+
+                        imgData.transparentImageServerUrl = this.removeGreenScreen(currentServerUrl);
+
                         this.saveState();
                         console.log("Original Image Saved to Server:", currentServerUrl);
                     } else {
@@ -645,14 +666,17 @@
 
                     if (!resultImageRaw) throw new Error("Server processed the request but returned no image data.");
 
-
-
-                    const savedResultResponse = await this.saveImageByData(resultImageRaw, `processed_${imgData.id}`);
-                    console.log("Processed Result Saved:", savedResultResponse);
+                    // --- STEP 3.5: REMOVE GREEN SCREEN & SAVE TRANSPARENT ---
+                    const transparentDataUrl = await this.removeGreenScreen(resultImageRaw);
+                    
+                    const transparentImageParsed = this.parseDataUrl(transparentDataUrl);
+                    const savedTransparentResponse = await this.saveImageByData(transparentImageParsed, `processed_${imgData.id}`);
+                    console.log("Transparent Result Saved:", savedTransparentResponse);
 
                     // --- STEP 4: UPDATE UI ---
                     imgData.status = 'success';
-                    imgData.processedSrc = savedResultResponse.url;
+                    imgData.processedSrc = savedTransparentResponse.url; // Use the transparent one
+                    imgData.transparentImageServerUrl = savedTransparentResponse.url;
 
                     this.saveState();
                     this.updateCardDOM(imgData);
@@ -702,6 +726,54 @@
                 if (fileName === '') fileName = parts.pop() || '';
                 return fileName.split('?')[0];
             },
+            
+
+            async removeGreenScreen(imageUrl) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous"; 
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        
+                        // Green screen color to remove: #00FF00 (0, 255, 0)
+                        // We'll use a tolerance to catch slight variations
+                        const targetR = 0;
+                        const targetG = 255;
+                        const targetB = 0;
+                        const tolerance = 60; // Adjustable tolerance
+
+                        for (let i = 0; i < data.length; i += 4) {
+                            const r = data[i];
+                            const g = data[i + 1];
+                            const b = data[i + 2];
+
+                            // Simple distance check
+                            // You can use more advanced color distance formulas (like Euclidean) if needed
+                            if (
+                                Math.abs(r - targetR) < tolerance &&
+                                Math.abs(g - targetG) < tolerance &&
+                                Math.abs(b - targetB) < tolerance
+                            ) {
+                                data[i + 3] = 0; // Set alpha to 0 (transparent)
+                            }
+                        }
+                        
+                        ctx.putImageData(imageData, 0, 0);
+                        resolve(canvas.toDataURL('image/png'));
+                    };
+                    img.onerror = (err) => reject(new Error("Failed to load image for green screen removal: " + err.message));
+                    img.src = imageUrl;
+                });
+            },
+
 
             // --- Rendering Logic ---
             renderImages() {
@@ -734,11 +806,11 @@
             appendImageCard(imgData) {
                 const card = document.createElement('div');
                 card.id = `card-${imgData.id}`;
-                card.className = "flex-none w-[320px] h-[426px] snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
+                card.className = "card-wrapper flex-none snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
 
                 card.innerHTML = `
-                    <div class="relative w-full h-[340px] bg-slate-100 overflow-hidden">
-                        <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="w-full h-full object-cover transition-all duration-500" />
+                    <div class="image-card relative bg-slate-100 overflow-hidden">
+                        <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
                         
                         <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
                             <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
@@ -796,9 +868,26 @@
                 const relativeContainer = card.querySelector('div.relative');
                 relativeContainer.addEventListener('mouseenter', () => {
                     imgEl.src = imgData.originalSrc;
+                    imgEl.style.backgroundColor = ''; // Reset background for original
                 });
                 relativeContainer.addEventListener('mouseleave', () => {
                     imgEl.src = imgData.processedSrc;
+                    imgEl.style.backgroundColor = this.state.brandColor; // Re-apply background
+                });
+            },
+
+            updateAllImageBackgrounds() {
+                if (!this.state.currentProject) return;
+                this.state.currentProject.images.forEach(img => {
+                    if (img.status === 'success') {
+                        const card = document.getElementById(`card-${img.id}`);
+                        if (card) {
+                            const imgEl = card.querySelector(`#img-${img.id}`);
+                            if (imgEl) {
+                                imgEl.style.backgroundColor = this.state.brandColor;
+                            }
+                        }
+                    }
                 });
             },
 
@@ -820,6 +909,9 @@
                     loading.classList.remove('flex');
                     imgEl.classList.remove('blur-sm');
                     imgEl.src = imgData.processedSrc;
+                    
+                    // Apply Brand Color Background
+                    imgEl.style.backgroundColor = this.state.brandColor;
 
                     const footer = card.lastElementChild;
                     footer.innerHTML = `

@@ -794,12 +794,12 @@ export function getPromptStandarizedSpeaker(data) {
     let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
     let {brandColor} = parsedData;
 
-    let bgDesc = "a clean, neutral studio " + (brandColor || "grey") + " color gradient background";
+    // let bgDesc = "a clean, neutral studio " + (brandColor || "grey") + " color gradient background";
 
     const prompt = `
       Edit this image to create a standardized professional corporate headshot.
       1. CRITICAL: Keep the person's clothing or attire
-      2. Replace the background with ${bgDesc}.
+      2. Replace the background with a full greenscreen #00FF00.
       3. CRITICAL: Keep the person's face, facial features, expression, and skin tone EXACTLY the same. Do not change the identity.
       4. Ensure the face is not cutted out and is well centered viewing into the camera, the photography style must be body and head shot but no hands shown.
       5. Ensure high quality, photorealistic lighting and texture.

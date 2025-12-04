@@ -128,5 +128,3 @@ async function getAiImage(data) {
         throw error; 
     }
 }
-
-
