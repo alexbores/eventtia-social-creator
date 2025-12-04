@@ -799,18 +799,18 @@ export function getPromptStandarizedSpeaker(data) {
     const prompt = `
       Edit this image to create a standardized professional corporate headshot.
       
-      INSTRUCTIONS:
-      1. CRITICAL **Identity & Attire**: Keep the person's face, facial features, expression, skin tone, and clothing EXACTLY the same.
-      2. CRITICAL **Background**: Replace the background with a SOLID PURE GREEN screen escpecifically this color(#00FF00).
-      3. CRITICAL **Framing**: Create a "Medium Close-Up" (Chest-up). The subject must be centered, standing straight, and facing the camera.
-      4. CRITICAL **Headroom**: Leave adequate empty space above the top of the head. Do NOT cut off the hair or head.
-      5. CRITICAL **Hands**: No hands should be visible.
-      6. CRITICAL **Expression**: Professional, confident, and approachable.
-      7. CRITICAL **Lighting**: Soft, high-quality studio lighting. Add subtle shadows for depth. Ensure the face is well-lit.
-      8. CRITICAL **Quality**: Photorealistic, sharp focus, high resolution.
+      1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input.
+
+      2. Background Technicals: Replace the entire background with a SOLID PURE GREEN screen, specifically color hex code (#00FF00).
+
+      3. Framing & Composition: Medium-close up shot (Head and shoulders framing). Leave adequate empty headroom; do not cut off the hair. Hands must not be visible. The aspect ratio must be 4:5.
+
+      4. Pose Technicals: Ensure body is angled approximately 45 degrees to the side (left shoulder forward), with the head turned to face the camera directly. Maintain direct eye contact with the viewer. Expression must remain a subtle, confident, closed-mouth smile. Posture must be upright and relaxed.
+
+      5. Lighting & Optics Technicals: Apply soft, high-quality, diffused studio lighting optimized for green screen (no harsh shadows on face, but subtle shadows for depth). Simulate a shallow depth of field (f/1.8 or f/2.8 aperture style) on the subject, with critical sharp focus on the eyes. The final image must be photorealistic, high-resolution, professional photography style.
       
       OUTPUT:
-      9. Return ONLY the image. Maintain the exact aspect ratio of the input.
+      6. Return ONLY the image. Maintain the exact aspect ratio of the input.
     `;
 
     return prompt;
