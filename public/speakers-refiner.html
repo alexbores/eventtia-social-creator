@@ -41,12 +41,17 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        #image-container .card-wrapper{
-            width: calc(33.33% - 20px);
+        
+        #image-container{
+            gap: 20px;
+        }
+        #image-container .card-wrapper,
+        #image-container .drop-zone-holder{
+            width: calc(25% - 20px);
             height: 100%;
         }
-        #image-container .image-card{
+        #image-container .image-card,
+        #image-container .drop-zone-holder{
             width: 100%;
             aspect-ratio: 29/36;
         }
@@ -787,7 +792,7 @@
 
                 // Static Upload Card HTML
                 const uploadCardHTML = `
-                <div class="flex-none w-[320px] h-[426px] snap-center">
+                <div class="drop-zone-holder flex-none w-[320px] h-[426px] snap-center">
                     <div id="drop-zone" class="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
                         <input type="file" id="file-input" multiple accept="image/*" class="hidden">
                         <div class="bg-slate-100 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
