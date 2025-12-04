@@ -55,9 +55,21 @@
             width: 100%;
             aspect-ratio: 29/36;
         }
+        #image-container .image-card::before{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(#0000007a, transparent);
+        }
         #image-container .image-card img{
             width: 100%;
             height: 100%;
+            z-index: 2;
+            position: relative;
         }
     </style>
 </head>
@@ -762,7 +774,7 @@
                         const targetR = 0;
                         const targetG = 255;
                         const targetB = 0;
-                        const tolerance = 60; // Adjustable tolerance
+                        const tolerance = 80; // Adjustable tolerance
 
                         for (let i = 0; i < data.length; i += 4) {
                             const r = data[i];
@@ -905,10 +917,7 @@
                     if (img.status === 'success') {
                         const card = document.getElementById(`card-${img.id}`);
                         if (card) {
-                            const imgEl = card.querySelector(`#img-${img.id}`);
-                            if (imgEl) {
-                                imgEl.style.backgroundColor = this.state.brandColor;
-                            }
+                            card.style.backgroundColor = this.state.brandColor;
                         }
                     }
                 });
