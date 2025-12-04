@@ -800,7 +800,7 @@ export function getPromptStandarizedSpeaker(data) {
       Edit this image to create a standardized professional corporate headshot.
       
       INSTRUCTIONS:
-      1. CRITICAL **Identity & Attire**: Keep the person's face, facial features, expression, skin tone, and clothing EXACTLY the same. Do not change the identity.
+      1. CRITICAL **Identity & Attire**: Keep the person's face, facial features, expression, skin tone, and clothing EXACTLY the same.
       2. CRITICAL **Background**: Replace the background with a SOLID PURE GREEN screen escpecifically this color(#00FF00).
       3. CRITICAL **Framing**: Create a "Medium Close-Up" (Chest-up). The subject must be centered, standing straight, and facing the camera.
       4. CRITICAL **Headroom**: Leave adequate empty space above the top of the head. Do NOT cut off the hair or head.
