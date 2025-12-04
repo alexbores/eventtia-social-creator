@@ -799,19 +799,15 @@ export function getPromptStandarizedSpeaker(data) {
     const prompt = `
       Edit this image to create a standardized professional corporate headshot.
       
-      CRITICAL INSTRUCTIONS:
-      1. **Identity & Attire**: Keep the person's face, facial features, expression, skin tone, and clothing EXACTLY the same. Do not change the identity.
-      2. **Background**: Replace the background with a SOLID PURE GREEN screen (#00FF00).
-      
-      COMPOSITION:
-      3. **Framing**: Create a "Medium Close-Up" (Chest-up). The subject must be centered, standing straight, and facing the camera.
-      4. **Headroom**: CRITICAL. Leave adequate empty space above the top of the head. Do NOT cut off the hair or head.
-      5. **Hands**: No hands should be visible.
-      
-      STYLE & LIGHTING:
-      6. **Expression**: Professional, confident, and approachable.
-      7. **Lighting**: Soft, high-quality studio lighting. Add subtle shadows for depth. Ensure the face is well-lit.
-      8. **Quality**: Photorealistic, sharp focus, high resolution.
+      INSTRUCTIONS:
+      1. CRITICAL **Identity & Attire**: Keep the person's face, facial features, expression, skin tone, and clothing EXACTLY the same. Do not change the identity.
+      2. CRITICAL **Background**: Replace the background with a SOLID PURE GREEN screen escpecifically this color(#00FF00).
+      3. CRITICAL **Framing**: Create a "Medium Close-Up" (Chest-up). The subject must be centered, standing straight, and facing the camera.
+      4. CRITICAL **Headroom**: Leave adequate empty space above the top of the head. Do NOT cut off the hair or head.
+      5. CRITICAL **Hands**: No hands should be visible.
+      6. CRITICAL **Expression**: Professional, confident, and approachable.
+      7. CRITICAL **Lighting**: Soft, high-quality studio lighting. Add subtle shadows for depth. Ensure the face is well-lit.
+      8. CRITICAL **Quality**: Photorealistic, sharp focus, high resolution.
       
       OUTPUT:
       9. Return ONLY the image. Maintain the exact aspect ratio of the input.

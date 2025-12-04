@@ -579,10 +579,7 @@
                         imgData.originalSrc = response.url;
                         imgData.originalServerUrl = response.url;
                         imgData.status = 'idle'; // Ready for processing
-                        
-                        // Clean up blob URL to free memory
-                        // URL.revokeObjectURL(imgData.originalSrc); 
-                        
+
                         // Update UI to use new URL
                         const imgEl = document.getElementById(`img-${imgData.id}`);
                         if (imgEl) imgEl.src = response.url;
@@ -595,6 +592,7 @@
 
                         // NOW save state with the URL
                         this.saveState();
+                        this.updateCardDOM(imgData);
                     } else {
                         throw new Error("Server returned no URL.");
                     }
@@ -610,7 +608,7 @@
                         const overlay = card.querySelector('.upload-overlay');
                         if (overlay) overlay.classList.remove('active');
                     }
-                    
+                    this.updateCardDOM(imgData);
                     this.updateUI(); 
                 }
             },
