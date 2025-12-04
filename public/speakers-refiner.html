@@ -1077,11 +1077,9 @@
                 const relativeContainer = card.querySelector('div.relative');
                 relativeContainer.addEventListener('mouseenter', () => {
                     imgEl.src = imgData.originalSrc;
-                    imgEl.style.backgroundColor = ''; // Reset background for original
                 });
                 relativeContainer.addEventListener('mouseleave', () => {
                     imgEl.src = imgData.processedSrc;
-                    imgEl.style.backgroundColor = this.state.brandColor; // Re-apply background
                 });
             },
 
