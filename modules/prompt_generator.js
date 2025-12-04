@@ -791,27 +791,17 @@ ANALYZE AND RETURN JSON.
 
 
 export function getPromptStandarizedSpeaker(data) {
-    let {attireColor, backgroundType, removeHeadwear} = data;
+    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    let {brandColor} = parsedData;
 
-    let attireDesc = "a professional formal dark business suit and tie";
-    if (attireColor === 'navy') attireDesc = "a professional navy blue business suit and tie";
-    if (attireColor === 'grey') attireDesc = "a professional charcoal grey business suit and tie";
-
-    let bgDesc = "a clean, neutral studio grey gradient background";
-    if (backgroundType === 'white') bgDesc = "a pure white background";
-    if (backgroundType === 'office-blur') bgDesc = "a blurred modern office background";
-
-    let headwearInstruction = "";
-    if (removeHeadwear) {
-        headwearInstruction = "Remove any hats, caps, or headwear, revealing the person's natural hair or head shape appropriately.";
-    }
+    let bgDesc = "a clean, neutral studio " + (brandColor || "grey") + " color gradient background";
 
     const prompt = `
       Edit this image to create a standardized professional corporate headshot.
-      1. Change the person's clothing to ${attireDesc}.
-      2. ${headwearInstruction}
-      3. Replace the background with ${bgDesc}.
-      4. CRITICAL: Keep the person's face, facial features, expression, and skin tone EXACTLY the same. Do not change the identity.
+      1. CRITICAL: Keep the person's clothing or attire
+      2. Replace the background with ${bgDesc}.
+      3. CRITICAL: Keep the person's face, facial features, expression, and skin tone EXACTLY the same. Do not change the identity.
+      4. Ensure the face is not cutted out and is well centered viewing into the camera, the photography style must be body and head shot but no hands shown.
       5. Ensure high quality, photorealistic lighting and texture.
       6. Output image must be the exact same aspect ratio as input.
       7. Return ONLY the image.

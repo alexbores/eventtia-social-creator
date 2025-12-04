@@ -88,33 +88,19 @@
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <div class="flex flex-col md:flex-row gap-6 items-end">
                 <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Attire Style</label>
-                        <select id="attire-select"
-                            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                            <option value="dark">Classic Dark Suit</option>
-                            <option value="navy">Navy Blue Suit</option>
-                            <option value="grey">Charcoal Grey Suit</option>
-                        </select>
+                        <label for="brand-color-picker" class="block text-sm font-medium text-slate-700 mb-2">Brand Color</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="color" id="brand-color-picker" 
+                                class="h-10 w-16 rounded cursor-pointer border border-slate-300 p-0.5 bg-white" 
+                                value="#4F46E5">
+                            <input type="text" id="brand-color-input" 
+                                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 uppercase font-mono" 
+                                value="#4F46E5" maxlength="7" placeholder="#4F46E5">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Background</label>
-                        <select id="bg-select"
-                            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                            <option value="studio-grey">Studio Gradient Grey</option>
-                            <option value="white">Pure White</option>
-                            <option value="office-blur">Blurred Office</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center h-full pb-2">
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="headwear-check" class="sr-only peer" checked>
-                            <div
-                                class="relative w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
-                            </div>
-                            <span class="ms-3 text-sm font-medium text-slate-700">Remove Headwear</span>
-                        </label>
-                    </div>
+
                 </div>
 
                 <button type="button" id="process-all-btn" disabled
@@ -165,6 +151,7 @@
             state: {
                 projects: [],
                 currentProjectId: null,
+                brandColor: '#4F46E5', // Default Indigo 600
                 get currentProject() {
                     return this.projects.find(p => p.id === this.currentProjectId);
                 }
@@ -188,9 +175,11 @@
                 this.elements = {
                     imageContainer: document.getElementById('image-container'),
                     processAllBtn: document.getElementById('process-all-btn'),
-                    attireSelect: document.getElementById('attire-select'),
-                    bgSelect: document.getElementById('bg-select'),
-                    headwearCheck: document.getElementById('headwear-check'),
+                    
+                    // Removed attireSelect
+                    // Added Color Picker elements
+                    colorPicker: document.getElementById('brand-color-picker'),
+                    colorInput: document.getElementById('brand-color-input'),
 
                     projectSelect: document.getElementById('project-select'),
                     newProjectBtn: document.getElementById('new-project-btn'),
@@ -224,6 +213,7 @@
                     });
                 }
 
+                // Project Events
                 if (this.elements.newProjectBtn) {
                     this.elements.newProjectBtn.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -248,6 +238,40 @@
 
                 if (this.elements.projectSelect) {
                     this.elements.projectSelect.addEventListener('change', (e) => this.switchProject(e.target.value));
+                }
+
+                // Color Picker Events
+                if (this.elements.colorPicker && this.elements.colorInput) {
+                    // Sync Picker -> Input
+                    this.elements.colorPicker.addEventListener('input', (e) => {
+                        this.elements.colorInput.value = e.target.value.toUpperCase();
+                        this.state.brandColor = e.target.value;
+                        this.saveState();
+                    });
+
+                    // Sync Input -> Picker
+                    this.elements.colorInput.addEventListener('input', (e) => {
+                        let val = e.target.value;
+                        if (val.startsWith('#') && (val.length === 4 || val.length === 7)) {
+                            this.elements.colorPicker.value = val;
+                            this.state.brandColor = val;
+                            this.saveState();
+                        }
+                    });
+                    
+                    // Validate on blur
+                    this.elements.colorInput.addEventListener('change', (e) => {
+                         let val = e.target.value;
+                         if (!val.startsWith('#')) val = '#' + val;
+                         if (/^#[0-9A-F]{6}$/i.test(val)) {
+                             this.state.brandColor = val;
+                             this.elements.colorPicker.value = val;
+                             this.saveState();
+                         } else {
+                             // Revert to state if invalid
+                             e.target.value = this.state.brandColor;
+                         }
+                    });
                 }
 
                 if (this.elements.processAllBtn) {
@@ -309,6 +333,11 @@
                 if (data) {
                     this.state.projects = data.projects || [];
                     this.state.currentProjectId = data.currentProjectId;
+                    if (data.brandColor) {
+                        this.state.brandColor = data.brandColor;
+                        if (this.elements.colorPicker) this.elements.colorPicker.value = data.brandColor;
+                        if (this.elements.colorInput) this.elements.colorInput.value = data.brandColor;
+                    }
                 }
 
                 if (this.state.projects.length === 0) {
@@ -348,7 +377,8 @@
             saveState() {
                 this.saveData(this.STORAGE_KEY, {
                     projects: this.state.projects,
-                    currentProjectId: this.state.currentProjectId
+                    currentProjectId: this.state.currentProjectId,
+                    brandColor: this.state.brandColor
                 });
             },
 
@@ -405,7 +435,7 @@
                             fileSize: file.size,
                             fileObject: file,
                             originalSrc: e.target.result,
-                            originalServerUrl: null, // NEW FIELD: Track server URL
+                            originalServerUrl: null,
                             processedSrc: null,
                             status: 'idle',
                             error: null
@@ -594,10 +624,8 @@
 
                     // --- STEP 2: CALL ANALYSIS API ---
                     const processingOptions = {
-                        imageUrl: currentServerUrl, // Pass the server URL we just ensured exists
-                        attireColor: this.elements.attireSelect.value,
-                        backgroundType: this.elements.bgSelect.value,
-                        removeHeadwear: this.elements.headwearCheck.checked,
+                        imageUrl: currentServerUrl, 
+                        brandColor: this.state.brandColor,
                     };
 
                     console.log("Requesting Analysis...", processingOptions);

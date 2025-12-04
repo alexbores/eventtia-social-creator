@@ -1,11 +1,9 @@
-import path from 'path';
-import fs from 'fs';
 
 
 import fetch from 'node-fetch';
 
 import { getPromptStandarizedSpeaker} from '../modules/prompt_generator.js';
-import { getImageName,formatImage} from '../modules/image_handlers.js';
+import { formatImage} from '../modules/image_handlers.js';
 
 /**
  * Runs an AI-powered analysis using data previously captured by getWebData.
