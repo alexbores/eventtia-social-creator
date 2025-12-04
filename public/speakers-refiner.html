@@ -55,7 +55,7 @@
             width: 100%;
             aspect-ratio: 29/36;
 
-            background-image: url('/public/');
+            background-image: url('/public/gradient-1 (1).jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -1069,11 +1069,11 @@
                             <button onclick="retryImage('${imgData.id}')" class="px-3 py-1 bg-white border border-red-200 text-red-600 rounded-full text-xs hover:bg-red-50">Retry</button>
                         </div>
 
-                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur relative z-10 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
                             ${imgData.status === 'success' ? 'Standardized' : 'Original'}
                         </div>
                         
-                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 relative z-10 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
                             Hover to compare
                         </div>
 
