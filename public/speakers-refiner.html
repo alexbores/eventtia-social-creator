@@ -1008,12 +1008,12 @@
             appendImageCard(imgData) {
                 const card = document.createElement('div');
                 card.id = `card-${imgData.id}`;
-                card.className = "card-wrapper flex-none snap-center bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
+                card.className = "card-wrapper flex-none snap-center rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
 
                 card.style.backgroundColor = this.state.brandColor;
 
                 card.innerHTML = `
-                    <div class="image-card relative bg-slate-100 overflow-hidden">
+                    <div class="image-card relative overflow-hidden">
                         <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
                         
                         <!-- Upload Spinner -->
@@ -1110,10 +1110,36 @@
                 const loading = card.querySelector(`#loading-${imgData.id}`);
                 const error = card.querySelector(`#error-${imgData.id}`);
                 const imgEl = card.querySelector(`#img-${imgData.id}`);
+                const uploadOverlay = card.querySelector('.upload-overlay');
                 
-                console.log(imgData.status);
+                console.log(`Updating DOM for ${imgData.id}: status=${imgData.status}`);
 
-                if (imgData.status === 'processing') {
+                // Always handle upload spinner visibility
+                if (imgData.status === 'uploading') {
+                    if (uploadOverlay) {
+                        uploadOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                        uploadOverlay.classList.add('opacity-100', 'pointer-events-auto');
+                    }
+                } else {
+                    // For any other status (idle, processing, success, error), hide the upload spinner
+                    if (uploadOverlay) {
+                        uploadOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                        uploadOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                }
+
+                if (imgData.status === 'idle') {
+                    // Idle state (uploaded but not processed)
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    error.classList.add('hidden');
+                    error.classList.remove('flex');
+                    imgEl.classList.remove('blur-sm');
+                    // Ensure we show the original (server) URL
+                    if (imgData.originalServerUrl) {
+                        imgEl.src = imgData.originalServerUrl;
+                    }
+                } else if (imgData.status === 'processing') {
                     loading.classList.remove('hidden');
                     loading.classList.add('flex');
                     error.classList.add('hidden');
@@ -1125,7 +1151,8 @@
                     imgEl.classList.remove('blur-sm');
                     imgEl.src = imgData.processedSrc;
                     
-                    
+                    // Apply Brand Color Background
+                    imgEl.style.backgroundColor = this.state.brandColor;
 
                     const footer = card.lastElementChild;
                     footer.innerHTML = `
