@@ -633,8 +633,6 @@
                         currentServerUrl = savedOriginalResponse.url;
                         imgData.originalServerUrl = currentServerUrl;
 
-                        imgData.transparentImageServerUrl = this.removeGreenScreen(currentServerUrl);
-
                         this.saveState();
                         console.log("Original Image Saved to Server:", currentServerUrl);
                     } else {
@@ -661,6 +659,8 @@
 
                     // --- STEP 3: SAVE RESULTING IMAGE ---
                     const resultImageRaw = analysisResponse.speaker; // Assuming this is a Data URL string
+
+                    console.log("Result Image Raw:", resultImageRaw);
 
                     if (!resultImageRaw) throw new Error("Server processed the request but returned no image data.");
 
@@ -726,7 +726,15 @@
             },
             
 
-            async removeGreenScreen(imageUrl) {
+            async removeGreenScreen(imageObj) {
+                console.log("Remove Green Screen Input:", imageObj);
+
+                if (!imageObj || !imageObj.data || !imageObj.mimeType) {
+                    throw new Error("Invalid input for removeGreenScreen. Expected object with {data, mimeType}.");
+                }
+
+                const srcUrl = `data:${imageObj.mimeType};base64,${imageObj.data}`;
+
                 return new Promise((resolve, reject) => {
                     const img = new Image();
                     img.crossOrigin = "Anonymous"; 
