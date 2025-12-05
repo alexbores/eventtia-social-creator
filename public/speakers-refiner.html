@@ -84,8 +84,16 @@
             height: 100%;
             z-index: 2;
             backdrop-filter: blur(20px);
-            background: radial-gradient(#0000007a, transparent);
             opacity: 0.5;
+        }
+        #image-container .image-card .background-shadow-holder{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            background: radial-gradient(#0000007a, transparent);
         }
         #image-container .image-card::after{
             content: "";
@@ -94,7 +102,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 3;
+            z-index: 4;
             filter: url(#noiseFilter);
             opacity: 0.5;
             mix-blend-mode: overlay;
@@ -102,7 +110,7 @@
         #image-container .image-card img{
             width: 100%;
             height: 100%;
-            z-index: 4;
+            z-index: 5;
             position: relative;
         }
 
@@ -1058,6 +1066,7 @@
                 card.innerHTML = `
                     <div class="image-card relative overflow-hidden">
                         <div class="background-image-holder"></div>
+                        <div class="background-shadow-holder"></div>
                         <div class="background-dynamic-color"></div>
                         <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
                         
