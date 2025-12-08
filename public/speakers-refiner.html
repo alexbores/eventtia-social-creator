@@ -435,8 +435,8 @@
                     });
                 }
 
-                if(this.element.backgroundImageSwatches){
-                    this.element.backgroundImageSwatches.addEventListener('click', (e) => {
+                if(this.elements.backgroundImageSwatches){
+                    this.elements.backgroundImageSwatches.addEventListener('click', (e) => {
                         if(e.target.classList.contains('swatch-holder')){
                             this.state.backgroundImage = e.target.dataset.imageId;
                             this.updateAllImageBackgrounds();
