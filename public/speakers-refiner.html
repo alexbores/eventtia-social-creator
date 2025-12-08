@@ -438,7 +438,7 @@
                 if(this.elements.backgroundImageSwatches){
                     this.elements.backgroundImageSwatches.addEventListener('click', (e) => {
                         if(e.target.classList.contains('swatch-holder')){
-                            this.state.backgroundImage = e.target.dataset.imageId;
+                            this.state.backgroundImage = e.target.querySelector('img').src;
                             this.updateAllImageBackgrounds();
                             this.renderSwatches();
                             this.saveState();
@@ -1300,15 +1300,12 @@
                     select.appendChild(option);
 
                     const swatch = document.createElement('div');
-                    swatch.innerHTML = `
-                        <div class="swatch-holder
-                               ${this.state.backgroundImage === image.id ? 'selected' : ''}
-                             " 
-                             data-image-id="${image.id}">
-                            <img src="${image.src}" 
-                                 alt="${image.id}">
-                        </div>
-                    `;
+                    swatch.classList.add('swatch-holder');
+                    swatch.dataset.imageId = image.id;
+                    if(this.state.backgroundImage === image.id){
+                        swatch.classList.add('selected');
+                    }
+                    swatch.innerHTML = `<img src="${image.src}" alt="${image.id}">`;
 
                     swatches.appendChild(swatch);
                 });
