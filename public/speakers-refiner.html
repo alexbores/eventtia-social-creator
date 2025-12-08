@@ -153,6 +153,7 @@
             cursor: pointer;
             transition: border-color 0.3s ease;
             max-height: 57px;
+            border: 2px solid #626267;
         }
         .swatches .swatch-holder img{
             width: 100%;
@@ -1221,6 +1222,7 @@
                 let backgroundImageHolder = this.elements.imageContainer.querySelectorAll('.card-wrapper .background-image-holder');
                 console.log(this.state.backgroundImage);
                 backgroundImageHolder.forEach(holder => {
+                    console.log(holder);
                     holder.style.backgroundImage = `url(${this.state.backgroundImage})`;
                 });
             },
