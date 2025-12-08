@@ -445,6 +445,7 @@
                     this.elements.backgroundImageSwatches.addEventListener('click', (e) => {
                         let swatch = e.target.closest('.swatch-holder');
                         if(swatch){
+                            console.log(swatch.querySelector('img').src);
                             this.state.backgroundImage = swatch.querySelector('img').src;
                             this.updateAllImageBackgrounds();
                             this.renderSwatches();
@@ -553,6 +554,7 @@
                     currentProjectId: this.state.currentProjectId,
                     brandColor: this.state.brandColor
                 });
+                console.log('saved');
             },
 
             // --- Project Logic ---
