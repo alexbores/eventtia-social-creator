@@ -1220,10 +1220,8 @@
                 });
 
                 let backgroundImageHolder = this.elements.imageContainer.querySelectorAll('.card-wrapper .background-image-holder');
-                console.log(this.state.backgroundImage);
                 backgroundImageHolder.forEach(holder => {
-                    console.log(holder);
-                    holder.style.backgroundImage = `url(${this.state.backgroundImage})`;
+                    holder.style.backgroundImage = `url("${decodeURI(this.state.backgroundImage)}")`;
                 });
             },
 
@@ -1305,7 +1303,7 @@
                 this.backgroundImages.forEach(image => {
                     const swatch = document.createElement('div');
                     swatch.classList.add('swatch-holder');
-                    if(image.src === this.state.backgroundImage){
+                    if(image.src === decodeURI(this.state.backgroundImage)){
                         swatch.classList.add('selected');
                     }
                     swatch.innerHTML = `<img src="${image.src}" alt="${image.id}">`;
