@@ -1308,7 +1308,7 @@
                 this.backgroundImages.forEach(image => {
                     const swatch = document.createElement('div');
                     swatch.classList.add('swatch-holder');
-                    if(image.src === decodeURI(this.state.backgroundImage)){
+                    if(decodeURI(image.src) === decodeURI(this.state.backgroundImage)){
                         swatch.classList.add('selected');
                     }
                     swatch.innerHTML = `<img src="${image.src}" alt="${image.id}">`;
