@@ -1061,8 +1061,19 @@
 
                             // Target: Lime Green #CCFF00 (Hue ~72deg / 0.20)
                             // Expanded slightly to catch edge halos
+                            // Further expanded to catch dark yellow/olive halos (#84761d -> Hue ~0.14)
                             
-                            if (h > 0.16 && h < 0.29 && s > 0.15 && v > 0.15) {
+                            // Wide Range: 0.13 (~47deg) to 0.29 (~104deg)
+                            if (h > 0.13 && h < 0.29 && s > 0.15 && v > 0.15) {
+                                // Safety check for the yellow-olive zone (0.13 - 0.16)
+                                // We don't want to kill bright skin tones (which can be yellow/orange).
+                                // The artifact #84761d is dark (Value ~50%).
+                                // So IF we are in the yellow zone, require Value < 0.65 to touch it.
+                                if (h < 0.16 && v > 0.65) {
+                                    // Skip bright yellows (likely skin/hair highlights or clothing)
+                                    continue; 
+                                }
+
                                 // Peak target is 0.20 (Lime Green)
                                 const dist = Math.abs(h - 0.20);
                                 let alpha = 1;
