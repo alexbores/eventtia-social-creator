@@ -799,9 +799,9 @@ export function getPromptStandarizedSpeaker(data) {
     const prompt = `
       Edit this image to create a standardized professional corporate headshot.
       
-      1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input, EXCEPT if it is a WOMAN and it is NOT wearing clothes, then and only then it must be wearing a semi-formal blazer.
+      1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input, EXCEPT if it is a WOMAN NOT wearing ANY clothes, then it must be wearing a semi-formal blazer. IF NOT then keep the same attire.
 
-      2. Background Technicals: Replace the entire background with a SOLID PURE GREEN screen, specifically color hex code (#00FF00).
+      2. Background Technicals: Replace the entire background with a SOLID PURE LIMEGREEN screen, specifically color hex code (#CCFF00).
 
       3. Framing & Composition: Medium-close up shot (Head and shoulders framing). Leave adequate empty headroom; do not cut off the hair. Hands must not be visible. The aspect ratio must be 4:5.
 

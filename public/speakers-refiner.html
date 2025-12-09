@@ -1059,32 +1059,30 @@
                             }
                             s = max === 0 ? 0 : d / max;
 
-                            // Green Hue Range (approx 80deg to 160deg) -> 0.22 to 0.44 in 0-1 scale
-                            // Saturation > 0.15 (avoid removing grays)
-                            // Value > 0.15 (avoid removing blacks)
+                            // Target: Lime Green #CCFF00 (Hue ~72deg / 0.20)
+                            // Refined to avoid Pure Green (120deg / 0.33) and Yellow (60deg / 0.16)
                             
-                            if (h > 0.20 && h < 0.48 && s > 0.15 && v > 0.15) {
-                                // Calculate "greenness" for soft edge (alpha matting)
-                                // Peak green is around 0.33 (120deg)
-                                const dist = Math.abs(h - 0.33);
+                            if (h > 0.17 && h < 0.27 && s > 0.35 && v > 0.35) {
+                                // Peak target is 0.20 (Lime Green)
+                                const dist = Math.abs(h - 0.20);
                                 let alpha = 1;
                                 
-                                // Hard cutoff for pure green
-                                if (dist < 0.08 && s > 0.4) {
+                                // Tight hard cutoff for Lime Green
+                                // Range +/- 0.04 (approx 15 degrees)
+                                if (dist < 0.04 && s > 0.45) {
                                     alpha = 0;
                                 } else {
-                                    // Soft edge for "near green" (aura removal)
-                                    // Map distance 0.08-0.15 to alpha 0-1
-                                    alpha = (dist - 0.08) / (0.15 - 0.08);
+                                    // Soft edge for near matches
+                                    // Fade out from dist 0.04 to 0.07
+                                    alpha = (dist - 0.04) / (0.07 - 0.04);
                                     alpha = Math.max(0, Math.min(1, alpha));
                                 }
 
                                 data[i + 3] = Math.floor(alpha * 255);
 
-                                // Color Decontamination (Despill)
-                                // If pixel is semi-transparent or near green, reduce green channel
+                                // Despill: If removing (lime) green, ensure G isn't overwhelming
                                 if (alpha < 0.9) {
-                                    data[i + 1] = Math.min(g, (r + b) / 2); // Clamp green to avg of red/blue
+                                    data[i + 1] = Math.min(g, Math.max(r, b) * 1.1); 
                                 }
                             }
                         }
