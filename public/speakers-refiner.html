@@ -306,12 +306,11 @@
             modalCallback: null,
             backgroundImages: [
                 { id: 'image1', src: '/backgrounds/back.jpg' },
-                { id: 'image3', src: '/backgrounds/back (2).jpg' },
-                { id: 'image6', src: '/backgrounds/back (5).jpg' },
-
                 { id: 'image2', src: '/backgrounds/back (1).jpg' },
+                { id: 'image3', src: '/backgrounds/back (2).jpg' },
                 { id: 'image4', src: '/backgrounds/back (3).jpg' },
                 { id: 'image5', src: '/backgrounds/back (4).jpg' },
+                { id: 'image6', src: '/backgrounds/back (5).jpg' },
             ],
 
             async init() {
@@ -1326,6 +1325,8 @@
                     error.classList.add('flex');
                     imgEl.classList.remove('blur-sm');
                 }
+
+                this.updateAllImageBackgrounds();
             },
             
             renderSwatches() {
