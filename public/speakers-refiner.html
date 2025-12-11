@@ -18,6 +18,7 @@
             }
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 
         
@@ -182,36 +183,6 @@
         <div class="max-w-[1920px] mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <h1 class="text-xl font-bold tracking-tight">Speaker <span class="text-primary">Standardiser</span></h1>
-
-                <div class="flex items-center space-x-2 border-l border-slate-200 pl-4 ml-4">
-                    <div class="relative">
-                        <select id="project-select"
-                            class="appearance-none bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-48 p-2.5 pr-8 truncate transition-colors hover:bg-slate-100 cursor-pointer"></select>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <button type="button" id="new-project-btn"
-                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="New Project">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14" />
-                            <path d="M12 5v14" />
-                        </svg>
-                    </button>
-                    <button type="button" id="edit-project-btn"
-                        class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        title="Rename Project">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
     </header>
@@ -293,13 +264,9 @@
         const ImageProcessor = {
             STORAGE_KEY: 'speaker_standardizer_data',
             state: {
-                projects: [],
-                currentProjectId: null,
+                currentProject: null,
                 brandColor: '#4F46E5', // Default Indigo 600
                 backgroundImage: null,
-                get currentProject() {
-                    return this.projects.find(p => p.id === this.currentProjectId);
-                }
             },
 
             elements: {},
@@ -334,10 +301,6 @@
                     colorPicker: document.getElementById('brand-color-picker'),
                     colorInput: document.getElementById('brand-color-input'),
 
-                    projectSelect: document.getElementById('project-select'),
-                    newProjectBtn: document.getElementById('new-project-btn'),
-                    editProjectBtn: document.getElementById('edit-project-btn'),
-
                     modal: document.getElementById('input-modal'),
                     modalTitle: document.getElementById('modal-title'),
                     modalInput: document.getElementById('modal-input'),
@@ -369,32 +332,6 @@
                     });
                 }
 
-                // Project Events
-                if (this.elements.newProjectBtn) {
-                    this.elements.newProjectBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.showInputModal("Create New Project", `Project ${this.state.projects.length + 1}`, (title) => {
-                            this.saveState();
-                            this.createProject(title);
-                        });
-                    });
-                }
-
-                if (this.elements.editProjectBtn) {
-                    this.elements.editProjectBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (!this.state.currentProject) return;
-                        this.showInputModal("Rename Project", this.state.currentProject.title, (newTitle) => {
-                            this.state.currentProject.title = newTitle;
-                            this.saveState();
-                            this.updateProjectUI();
-                        });
-                    });
-                }
-
-                if (this.elements.projectSelect) {
-                    this.elements.projectSelect.addEventListener('change', (e) => this.switchProject(e.target.value));
-                }
 
                 // Color Picker Events
                 if (this.elements.colorPicker && this.elements.colorInput) {
@@ -499,14 +436,48 @@
             exposeGlobalHelpers() {
                 window.removeImage = (id) => this.removeImage(id);
                 window.retryImage = (id) => this.retryImage(id);
+                window.downloadCardAsImage = (id, filename) => this.downloadCardAsImage(id, filename);
+            },
+
+            async downloadCardAsImage(id, filename) {
+                const card = document.getElementById(`card-${id}`);
+                if (!card) return;
+                
+                const imageCard = card.querySelector('.image-card');
+                if (!imageCard) return;
+
+                // Ensure the processed image is showing (in case user was hovering)
+                const imgEl = imageCard.querySelector('img');
+                const originalSrc = imgEl.src;
+                
+                // Force processed src if possible, though it should be default
+                // Actually, the hover effect swaps src. Let's make sure we capture the right state.
+                // But html2canvas captures the DOM as is.
+                // We should probably clone it or just capture it.
+                
+                try {
+                    const canvas = await html2canvas(imageCard, {
+                        useCORS: true,
+                        scale: 2, // Better resolution
+                        backgroundColor: null, // Transparent if possible, though card has bg
+                        logging: false
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (err) {
+                    console.error("Download failed:", err);
+                    alert("Failed to generate image. Please try again.");
+                }
             },
 
             // --- Storage Logic ---
             checkStorage() {
                 let data = this.loadData(this.STORAGE_KEY);
                 if (data) {
-                    this.state.projects = data.projects || [];
-                    this.state.currentProjectId = data.currentProjectId;
+                    this.state.project = data.project || null;
                     if (data.brandColor) {
                         this.state.brandColor = data.brandColor;
                         if (this.elements.colorPicker) this.elements.colorPicker.value = data.brandColor;
@@ -517,17 +488,10 @@
                     }
                 }
 
-                if (this.state.projects.length === 0) {
+                if(this.state.project === null) {
                     this.createProject("My First Project", false);
-                } else {
-                    const exists = this.state.projects.find(p => p.id === this.state.currentProjectId);
-                    if (!exists && this.state.projects.length > 0) {
-                        this.state.currentProjectId = this.state.projects[0].id;
-                        this.saveState();
-                    }
                 }
 
-                this.updateProjectUI();
                 this.renderImages();
                 this.renderSwatches();
                 this.updateUI();
@@ -556,8 +520,7 @@
 
             saveState() {
                 this.saveData(this.STORAGE_KEY, {
-                    projects: this.state.projects,
-                    currentProjectId: this.state.currentProjectId,
+                    project: this.state.project,
                     brandColor: this.state.brandColor,
                     backgroundImage: this.state.backgroundImage
                 });
@@ -571,43 +534,19 @@
                     id,
                     title: title || id,
                     images: []
-                };
-                this.state.projects.push(newProject);
-                this.state.currentProjectId = id;
+                }
+                this.state.project = newProject;
                 if (save) this.saveState();
-                this.updateProjectUI();
                 this.renderSwatches();
                 this.renderImages();
                 this.updateUI();
             },
 
-            switchProject(id) {
-                this.saveState();
-                this.state.currentProjectId = id;
-                this.saveState();
-                this.updateProjectUI();
-                this.renderImages();
-                this.renderSwatches();
-                this.updateUI();
-            },
 
-            updateProjectUI() {
-                const select = this.elements.projectSelect;
-                select.innerHTML = '';
-                this.state.projects.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.id;
-                    option.textContent = p.title;
-                    if (p.id === this.state.currentProjectId) option.selected = true;
-                    select.appendChild(option);
-                });
-
-                this.renderSwatches();
-            },
 
             // --- Image Handling Logic ---
             handleFiles(fileList) {
-                if (!this.state.currentProject) return;
+                if (!this.state.project) return;
 
                 const files = Array.from(fileList);
 
@@ -628,7 +567,7 @@
                         error: null
                     };
 
-                    this.state.currentProject.images.push(imgData);
+                    this.state.project.images.push(imgData);
                     // Do NOT save state yet (avoids saving blob URL)
                     this.appendImageCard(imgData);
                     this.updateUI();
@@ -735,8 +674,8 @@
             },
 
             removeImage(id) {
-                if (!this.state.currentProject) return;
-                this.state.currentProject.images = this.state.currentProject.images.filter(img => img.id !== id);
+                if (!this.state.project) return;
+                this.state.project.images = this.state.project.images.filter(img => img.id !== id);
                 this.saveState();
                 const card = document.getElementById(`card-${id}`);
                 if (card) card.remove();
@@ -744,25 +683,16 @@
             },
 
             retryImage(id) {
-                if (!this.state.currentProject) return;
-                const imgData = this.state.currentProject.images.find(i => i.id === id);
+                if (!this.state.project) return;
+                const imgData = this.state.project.images.find(i => i.id === id);
                 console.log(imgData);
                 if (imgData) this.processSingleImage(imgData);
             },
 
             updateUI() {
-                const currentProj = this.state.currentProject;
+                const currentProj = this.state.project;
                 const images = currentProj ? currentProj.images : [];
                 this.elements.processAllBtn.disabled = images.length === 0;
-
-                const isDefaultTitle = currentProj && currentProj.title === "My First Project";
-                const hasImages = images.length > 0;
-                const canCreateNew = hasImages || !isDefaultTitle;
-
-                if (this.elements.newProjectBtn) {
-                    this.elements.newProjectBtn.disabled = !canCreateNew;
-                    this.elements.newProjectBtn.title = canCreateNew ? "Create New Project" : "Add images to current project first";
-                }
             },
 
             // --- API & Processing Utilities ---
@@ -831,7 +761,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        url: this.state.currentProject.id,
+                        url: this.state.project.id,
                         request: 'save_image',
                         webData: JSON.stringify(newImageData)
                     })
@@ -847,7 +777,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        url: this.state.currentProject.id,
+                        url: this.state.project.id,
                         request: 'save_image',
                         webData: JSON.stringify(imageData)
                     })
@@ -969,7 +899,7 @@
             },
 
             async processAllImages() {
-                if (!this.state.currentProject) return;
+                if (!this.state.project) return;
 
                 const btn = this.elements.processAllBtn;
                 btn.disabled = true;
@@ -1212,12 +1142,11 @@
 
             renderFooterAction(imgData) {
               if (imgData.status === 'success') {
-                  return '';
-                //   return `
-                //       <a href="${imgData.processedSrc}" download="standardized-${imgData.fileName || 'image.jpg'}" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download">
-                //           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                //       </a>
-                //   `;
+                  return `
+                      <button onclick="downloadCardAsImage('${imgData.id}', 'standardized-${imgData.fileName || 'image.jpg'}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download Combined Image">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      </button>
+                  `;
               }
               return `<span class="text-xs text-slate-400  bg-slate-100 px-2 py-1 rounded">Pending</span>`;
             },
@@ -1243,7 +1172,7 @@
             },
 
             updateAllImageBackgrounds() {
-                if (!this.state.currentProject) return;
+                if (!this.state.project) return;
 
                 let cardsWrapper = this.elements.imageContainer.querySelectorAll('.card-wrapper .background-dynamic-color');
                 cardsWrapper.forEach(card => {
