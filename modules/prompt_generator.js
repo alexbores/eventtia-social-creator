@@ -801,7 +801,7 @@ export function getPromptStandarizedSpeaker(data) {
       
       1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input, EXCEPT if it is a WOMAN NOT wearing ANY clothes, then it must be wearing a semi-formal blazer. IF NOT then keep the same attire.
 
-      2. Background Technicals: Replace the entire background with a SOLID PURE LIMEGREEN screen, specifically color hex code (#CCFF00).
+      2. Background Technicals: First correct any color that could match a LIMEGREEN color close or exactly to this hex code #CCFF00 from clothes and skin tone and change it to a black color for clothes and skin tone match the skin tone of the person. And then replace the entire background with a SOLID PURE LIMEGREEN screen, specifically color hex code #CCFF00. this is so I can edit the background later.
 
       3. Framing & Composition: Medium-close up shot (Head and shoulders framing). Leave adequate empty headroom; do not cut off the hair. Hands must not be visible. The aspect ratio must be 4:5.
 

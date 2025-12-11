@@ -18,7 +18,7 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <style>
 
         
@@ -446,30 +446,21 @@
                 const imageCard = card.querySelector('.image-card');
                 if (!imageCard) return;
 
-                // Ensure the processed image is showing (in case user was hovering)
-                const imgEl = imageCard.querySelector('img');
-                const originalSrc = imgEl.src;
-                
-                // Force processed src if possible, though it should be default
-                // Actually, the hover effect swaps src. Let's make sure we capture the right state.
-                // But html2canvas captures the DOM as is.
-                // We should probably clone it or just capture it.
-                
                 try {
-                    const canvas = await html2canvas(imageCard, {
-                        useCORS: true,
-                        scale: 2, // Better resolution
-                        backgroundColor: null, // Transparent if possible, though card has bg
-                        logging: false
+                    // dom-to-image uses SVG foreignObject which preserves CSS mix-blend-mode and filters better
+                    const dataUrl = await domtoimage.toPng(imageCard, {
+                        quality: 1,
+                        bgcolor: null,
+                        cacheBust: true, // Ensures images are re-fetched if needed preventing CORS/Cache issues
                     });
 
                     const link = document.createElement('a');
                     link.download = filename;
-                    link.href = canvas.toDataURL('image/png');
+                    link.href = dataUrl;
                     link.click();
                 } catch (err) {
                     console.error("Download failed:", err);
-                    alert("Failed to generate image. Please try again.");
+                    alert("Failed to generate image. Please check console for errors.");
                 }
             },
 
