@@ -464,15 +464,20 @@
                 try {
                     // Helper: Fetch via proxy -> Blob -> ObjectURL
                     const proxyToLocalParams = async (url) => {
-                        if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
+                        if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) {
+                             return url;
+                        }
                         
                         try {
-                            // Extract actual URL if wrapped in css url('')
                             let cleanUrl = url;
                             if (url.match(/^url\(["']?.*["']?\)$/)) {
                                 cleanUrl = url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
                             }
                             
+                            if (cleanUrl.startsWith('/') || cleanUrl.includes(window.location.origin)) {
+                                return cleanUrl;
+                            }
+
                             console.log("Proxying:", cleanUrl);
                             
                             const response = await this.fetchBinaryApi('/api/analyze', {
@@ -492,7 +497,7 @@
 
                         } catch (e) {
                             console.warn("Proxy failed for", url, e);
-                            return url; // Fallback to original
+                            return url; 
                         }
                     };
 
@@ -503,29 +508,24 @@
                         if (img.src) {
                             const newSrc = await proxyToLocalParams(img.src);
                             img.src = newSrc;
-                            // Ensure it's marked as loaded for html2canvas
-                            await new Promise(r => { 
-                                if(img.complete) r(); 
-                                else { img.onload = r; img.onerror = r; } 
-                            });
+                            await new Promise(r => { if(img.complete) r(); else { img.onload = r; img.onerror = r; } });
                         }
                     }));
 
-                    // B. Background Images (divs)
-                    const divs = Array.from(clone.querySelectorAll('*')); // Check all elements
-                    await Promise.all(divs.map(async (el) => {
-                        const style = window.getComputedStyle(el);
-                        const bg = style.backgroundImage;
-                        if (bg && bg !== 'none' && bg.includes('url(')) {
-                            // Handle multiple backgrounds? simple regex for first one for now
-                            const urlMatch = bg.match(/url\(([^)]+)\)/);
-                            if (urlMatch && urlMatch[1]) {
-                                const originalUrl = urlMatch[1].replace(/['"]/g, '');
-                                const newSrc = await proxyToLocalParams(originalUrl);
-                                el.style.backgroundImage = `url('${newSrc}')`;
-                            }
-                        }
-                    }));
+                    // B. Background Images (explicitly target holder)
+                    const bgHolder = clone.querySelector('.background-image-holder');
+                    if (bgHolder) {
+                         const style = window.getComputedStyle(bgHolder);
+                         const bg = style.backgroundImage;
+                         if (bg && bg !== 'none' && bg.includes('url(')) {
+                             const urlMatch = bg.match(/url\(([^)]+)\)/);
+                             if (urlMatch && urlMatch[1]) {
+                                 const originalUrl = urlMatch[1].replace(/['"]/g, '');
+                                 const newSrc = await proxyToLocalParams(originalUrl);
+                                 bgHolder.style.backgroundImage = `url('${newSrc}')`;
+                             }
+                         }
+                    }
 
                     // Small delay to ensure rendering context is stable
                     await new Promise(resolve => setTimeout(resolve, 500));
@@ -549,7 +549,6 @@
                     console.error("html2canvas download failed:", err);
                     alert("Download failed. See console.");
                 } finally {
-                    // Cleanup
                     document.body.removeChild(clone);
                     objectUrls.forEach(u => URL.revokeObjectURL(u));
                 }
