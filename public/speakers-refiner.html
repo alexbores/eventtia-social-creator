@@ -18,6 +18,7 @@
             }
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 
         
@@ -439,6 +440,122 @@
             },
 
             async downloadCardAsImage(id, filename) {
+                const card = document.getElementById(`card-${id}`);
+                if (!card) return;
+                
+                const imageCard = card.querySelector('.image-card');
+                if (!imageCard) return;
+
+                console.log("Starting proxy-based html2canvas capture...");
+
+                // 1. Create off-screen clone
+                const clone = imageCard.cloneNode(true);
+                clone.style.position = 'fixed';
+                clone.style.top = '0'; 
+                clone.style.left = '-10000px'; 
+                clone.style.zIndex = '-9999';
+                clone.style.width = imageCard.offsetWidth + 'px';
+                clone.style.height = imageCard.offsetHeight + 'px';
+                
+                document.body.appendChild(clone);
+
+                const objectUrls = [];
+
+                try {
+                    // Helper: Fetch via proxy -> Blob -> ObjectURL
+                    const proxyToLocalParams = async (url) => {
+                        if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url;
+                        
+                        try {
+                            // Extract actual URL if wrapped in css url('')
+                            let cleanUrl = url;
+                            if (url.match(/^url\(["']?.*["']?\)$/)) {
+                                cleanUrl = url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                            }
+                            
+                            console.log("Proxying:", cleanUrl);
+                            
+                            const response = await this.fetchBinaryApi('/api/analyze', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    url: this.state.project ? this.state.project.id : 'proxy-req', 
+                                    request: 'download_image', 
+                                    webData: cleanUrl
+                                })
+                            });
+                            
+                            const blob = await response.blob();
+                            const localUrl = URL.createObjectURL(blob);
+                            objectUrls.push(localUrl);
+                            return localUrl;
+
+                        } catch (e) {
+                            console.warn("Proxy failed for", url, e);
+                            return url; // Fallback to original
+                        }
+                    };
+
+                    // 2. Process all images in clone
+                    // A. Generic <img> tags
+                    const imgs = Array.from(clone.querySelectorAll('img'));
+                    await Promise.all(imgs.map(async (img) => {
+                        if (img.src) {
+                            const newSrc = await proxyToLocalParams(img.src);
+                            img.src = newSrc;
+                            // Ensure it's marked as loaded for html2canvas
+                            await new Promise(r => { 
+                                if(img.complete) r(); 
+                                else { img.onload = r; img.onerror = r; } 
+                            });
+                        }
+                    }));
+
+                    // B. Background Images (divs)
+                    const divs = Array.from(clone.querySelectorAll('*')); // Check all elements
+                    await Promise.all(divs.map(async (el) => {
+                        const style = window.getComputedStyle(el);
+                        const bg = style.backgroundImage;
+                        if (bg && bg !== 'none' && bg.includes('url(')) {
+                            // Handle multiple backgrounds? simple regex for first one for now
+                            const urlMatch = bg.match(/url\(([^)]+)\)/);
+                            if (urlMatch && urlMatch[1]) {
+                                const originalUrl = urlMatch[1].replace(/['"]/g, '');
+                                const newSrc = await proxyToLocalParams(originalUrl);
+                                el.style.backgroundImage = `url('${newSrc}')`;
+                            }
+                        }
+                    }));
+
+                    // Small delay to ensure rendering context is stable
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    // 3. Capture with html2canvas
+                    const canvas = await html2canvas(clone, {
+                        useCORS: true, 
+                        allowTaint: true,
+                        backgroundColor: null,
+                        scale: 2, // High resolution
+                        logging: true
+                    });
+
+                    // 4. Download
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                } catch (err) {
+                    console.error("html2canvas download failed:", err);
+                    alert("Download failed. See console.");
+                } finally {
+                    // Cleanup
+                    document.body.removeChild(clone);
+                    objectUrls.forEach(u => URL.revokeObjectURL(u));
+                }
+            },
+
+            async downloadCardAsImage_OLD(id, filename) {
                 const imgData = this.state.project.images.find(img => img.id === id);
                 if (!imgData) return;
 
