@@ -18,7 +18,6 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <style>
 
         
@@ -440,92 +439,172 @@
             },
 
             async downloadCardAsImage(id, filename) {
-                const card = document.getElementById(`card-${id}`);
-                if (!card) return;
-                
-                const imageCard = card.querySelector('.image-card');
-                if (!imageCard) return;
+                const imgData = this.state.project.images.find(img => img.id === id);
+                if (!imgData) return;
 
-                // Create a clone to modify sources without affecting UI
-                const clone = imageCard.cloneNode(true);
-                clone.style.position = 'fixed';
-                clone.style.top = '-9999px';
-                clone.style.left = '-9999px';
-                clone.style.width = imageCard.offsetWidth + 'px'; // Enforce size
-                clone.style.height = imageCard.offsetHeight + 'px';
-                document.body.appendChild(clone);
+                console.log("Generating Canvas for:", imgData);
 
-                // Helper to fetch image via Node proxy and convert to Base64
-                const proxyFetch = async (url) => {
-                    if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) return url;
-                    
-                    try {
-                        let cleanUrl = url.replace(/["']/g, "");
-                        
-                        const response = await this.fetchBinaryApi('/api/analyze', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                url: this.state.project ? this.state.project.id : 'proxy-request', 
-                                request: 'download_image',
-                                webData: cleanUrl
-                            })
-                        });
-                        
-                        const blob = await response.blob();
-                        return await new Promise((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => resolve(reader.result);
-                            reader.onerror = reject;
-                            reader.readAsDataURL(blob);
-                        });
-                    } catch (e) {
-                        console.warn("Proxy failed for", url, e);
-                        return url; // Fallback to original
-                    }
-                };
+                // 1. URLs
+                const bgUrl = this.state.backgroundImage; 
+                const speakerUrl = imgData.processedSrc || imgData.originalSrc;
+                const brandColor = this.state.brandColor;
 
                 try {
-                    // 1. Process <img> tags
-                    const images = Array.from(clone.querySelectorAll('img'));
-                    await Promise.all(images.map(async (img) => {
-                         if (img.src) {
-                             const newSrc = await proxyFetch(img.src);
-                             img.src = newSrc;
-                         }
-                    }));
-
-                    // 2. Process Background Images
-                    const divs = Array.from(clone.querySelectorAll('div'));
-                    await Promise.all(divs.map(async (div) => {
-                         if (div.style.backgroundImage) {
-                             const bg = div.style.backgroundImage;
-                             const urlMatch = bg.match(/url\((.*?)\)/);
-                             if (urlMatch && urlMatch[1]) {
-                                 const originalUrl = urlMatch[1].replace(/['"]/g, '');
-                                 const newSrc = await proxyFetch(originalUrl);
-                                 div.style.backgroundImage = `url('${newSrc}')`;
-                             }
+                    // Helper to fetch and create ImageBitmap
+                    const loadImage = async (url) => {
+                        if (!url) return null;
+                        
+                        // Use proxy or direct fetch depending on internal/external
+                        // But wait, fetchBinaryApi is for external. 
+                        // If it's a data URL, we can use new Image().
+                        // The bgUrl is likely a relative path '/back.jpg' or external.
+                        // The speakerUrl is likely an external URL (from 'originalServerUrl' or 'processedSrc').
+                        
+                        // We use the proxy approach for ALL to be safe from CORS, unless it's a relative path.
+                        // Actually, relative paths are safe for canvas? Yes, same origin.
+                        // Cloudinary/External paths need proxy.
+                        
+                        let finalUrl = url;
+                        let useProxy = false;
+                        
+                        if (url.startsWith('http')) {
+                            useProxy = true;
                         }
-                    }));
 
-                    // Wait a moment for Base64 images to "render" in the off-screen DOM
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                        if (useProxy) {
+                             const response = await this.fetchBinaryApi('/api/analyze', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    url: this.state.project ? this.state.project.id : 'proxy-req', 
+                                    request: 'download_image', // Stream proxy
+                                    webData: url
+                                })
+                            });
+                             const blob = await response.blob();
+                             return createImageBitmap(blob);
+                        } else {
+                            // Local/Relative
+                            return new Promise((resolve, reject) => {
+                                const img = new Image();
+                                img.src = url;
+                                img.crossOrigin = "Anonymous";
+                                img.onload = () => createImageBitmap(img).then(resolve);
+                                img.onerror = reject;
+                            });
+                        }
+                    };
 
-                    const dataUrl = await domtoimage.toPng(clone, {
-                        quality: 1,
-                        bgcolor: null,
-                    });
+                    const [bgBitmap, speakerBitmap] = await Promise.all([
+                        loadImage(bgUrl),
+                        loadImage(speakerUrl)
+                    ]);
 
-                    const link = document.createElement('a');
-                    link.download = filename;
-                    link.href = dataUrl;
-                    link.click();
+                    if(!bgBitmap || !speakerBitmap) throw new Error("Failed to load images");
+
+                    // 2. Setup Canvas
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Target Dimensions (High Res, matching aspect ratio 29/36)
+                    const WIDTH = 1080;
+                    const HEIGHT = 1341; // 1080 * (36/29) ~= 1340.69
+                    canvas.width = WIDTH;
+                    canvas.height = HEIGHT;
+
+                    // 3. Draw Background (Cover + Grayscale)
+                    // Calculate "cover" dimensions
+                    let drawW = WIDTH;
+                    let drawH = drawW / (bgBitmap.width / bgBitmap.height);
+                    let drawX = 0;
+                    let drawY = (HEIGHT - drawH) / 2;
+
+                    if (drawH < HEIGHT) {
+                        drawH = HEIGHT;
+                        drawW = drawH * (bgBitmap.width / bgBitmap.height);
+                        drawX = (WIDTH - drawW) / 2;
+                        drawY = 0;
+                    }
+                    
+                    ctx.filter = 'grayscale(100%)';
+                    ctx.drawImage(bgBitmap, drawX, drawY, drawW, drawH);
+                    ctx.filter = 'none'; // Reset filter
+
+                    // 4. Draw Shadow (Radial Gradient)
+                    // background: radial-gradient(#0000007a, transparent); -> Center outward
+                    const gradient = ctx.createRadialGradient(WIDTH / 2, HEIGHT / 2, 0, WIDTH / 2, HEIGHT / 2, Math.max(WIDTH, HEIGHT) / 1.5);
+                    gradient.addColorStop(0, 'rgba(0,0,0,0.48)'); // #0000007a is ~48% alpha
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                    // 5. Draw Dynamic Color Overlay
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = brandColor;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                    
+                    // 5.5 Draw Noise Overlay (Simulating #noiseFilter)
+                    // CSS: z-index: 4; filter: url(#noiseFilter) grayscale(1); opacity: 0.5; mix-blend-mode: overlay;
+                    ctx.globalAlpha = 0.5;
+                    ctx.globalCompositeOperation = 'overlay';
+                    
+                    // Generate noise pattern on the fly
+                    const noiseCanvas = document.createElement('canvas');
+                    noiseCanvas.width = 128; // Tile size
+                    noiseCanvas.height = 128;
+                    const noiseCtx = noiseCanvas.getContext('2d');
+                    const idata = noiseCtx.createImageData(128, 128);
+                    const buffer32 = new Uint32Array(idata.data.buffer);
+                    const len = buffer32.length;
+                    for (let i = 0; i < len; i++) {
+                        // Grayscale noise: R=G=B. Alpha = 255.
+                        // We want high frequency noise.
+                        const v = Math.random() * 255 | 0;
+                        buffer32[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+                    }
+                    noiseCtx.putImageData(idata, 0, 0);
+                    
+                    const noisePattern = ctx.createPattern(noiseCanvas, 'repeat');
+                    ctx.fillStyle = noisePattern;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                    // Reset Composition
+                    ctx.globalAlpha = 1.0;
+                    ctx.globalCompositeOperation = 'source-over'; 
+
+                    // 6. Draw Speaker Image (Cover/Contain? CSS says img { width: 100%; height: 100% }, usually implies object-fit logic implies stretching if not specified, 
+                    // but usually speaker images are 4:5 or similar.
+                    // The CSS `img { width: 100%; height: 100%; z-index: 5; position: relative; }`
+                    // Checks if object-fit is set...
+                    // In Step 194, I see `<img ... object-cover ...>` class on the generic img tag.
+                    // So we must simulate `object-fit: cover`.
+                    
+                    let sDrawW = WIDTH;
+                    let sDrawH = sDrawW / (speakerBitmap.width / speakerBitmap.height);
+                    let sDrawX = 0;
+                    let sDrawY = (HEIGHT - sDrawH) / 2;
+                    
+                    if (sDrawH < HEIGHT) {
+                        sDrawH = HEIGHT;
+                        sDrawW = sDrawH * (speakerBitmap.width / speakerBitmap.height);
+                        sDrawX = (WIDTH - sDrawW) / 2;
+                        sDrawY = 0;
+                    }
+
+                    // Wait from CSS: .object-cover means "cover".
+                    ctx.drawImage(speakerBitmap, sDrawX, sDrawY, sDrawW, sDrawH);
+
+
+                   // 7. Download
+                   const link = document.createElement('a');
+                   link.download = filename;
+                   link.href = canvas.toDataURL('image/png', 1.0);
+                   link.click();
+
                 } catch (err) {
-                    console.error("Download failed:", err);
-                    alert("Failed to generate image. Please check console for errors.");
-                } finally {
-                    document.body.removeChild(clone);
+                    console.error("Manual Canvas Generation failed:", err);
+                    alert("Failed to generate image. Please checking console.");
                 }
             },
 
