@@ -446,12 +446,75 @@
                 const imageCard = card.querySelector('.image-card');
                 if (!imageCard) return;
 
+                // Create a clone to modify sources without affecting UI
+                const clone = imageCard.cloneNode(true);
+                clone.style.position = 'fixed';
+                clone.style.top = '-9999px';
+                clone.style.left = '-9999px';
+                clone.style.width = imageCard.offsetWidth + 'px'; // Enforce size
+                clone.style.height = imageCard.offsetHeight + 'px';
+                document.body.appendChild(clone);
+
+                // Helper to fetch image via Node proxy and convert to Base64
+                const proxyFetch = async (url) => {
+                    if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) return url;
+                    
+                    try {
+                        let cleanUrl = url.replace(/["']/g, "");
+                        
+                        const response = await this.fetchBinaryApi('/api/analyze', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                url: this.state.project ? this.state.project.id : 'proxy-request', 
+                                request: 'download_image',
+                                webData: cleanUrl
+                            })
+                        });
+                        
+                        const blob = await response.blob();
+                        return await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+                    } catch (e) {
+                        console.warn("Proxy failed for", url, e);
+                        return url; // Fallback to original
+                    }
+                };
+
                 try {
-                    // dom-to-image uses SVG foreignObject which preserves CSS mix-blend-mode and filters better
-                    const dataUrl = await domtoimage.toPng(imageCard, {
+                    // 1. Process <img> tags
+                    const images = Array.from(clone.querySelectorAll('img'));
+                    await Promise.all(images.map(async (img) => {
+                         if (img.src) {
+                             const newSrc = await proxyFetch(img.src);
+                             img.src = newSrc;
+                         }
+                    }));
+
+                    // 2. Process Background Images
+                    const divs = Array.from(clone.querySelectorAll('div'));
+                    await Promise.all(divs.map(async (div) => {
+                         if (div.style.backgroundImage) {
+                             const bg = div.style.backgroundImage;
+                             const urlMatch = bg.match(/url\((.*?)\)/);
+                             if (urlMatch && urlMatch[1]) {
+                                 const originalUrl = urlMatch[1].replace(/['"]/g, '');
+                                 const newSrc = await proxyFetch(originalUrl);
+                                 div.style.backgroundImage = `url('${newSrc}')`;
+                             }
+                        }
+                    }));
+
+                    // Wait a moment for Base64 images to "render" in the off-screen DOM
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    const dataUrl = await domtoimage.toPng(clone, {
                         quality: 1,
                         bgcolor: null,
-                        cacheBust: true, // Ensures images are re-fetched if needed preventing CORS/Cache issues
                     });
 
                     const link = document.createElement('a');
@@ -461,6 +524,8 @@
                 } catch (err) {
                     console.error("Download failed:", err);
                     alert("Failed to generate image. Please check console for errors.");
+                } finally {
+                    document.body.removeChild(clone);
                 }
             },
 
@@ -701,6 +766,24 @@
                     console.error(`Failed to fetch ${endpoint}:`, error);
                     throw error;
                 }
+            },
+
+            async fetchBinaryApi(endpoint, options = {}) {
+               try {
+                   options.credentials = 'include'; 
+                   const response = await fetch(endpoint, options);
+                   if (!response.ok) {
+                       const errorData = await response.json().catch(() => ({
+                           error: 'Server responded with a non-JSON error format.'
+                       }));
+                       throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                   }
+                   return response;
+
+               } catch (error) {
+                   console.error(`Failed to fetch ${endpoint} (Binary Call):`, error);
+                   throw error;
+               }
             },
 
             // 1. Convert URL to Blob
