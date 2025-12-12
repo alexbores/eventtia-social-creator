@@ -463,11 +463,6 @@
                         if (!url) return null;
                         
                         let srcToLoad = url;
-                        // Determine if we need to proxy
-                        // If it's a relative path, we can load directly.
-                        // If it's external, we MUST proxy to avoid Tainted Canvas if we want to read data (though for export we just need it to work).
-                        // Standard 'img.crossOrigin = Anonymous' works if the server supports it.
-                        // Our proxy is safer.
                         
                         let useProxy = false;
                         if (url.startsWith('http') && !url.includes(window.location.origin)) {
@@ -563,8 +558,7 @@
                     noiseCtx.putImageData(idata, 0, 0);
                     
                     ctx.save();
-                    // User asked for "granular effect". Overlay is good.
-                    // Previous CSS was: filter: url(#noiseFilter) grayscale(1); opacity: 0.5; mix-blend-mode: overlay;
+                    
                     ctx.globalCompositeOperation = 'overlay';
                     ctx.globalAlpha = 0.5; 
                     const noisePattern = ctx.createPattern(noiseCanvas, 'repeat');
@@ -573,15 +567,12 @@
                     ctx.restore();
 
                     // --- LAYER 4: Soft Radial Shadow ---
-                    // CSS: background: radial-gradient(#0000007a, transparent);
-                    // Radial from center?
-                    // "soft shadow radial from the center"
                     ctx.save();
                     const gradient = ctx.createRadialGradient(
                         WIDTH / 2, HEIGHT / 2, 0, 
                         WIDTH / 2, HEIGHT / 2, Math.max(WIDTH, HEIGHT) / 1.5
                     );
-                    gradient.addColorStop(0, 'rgba(0,0,0,0.48)'); // Center dark
+                    gradient.addColorStop(0, 'rgba(0,0,0,0.60)'); // Center dark
                     gradient.addColorStop(1, 'transparent'); // Outer transparent
                     
                     ctx.fillStyle = gradient;
@@ -589,12 +580,6 @@
                     ctx.restore();
 
                     // --- LAYER 5: Speaker Image ---
-                    // Draw "Cover" or "Contain"? usually speakers are "Cover" but anchored bottom?
-                    // CSS says img { width: 100%; height: 100%; object-fit: cover? }
-                    // Actually, usually we want to see the whole person if they are cut out.
-                    // But if it's the `processedSrc` (transparent), it might be just the person.
-                    // If we stretch it, it might distort.
-                    // Let's assume proportional scaling to fit the box (cover).
                     
                     let sDrawW = WIDTH;
                     let sDrawH = sDrawW / (speakerImg.width / speakerImg.height);
@@ -1164,17 +1149,14 @@
                             s = max === 0 ? 0 : d / max;
 
                             // Target: Lime Green #CCFF00 (Hue ~72deg / 0.20)
-                            // Expanded slightly to catch edge halos
-                            // Further expanded to catch dark yellow/olive halos (#84761d -> Hue ~0.14)
+                            // "Lemon Green" is roughly Hue 60-70deg (0.16 - 0.19)
                             
                             // Wide Range: 0.13 (~47deg) to 0.29 (~104deg)
                             if (h > 0.13 && h < 0.29 && s > 0.15 && v > 0.15) {
-                                // Safety check for the yellow-olive zone (0.13 - 0.16)
-                                // We don't want to kill bright skin tones (which can be yellow/orange).
-                                // The artifact #84761d is dark (Value ~50%).
-                                // So IF we are in the yellow zone, require Value < 0.65 to touch it.
-                                if (h < 0.16 && v > 0.65) {
-                                    // Skip bright yellows (likely skin/hair highlights or clothing)
+                                // Safety check for Yellow/Skin tones
+                                // Tightened from 0.16 to 0.13 to allow "lemon" (0.15-0.16) found in aura to be processed.
+                                // Hue 0.13 is ~47 degrees (Gold/Yellow). Real skin is usually < 35 deg (0.10).
+                                if (h < 0.13 && v > 0.65) {
                                     continue; 
                                 }
 
@@ -1183,18 +1165,17 @@
                                 let alpha = 1;
                                 
                                 // Aggressive Hard Cutoff
-                                // Any high-saturation lime green is gone.
                                 if (dist < 0.05 && s > 0.35) {
                                     alpha = 0;
                                 } else {
-                                    // Steeper ramp for near matches to reduce semi-transparent halo
-                                    // Fade rapidly from 0.05 to 0.08
+                                    // Soft Feather for edges
                                     const featherStart = 0.05;
                                     const featherEnd = 0.08;
                                     
                                     if (dist < featherEnd) {
                                         alpha = (dist - featherStart) / (featherEnd - featherStart);
-                                        alpha = Math.pow(alpha, 2); // Square it to push values closer to 0
+                                        // Stronger erosion for edge cleaning
+                                        alpha = Math.pow(alpha, 3); 
                                     }
                                 }
                                 
@@ -1202,16 +1183,11 @@
                                 alpha = Math.max(0, Math.min(1, alpha));
                                 data[i + 3] = Math.floor(alpha * 255);
 
-                                // Aggressive Despill / Halo Killer
-                                // Even if we keep the pixel (alpha > 0), we MUST kill the lime tint.
-                                // If it's within our broad lime hue range, force Green down.
-                                if (alpha < 0.99) {
-                                    // "Lime" is high G and High R. 
-                                    // To neutralize lime spill, we clamp G to B, or average of R/B.
-                                    // Since Lime is R+G, clamping G to R doesn't help much.
-                                    // We need to clamp G to something neutral.
-                                    
-                                    const neutral = Math.max(r, b) * 0.95;
+                                // --- AGGRESSIVE SPILL SUPPRESSION (Applied to ALL candidate pixels) ---
+                                // If the pixel falls in this "Green Range" at all, we neutralize the Green channel.
+                                // This kills the "lemon aura" even if the pixel remains opaque or semi-transparent.
+                                if (alpha > 0) {
+                                    const neutral = Math.max(r, b) * 0.98; // Slightly looser clamp to avoid purple fringe
                                     if (data[i+1] > neutral) {
                                          data[i+1] = neutral; 
                                     }
