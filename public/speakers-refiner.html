@@ -1124,7 +1124,18 @@
                         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                         const data = imageData.data;
                         
-                        // Advanced Green Screen Removal (HSV + Soft Edges)
+                        // Target Color: #00B140 (RGB: 0, 177, 64)
+                        // HSV Calculation for #00B140:
+                        // Max=177(G), Min=0(R), Delta=177
+                        // H = 60 * ((64-0)/177 + 2) = 141.6 deg
+                        // H_norm = 141.6 / 360 = 0.393
+                        const targetHue = 0.393;
+                        
+                        // Tunable Thresholds
+                        const hueThreshold = 0.12; // +/- range around target (0.27 to 0.51)
+                        const satThreshold = 0.15; // Must be somewhat colored
+                        const valThreshold = 0.15; // Must be somewhat bright
+
                         for (let i = 0; i < data.length; i += 4) {
                             const r = data[i];
                             const g = data[i + 1];
@@ -1148,49 +1159,49 @@
                             }
                             s = max === 0 ? 0 : d / max;
 
-                            // Target: Lime Green #CCFF00 (Hue ~72deg / 0.20)
-                            // "Lemon Green" is roughly Hue 60-70deg (0.16 - 0.19)
-                            
-                            // Wide Range: 0.13 (~47deg) to 0.29 (~104deg)
-                            if (h > 0.13 && h < 0.29 && s > 0.15 && v > 0.15) {
-                                // Safety check for Yellow/Skin tones
-                                // Tightened from 0.16 to 0.13 to allow "lemon" (0.15-0.16) found in aura to be processed.
-                                // Hue 0.13 is ~47 degrees (Gold/Yellow). Real skin is usually < 35 deg (0.10).
-                                if (h < 0.13 && v > 0.65) {
-                                    continue; 
+                            // 1. CHROMA KEY MASK
+                            if (Math.abs(h - targetHue) < hueThreshold && s > satThreshold && v > valThreshold) {
+                                
+                                // Calculate distance from ideal key color
+                                const dist = Math.abs(h - targetHue);
+                                
+                                // Alpha Calculation:
+                                // Core range (very close): 100% transparent
+                                // Feather range (edges): Gradient
+                                let alpha = 1;
+
+                                const coreRange = 0.04; // Hard cut
+                                const featherRange = 0.08; // Soft edge
+
+                                if (dist < coreRange && s > 0.30) {
+                                    alpha = 0;
+                                } else if (dist < featherRange) {
+                                    // Linear falloff
+                                    alpha = (dist - coreRange) / (featherRange - coreRange);
+                                    // Smoothstep-like Easing for cleaner edge
+                                    alpha = alpha * alpha * (3 - 2 * alpha);
                                 }
 
-                                // Peak target is 0.20 (Lime Green)
-                                const dist = Math.abs(h - 0.20);
-                                let alpha = 1;
-                                
-                                // Aggressive Hard Cutoff
-                                if (dist < 0.05 && s > 0.35) {
-                                    alpha = 0;
-                                } else {
-                                    // Soft Feather for edges
-                                    const featherStart = 0.05;
-                                    const featherEnd = 0.08;
-                                    
-                                    if (dist < featherEnd) {
-                                        alpha = (dist - featherStart) / (featherEnd - featherStart);
-                                        // Stronger erosion for edge cleaning
-                                        alpha = Math.pow(alpha, 3); 
-                                    }
-                                }
-                                
-                                // Final Clamp
+                                // Apply transparency
                                 alpha = Math.max(0, Math.min(1, alpha));
                                 data[i + 3] = Math.floor(alpha * 255);
+                            }
 
-                                // --- AGGRESSIVE SPILL SUPPRESSION (Applied to ALL candidate pixels) ---
-                                // If the pixel falls in this "Green Range" at all, we neutralize the Green channel.
-                                // This kills the "lemon aura" even if the pixel remains opaque or semi-transparent.
-                                if (alpha > 0) {
-                                    const neutral = Math.max(r, b) * 0.98; // Slightly looser clamp to avoid purple fringe
-                                    if (data[i+1] > neutral) {
-                                         data[i+1] = neutral; 
-                                    }
+                            // 2. AURA / SPILL REMOVAL (Applied globally to catch fringes)
+                            // Standard Despill: G cannot exceed max(R, B)
+                            // This neutralizes any green tint remaining on the subject's edge
+                            
+                            // Check if this pixel is "Green dominant" relative to target Hue geometry
+                            // Simple check: Is Green the strongest channel?
+                            if (g > r && g > b) {
+                                // "Soft" Spill Removal:
+                                // Limit G to the average of R and B, or Max of R/B
+                                const limit = Math.max(r, b); 
+                                
+                                // Only dampen if it's actually greenish hue logic-wise (0.15 - 0.55) to avoid killing teals/yellows too hard
+                                if (h > 0.15 && h < 0.55) {
+                                     // Reduce Green component to neutral
+                                     data[i + 1] = limit;
                                 }
                             }
                         }
