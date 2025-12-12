@@ -18,7 +18,7 @@
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <style>
 
         
@@ -440,154 +440,121 @@
             },
 
             async downloadCardAsImage(id, filename) {
-              // 1. Get the wrapper
-              const cardWrapper = document.getElementById(`card-${id}`);
-              if (!cardWrapper) return;
-
-              // 2. Target the specific component you want to capture
-              const sourceElement = cardWrapper.querySelector('.image-card');
-              if (!sourceElement) return;
-
-              console.log("Starting capture for .image-card...");
-
-              // 3. Clone the node
-              const clone = sourceElement.cloneNode(true);
-
-              // --- CRITICAL FIXES FOR CLONE ---
-              // A. Reset positioning to ensure it renders flat (removes hover/scroll transforms)
-              clone.style.transform = 'none';
-              clone.style.transition = 'none';
-    
-              // B. Position off-screen but keep it reachable
-              clone.style.position = 'absolute';
-              clone.style.top = '0';
-              clone.style.left = '0'; // We will use a wrapper to hide it, keeping it in flow helps CSS
-              clone.style.zIndex = '-9999';
-    
-              // C. Force dimensions to match the original exactly
-              const rect = sourceElement.getBoundingClientRect();
-              clone.style.width = rect.width + 'px';
-              clone.style.height = rect.height + 'px';
-
-              // D. Force a background color to prevent transparent PNGs where text is invisible
-              // Try to get the computed background, default to white if transparent
-              const computedStyle = window.getComputedStyle(sourceElement);
-              let bgColor = computedStyle.backgroundColor;
-              if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
-                  bgColor = '#ffffff'; 
-              }
-              clone.style.backgroundColor = bgColor;
-
-              // 4. Append clone to the ORIGINAL PARENT to preserve CSS selectors (e.g. #card-123 .image-card)
-              // We wrap it in a hidden div to avoid messing up the visible layout
-              const cloneContainer = document.createElement('div');
-              cloneContainer.style.position = 'absolute';
-              cloneContainer.style.left = '-9999px';
-              cloneContainer.style.top = '0';
-              cloneContainer.appendChild(clone);
-              sourceElement.parentNode.appendChild(cloneContainer);
-
-              const objectUrls = [];
-
-              try {
-                  const proxyToLocalParams = async (url) => {
-                      if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) {
-                          return url;
-                      }
-                      try {
-                          let cleanUrl = url;
-                          if (url.match(/^url\(["']?.*["']?\)$/)) {
-                              cleanUrl = url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-                          }
-                          // Skip if local
-                          if (cleanUrl.startsWith(window.location.origin) || cleanUrl.startsWith('/')) {
-                              return cleanUrl;
-                          }
-
-                          console.log("Proxying:", cleanUrl);
-                          const response = await this.fetchBinaryApi('/api/analyze', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                  url: this.state.project ? this.state.project.id : 'proxy-req',
-                                  request: 'download_image',
-                                  webData: cleanUrl
-                              })
-                          });
-
-                          const blob = await response.blob();
-                          const localUrl = URL.createObjectURL(blob);
-                          objectUrls.push(localUrl);
-                          return localUrl;
-                      } catch (e) {
-                          console.warn("Proxy failed for", url, e);
-                          return url;
-                      }
-              };
-
-              // --- Process Images (<img>) ---
-              const imgs = Array.from(clone.querySelectorAll('img'));
-              await Promise.all(imgs.map(async (img) => {
-                  if (img.src) {
-                      const newSrc = await proxyToLocalParams(img.src);
-                      img.src = newSrc;
-                      // Force a reload check
-                      await new Promise(r => {
-                          if (img.complete) r();
-                          else { img.onload = r; img.onerror = r; }
-                      });
-                  }
-              }));
-
-              // --- Process Background Images ---
-              const elementsWithBg = Array.from(clone.querySelectorAll('*'));
-              elementsWithBg.push(clone); // Check the card itself too
-
-              await Promise.all(elementsWithBg.map(async (el) => {
-                  const style = window.getComputedStyle(el);
-                  const bg = style.backgroundImage;
-                  if (bg && bg !== 'none' && bg.includes('url(')) {
-                      const urlMatch = bg.match(/url\(([^)]+)\)/);
-                      if (urlMatch && urlMatch[1]) {
-                    const originalUrl = urlMatch[1].replace(/['"]/g, '');
-                    if(originalUrl.startsWith('http')) {
-                        const newSrc = await proxyToLocalParams(originalUrl);
-                        el.style.backgroundImage = `url('${newSrc}')`;
-                    }
-                }
-            }
-        }));
-
-        // Wait for rendering to settle
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // 5. Capture
-        const canvas = await html2canvas(clone, {
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: null, // We handled bg color on the element manually
-            scale: 2, // Retina quality
-            logging: false
-        });
-
-        // 6. Download
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-    } catch (err) {
-        console.error("html2canvas download failed:", err);
-        alert("Download failed. Check console.");
-    } finally {
-        // Cleanup
-        if (cloneContainer.parentNode) {
-            cloneContainer.parentNode.removeChild(cloneContainer);
-        }
-        objectUrls.forEach(u => URL.revokeObjectURL(u));
-    }
+               const cardWrapper = document.getElementById(`card-${id}`);
+               if (!cardWrapper) return;
+               
+               const sourceElement = cardWrapper.querySelector('.image-card');
+               if (!sourceElement) return;
+               
+               console.log("Starting high-fidelity capture with html-to-image...");
+               
+               // 1. Clone the node to modify it safely (for proxying images)
+               const clone = sourceElement.cloneNode(true);
+               
+               // Position off-screen
+               clone.style.position = 'fixed';
+               clone.style.top = '0';
+               clone.style.left = '-10000px';
+               clone.style.zIndex = '-9999';
+               // Ensure dimensions match exactly
+               const rect = sourceElement.getBoundingClientRect();
+               clone.style.width = rect.width + 'px';
+               clone.style.height = rect.height + 'px';
+               
+               // Append to DOM so it renders styles
+               sourceElement.parentNode.appendChild(clone);
+               
+               const objectUrls = [];
+               
+               try {
+                   // --- PROXY HELPER (Kept from your original code) ---
+                   const proxyToLocalParams = async (url) => {
+                       if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) return url;
+                       try {
+                           let cleanUrl = url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                           if (cleanUrl.startsWith(window.location.origin)) return cleanUrl;
+               
+                           console.log("Proxying:", cleanUrl);
+                           const response = await this.fetchBinaryApi('/api/analyze', {
+                               method: 'POST',
+                               headers: { 'Content-Type': 'application/json' },
+                               body: JSON.stringify({
+                                   url: this.state.project ? this.state.project.id : 'proxy-req',
+                                   request: 'download_image',
+                                   webData: cleanUrl
+                               })
+                           });
+                           const blob = await response.blob();
+                           const localUrl = URL.createObjectURL(blob);
+                           objectUrls.push(localUrl);
+                           return localUrl;
+                       } catch (e) {
+                           console.warn("Proxy failed", e);
+                           return url;
+                       }
+                   };
+               
+                   // --- PRE-PROCESS IMAGES IN CLONE ---
+                   // 1. Image Tags
+                   const imgs = Array.from(clone.querySelectorAll('img'));
+                   await Promise.all(imgs.map(async (img) => {
+                       if (img.src) {
+                           const newSrc = await proxyToLocalParams(img.src);
+                           img.src = newSrc;
+                           // Important: Ensure image is decoded before capture
+                           await img.decode().catch(() => {}); 
+                       }
+                   }));
+               
+                   // 2. Background Images (including your grain/overlay layers)
+                   const allElements = Array.from(clone.querySelectorAll('*'));
+                   allElements.push(clone);
+               
+                   await Promise.all(allElements.map(async (el) => {
+                       const style = window.getComputedStyle(el);
+                       const bg = style.backgroundImage;
+                       if (bg && bg !== 'none' && bg.includes('url(')) {
+                           const urlMatch = bg.match(/url\(([^)]+)\)/);
+                           if (urlMatch && urlMatch[1]) {
+                               const originalUrl = urlMatch[1].replace(/['"]/g, '');
+                               if (originalUrl.startsWith('http')) {
+                                   const newSrc = await proxyToLocalParams(originalUrl);
+                                   el.style.backgroundImage = `url('${newSrc}')`;
+                               }
+                           }
+                       }
+                   }));
+               
+                   // Give the browser a moment to apply the Blob URLs to the layout
+                   await new Promise(r => setTimeout(r, 100));
+               
+                   // --- CAPTURE ---
+                   // html-to-image supports mix-blend-mode and filters automatically
+                   const dataUrl = await htmlToImage.toPng(clone, {
+                       quality: 1.0,
+                       pixelRatio: 2, // High resolution
+                       backgroundColor: null, // Preserves transparency if needed
+                       style: {
+                           // Ensure transforms are reset for the capture if needed
+                           transform: 'none',
+                           margin: 0
+                       }
+                   });
+               
+                   // --- DOWNLOAD ---
+                   const link = document.createElement('a');
+                   link.download = filename;
+                   link.href = dataUrl;
+                   link.click();
+               
+               } catch (err) {
+                   console.error("Capture failed:", err);
+                   alert("Download failed. See console.");
+               } finally {
+                   if (clone.parentNode) clone.parentNode.removeChild(clone);
+                   objectUrls.forEach(u => URL.revokeObjectURL(u));
+               }
             },
-
             // --- Storage Logic ---
             checkStorage() {
                 let data = this.loadData(this.STORAGE_KEY);
