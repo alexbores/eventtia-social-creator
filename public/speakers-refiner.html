@@ -1367,6 +1367,8 @@
                 const error = card.querySelector(`#error-${imgData.id}`);
                 const imgEl = card.querySelector(`#img-${imgData.id}`);
                 const uploadOverlay = card.querySelector('.upload-overlay');
+
+                const backgroundShadowHolder = card.querySelector('.background-shadow-holder');
                 
                 console.log(`Updating DOM for ${imgData.id}: status=${imgData.status}`);
 
@@ -1407,6 +1409,7 @@
                     imgEl.classList.remove('blur-sm');
                     imgEl.src = imgData.processedSrc;
                     
+                    backgroundShadowHolder.innerHTML = imgData.processedSrc ? `<img src="${imgData.processedSrc}" />` : '';
 
                     const footer = card.lastElementChild;
                     footer.innerHTML = `
