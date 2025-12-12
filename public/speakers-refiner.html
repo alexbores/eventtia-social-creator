@@ -1265,9 +1265,7 @@
                     <div class="image-card relative overflow-hidden">
                         <div class="background-image-holder"></div>
                         <div class="background-shadow-holder">
-                          ${imgData.processedSrc && (
-                            <img src="${imgData.processedSrc}" />
-                          )}
+                          ${imgData.processedSrc ? `<img src="${imgData.processedSrc}" />` : ''}
                         </div>
                         <div class="background-dynamic-color"></div>
                         <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
