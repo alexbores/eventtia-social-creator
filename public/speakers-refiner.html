@@ -440,143 +440,191 @@
             },
 
             async downloadCardAsImage(id, filename) {
-                const cardWrapper = document.getElementById(`card-${id}`);
-                if (!cardWrapper) return;
-             
-                const sourceElement = cardWrapper.querySelector('.image-card');
-                if (!sourceElement) return;
-             
-                console.log("Starting high-fidelity capture...");
-             
-                // 1. Create a "Sandbox" container
-                // We place this fixed on top of the screen but invisible. 
-                // This forces the browser to render the contents fully.
-                const sandbox = document.createElement('div');
-                sandbox.style.position = 'fixed';
-                sandbox.style.top = '0';
-                sandbox.style.left = '0';
-                sandbox.style.width = '100%';
-                sandbox.style.height = '100%';
-                sandbox.style.overflow = 'hidden'; // Hide scrollbars if clone is huge
-                sandbox.style.zIndex = '-9999'; // Behind everything
-                sandbox.style.opacity = '0'; // Invisible to user, but visible to renderer
-                sandbox.style.pointerEvents = 'none';
-                
-                document.body.appendChild(sandbox);
-             
-                // 2. Clone the element into the sandbox
-                const clone = sourceElement.cloneNode(true);
-                
-                // Reset positioning on the clone so it sits cleanly in our sandbox
-                clone.style.position = 'absolute';
-                clone.style.top = '0';
-                clone.style.left = '0';
-                clone.style.margin = '0';
-                clone.style.transform = 'none'; // Remove scaling/movement
-                
-                // Force specific dimensions to match original
-                const rect = sourceElement.getBoundingClientRect();
-                clone.style.width = rect.width + 'px';
-                clone.style.height = rect.height + 'px';
-             
-                sandbox.appendChild(clone);
-             
+                const imgData = this.state.project.images.find(img => img.id === id);
+                if (!imgData) return;
+
+                console.log("Starting Manual Canvas Composition...", imgData);
+
+                // 1. Prepare Resources
+                // We use 4:5 aspect ratio (1080x1350) which is standard for social cards
+                const WIDTH = 1080;
+                const HEIGHT = 1350;
+
+                const bgUrl = this.state.backgroundImage || '/backgrounds/back.jpg';
+                // Prefer the processed (transparent) image, fall back to original if needed
+                const speakerUrl = imgData.processedSrc || imgData.originalSrc; 
+                const brandColor = this.state.brandColor;
+
                 const objectUrls = [];
-             
+
                 try {
-                    // --- PROXY LOGIC (Same as before) ---
-                    const proxyToLocalParams = async (url) => {
-                        if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/')) return url;
-                        try {
-                            let cleanUrl = url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-                            if (cleanUrl.startsWith(window.location.origin)) return cleanUrl;
-             
-                            const response = await this.fetchBinaryApi('/api/analyze', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    url: this.state.project ? this.state.project.id : 'proxy-req',
-                                    request: 'download_image',
-                                    webData: cleanUrl
-                                })
-                            });
-                            const blob = await response.blob();
-                            const localUrl = URL.createObjectURL(blob);
-                            objectUrls.push(localUrl);
-                            return localUrl;
-                        } catch (e) {
-                            console.warn("Proxy failed", e);
-                            return url;
+                    // --- HELPER: Load Image safely to use in Canvas (Proxy -> Blob -> ImageBitmap/Img) ---
+                    const loadImage = async (url) => {
+                        if (!url) return null;
+                        
+                        let srcToLoad = url;
+                        // Determine if we need to proxy
+                        // If it's a relative path, we can load directly.
+                        // If it's external, we MUST proxy to avoid Tainted Canvas if we want to read data (though for export we just need it to work).
+                        // Standard 'img.crossOrigin = Anonymous' works if the server supports it.
+                        // Our proxy is safer.
+                        
+                        let useProxy = false;
+                        if (url.startsWith('http') && !url.includes(window.location.origin)) {
+                            useProxy = true;
                         }
+
+                        if (useProxy) {
+                             try {
+                                const response = await this.fetchBinaryApi('/api/analyze', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        url: this.state.project ? this.state.project.id : 'proxy-req', 
+                                        request: 'download_image', 
+                                        webData: url
+                                    })
+                                });
+                                const blob = await response.blob();
+                                srcToLoad = URL.createObjectURL(blob);
+                                objectUrls.push(srcToLoad);
+                             } catch (e) {
+                                 console.warn("Proxy load failed, trying direct", e);
+                             }
+                        }
+
+                        return new Promise((resolve, reject) => {
+                            const img = new Image();
+                            img.crossOrigin = "Anonymous";
+                            img.onload = () => resolve(img);
+                            img.onerror = (e) => {
+                                console.error("Failed to load image:", url);
+                                resolve(null);
+                            };
+                            img.src = srcToLoad;
+                        });
                     };
-             
-                    // --- PRE-LOAD IMAGES ---
-                    // We must swap the URLs in the clone and wait for them to load
+
+                    const [bgImg, speakerImg] = await Promise.all([
+                        loadImage(bgUrl),
+                        loadImage(speakerUrl)
+                    ]);
+
+                    if (!bgImg || !speakerImg) {
+                        alert("Failed to load source images. Please try again.");
+                        return;
+                    }
+
+                    // --- CANVAS SETUP ---
+                    const canvas = document.createElement('canvas');
+                    canvas.width = WIDTH;
+                    canvas.height = HEIGHT;
+                    const ctx = canvas.getContext('2d');
+
+                    // --- LAYER 1: Background Image (Grayscale) ---
+                    // Draw cover
+                     let drawW = WIDTH;
+                     let drawH = drawW / (bgImg.width / bgImg.height);
+                     let drawX = 0;
+                     let drawY = (HEIGHT - drawH) / 2;
+                     if (drawH < HEIGHT) {
+                         drawH = HEIGHT;
+                         drawW = drawH * (bgImg.width / bgImg.height);
+                         drawX = (WIDTH - drawW) / 2;
+                         drawY = 0;
+                     }
+
+                    ctx.save();
+                    ctx.filter = 'grayscale(100%)';
+                    ctx.drawImage(bgImg, drawX, drawY, drawW, drawH);
+                    ctx.restore(); // remove filter
+
+                    // --- LAYER 2: Brand Color Overlay ---
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = brandColor;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                    ctx.restore();
+
+                    // --- LAYER 3: Noise Effect ---
+                    // Generate noise pattern
+                    const noiseCanvas = document.createElement('canvas');
+                    noiseCanvas.width = 128;
+                    noiseCanvas.height = 128;
+                    const noiseCtx = noiseCanvas.getContext('2d');
+                    const idata = noiseCtx.createImageData(128, 128);
+                    const buffer32 = new Uint32Array(idata.data.buffer);
+                    for (let i = 0; i < buffer32.length; i++) {
+                         // Random gray noise
+                         const v = Math.random() * 255 | 0;
+                         // ABGR (little endian) -> Alpha=255
+                         buffer32[i] = (255 << 24) | (v << 16) | (v << 8) | v;
+                    }
+                    noiseCtx.putImageData(idata, 0, 0);
                     
-                    // 1. Process <img> tags
-                    const imgs = Array.from(clone.querySelectorAll('img'));
-                    await Promise.all(imgs.map(async (img) => {
-                        if (img.src) {
-                            const newSrc = await proxyToLocalParams(img.src);
-                            img.src = newSrc;
-                            // Critical: Wait for decode
-                            await img.decode().catch(() => {});
-                        }
-                    }));
-             
-                    // 2. Process Background Images
-                    const allElements = Array.from(clone.querySelectorAll('*'));
-                    allElements.push(clone);
-             
-                    await Promise.all(allElements.map(async (el) => {
-                        const style = window.getComputedStyle(el);
-                        const bg = style.backgroundImage;
-                        if (bg && bg !== 'none' && bg.includes('url(')) {
-                            const urlMatch = bg.match(/url\(([^)]+)\)/);
-                            if (urlMatch && urlMatch[1]) {
-                                const originalUrl = urlMatch[1].replace(/['"]/g, '');
-                                if (originalUrl.startsWith('http')) {
-                                    const newSrc = await proxyToLocalParams(originalUrl);
-                                    el.style.backgroundImage = `url('${newSrc}')`;
-                                }
-                            }
-                        }
-                    }));
-             
-                    // --- FONT HACK ---
-                    // Sometimes fonts don't render in the hidden clone immediately. 
-                    // We force a tiny delay to let the browser "paint" the opacity:0 div.
-                    await new Promise(resolve => setTimeout(resolve, 500));
-             
-                    // --- CAPTURE ---
-                    const dataUrl = await htmlToImage.toPng(clone, {
-                        quality: 1.0,
-                        pixelRatio: 2, // High Res
-                        
-                        backgroundColor: '#ffffff', 
-                        
-                        style: {
-                            opacity: '1', 
-                            visibility: 'visible',
-                            transform: 'none',
-                        },
-                        width: rect.width,
-                        height: rect.height,
-                        
-                        cacheBust: false 
-                    });
-             
-                    // --- DOWNLOAD ---
+                    ctx.save();
+                    // User asked for "granular effect". Overlay is good.
+                    // Previous CSS was: filter: url(#noiseFilter) grayscale(1); opacity: 0.5; mix-blend-mode: overlay;
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.globalAlpha = 0.5; 
+                    const noisePattern = ctx.createPattern(noiseCanvas, 'repeat');
+                    ctx.fillStyle = noisePattern;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                    ctx.restore();
+
+                    // --- LAYER 4: Soft Radial Shadow ---
+                    // CSS: background: radial-gradient(#0000007a, transparent);
+                    // Radial from center?
+                    // "soft shadow radial from the center"
+                    ctx.save();
+                    const gradient = ctx.createRadialGradient(
+                        WIDTH / 2, HEIGHT / 2, 0, 
+                        WIDTH / 2, HEIGHT / 2, Math.max(WIDTH, HEIGHT) / 1.5
+                    );
+                    gradient.addColorStop(0, 'rgba(0,0,0,0.48)'); // Center dark
+                    gradient.addColorStop(1, 'transparent'); // Outer transparent
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                    ctx.restore();
+
+                    // --- LAYER 5: Speaker Image ---
+                    // Draw "Cover" or "Contain"? usually speakers are "Cover" but anchored bottom?
+                    // CSS says img { width: 100%; height: 100%; object-fit: cover? }
+                    // Actually, usually we want to see the whole person if they are cut out.
+                    // But if it's the `processedSrc` (transparent), it might be just the person.
+                    // If we stretch it, it might distort.
+                    // Let's assume proportional scaling to fit the box (cover).
+                    
+                    let sDrawW = WIDTH;
+                    let sDrawH = sDrawW / (speakerImg.width / speakerImg.height);
+                    let sDrawX = 0;
+                    let sDrawY = (HEIGHT - sDrawH) / 2;
+
+                    // If height is too short for the box, we scale up by height
+                    // "Cover" logic
+                    if (sDrawH < HEIGHT) {
+                        sDrawH = HEIGHT;
+                        sDrawW = sDrawH * (speakerImg.width / speakerImg.height);
+                        sDrawX = (WIDTH - sDrawW) / 2;
+                        sDrawY = 0;
+                    }
+                    
+                    ctx.save();
+                    ctx.drawImage(speakerImg, sDrawX, sDrawY, sDrawW, sDrawH);
+                    ctx.restore();
+
+
+                    // --- EXPORT ---
                     const link = document.createElement('a');
                     link.download = filename;
-                    link.href = dataUrl;
+                    link.href = canvas.toDataURL('image/png', 1.0);
                     link.click();
-             
+
                 } catch (err) {
-                    console.error("Capture failed:", err);
-                    alert("Download failed. See console.");
+                    console.error("Manual Canvas Generation failed:", err);
+                    alert("Failed to generate image. Check console.");
                 } finally {
-                    document.body.removeChild(sandbox);
                     objectUrls.forEach(u => URL.revokeObjectURL(u));
                 }
             },
