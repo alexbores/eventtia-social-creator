@@ -553,23 +553,17 @@
                         quality: 1.0,
                         pixelRatio: 2, // High Res
                         
-                        // --- THE FIX ---
-                        // Force a solid white background. 
-                        // This ensures mix-blend-mode has a base layer to blend against.
                         backgroundColor: '#ffffff', 
                         
-                        // Explicitly force the clone to be visible/opaque during capture
                         style: {
                             opacity: '1', 
                             visibility: 'visible',
                             transform: 'none',
                         },
-                        // Ensure we capture the full dimensions
                         width: rect.width,
                         height: rect.height,
                         
-                        // Force a reload of styles to ensure filters apply
-                        cacheBust: true 
+                        cacheBust: false 
                     });
              
                     // --- DOWNLOAD ---
