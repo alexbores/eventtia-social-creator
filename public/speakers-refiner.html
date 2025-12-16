@@ -290,11 +290,7 @@
                     colorPicker: document.getElementById('brand-color-picker'),
                     colorInput: document.getElementById('brand-color-input'),
 
-                    modal: document.getElementById('input-modal'),
-                    modalTitle: document.getElementById('modal-title'),
-                    modalInput: document.getElementById('modal-input'),
-                    modalCancel: document.getElementById('modal-cancel'),
-                    modalConfirm: document.getElementById('modal-confirm'),
+                   
 
                     getDropZone: () => document.getElementById('drop-zone'),
                     getFileInput: () => document.getElementById('file-input'),
@@ -305,21 +301,7 @@
             },
 
             bindEvents() {
-                if (this.elements.modalCancel) this.elements.modalCancel.addEventListener('click', () => this.hideModal());
-                if (this.elements.modalConfirm) {
-                    this.elements.modalConfirm.addEventListener('click', () => {
-                        if (this.modalCallback) {
-                            const val = this.elements.modalInput.value.trim();
-                            if (val) this.modalCallback(val);
-                        }
-                        this.hideModal();
-                    });
-                }
-                if (this.elements.modalInput) {
-                    this.elements.modalInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') this.elements.modalConfirm.click();
-                    });
-                }
+                
 
 
                 // Color Picker Events
