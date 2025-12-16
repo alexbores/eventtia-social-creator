@@ -129,7 +129,7 @@
 
     <main class="flex-grow flex flex-col p-6 max-w-[1920px] mx-auto w-full space-y-6">
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex justify-between items-center gap-4">
-                <div class="flex items-center gap-4">
+                <div class="">
                     <label for="logo-style-select" class="block text-sm font-medium text-slate-700 mb-2">Logo Style</label>
                     <div class="flex items-center">
                        <select id="logo-style-select" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
@@ -1146,7 +1146,6 @@
                 const imgEl = card.querySelector(`#img-${imgData.id}`);
                 const uploadOverlay = card.querySelector('.upload-overlay');
 
-                const backgroundShadowHolder = card.querySelector('.background-shadow-holder');
                 
                 console.log(`Updating DOM for ${imgData.id}: status=${imgData.status}`);
 
@@ -1187,7 +1186,7 @@
                     imgEl.classList.remove('blur-sm');
                     imgEl.src = imgData.processedSrc;
                     
-                    backgroundShadowHolder.innerHTML = imgData.processedSrc ? `<img src="${imgData.processedSrc}" />` : '';
+                    
 
                     const footer = card.lastElementChild;
                     footer.innerHTML = `
