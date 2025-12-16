@@ -818,25 +818,47 @@ export function getPromptStandarizedSpeaker(data) {
 
 export function getPromptStandarizedLogo(data) {
     let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-    let {brandColor} = parsedData;
-
-    // let bgDesc = "a clean, neutral studio " + (brandColor || "grey") + " color gradient background";
 
     const prompt = `
-      Edit this image to create a standardized professional corporate headshot.
-      
-      1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input, EXCEPT if it is a WOMAN NOT wearing ANY clothes, then it must be wearing a semi-formal blazer. IF NOT then keep the same attire.
+      You are an expert Vectorizer and Logo Restoration AI.
+      Your task is to take the input logo image and Generate a high-fidelity, standardized version of it.
 
-      2. Background Technicals: First correct any color that could match a CHROMA GREEN color close or exactly to this hex code #00B140 from clothes and skin tone and change it to a black color for clothes and skin tone match the skin tone of the person. And then replace the entire background with a SOLID PURE CHROMA GREEN screen, specifically color hex code #00B140. this is so I can edit the background later.
+      **Objective:**
+      Restore the logo to perfect quality, correct its alignment, and place it on a specific background for easy extraction.
 
-      3. Framing & Composition: Medium-close up shot (Head and shoulders framing). Leave adequate empty headroom; do not cut off the hair. Hands must not be visible. The aspect ratio must be 4:5.
+      ---
+      ### ### Execution Logic (Follow strictly):
 
-      4. Pose Technicals: Ensure body is angled approximately 45 degrees to the side (left shoulder forward), with the head turned to face the camera directly. Maintain direct eye contact with the viewer. Expression must remain a subtle, confident, closed-mouth smile. Posture must be upright and relaxed.
+      **1. Logo Restoration & Quality:**
+      - **Super-Resolution:** Treat the input as a potentially low-res or compressed reference. Generate a crisp, sharp, vector-like quality output.
+      - **Color Correction:** Analyze the brand colors. Eliminate JPEG artifacts, noise, or color banding. Make the colors solid, vibrant, and coherent.
+      - **Shape Integrity:** Sharpen all edges (text and icons). Ensure perfect geometric curves and straight lines. Fix any pixelation or anti-aliasing errors.
 
-      5. Lighting & Optics Technicals: Apply soft, high-quality, diffused studio lighting optimized for green screen (no harsh shadows on face, but subtle shadows for depth). Simulate a shallow depth of field (f/1.8 or f/2.8 aperture style) on the subject, with critical sharp focus on the eyes. The final image must be photorealistic, high-resolution, professional photography style.
-      
-      OUTPUT:
-      6. Return ONLY the image. Maintain the exact aspect ratio of the input.
+      **2. Composition & Ratio:**
+      - **Aspect Ratio:** The final image must respect the requested aspect ratio (typically 16:9).
+      - **Centering:** The logo must be perfectly centered both horizontally and vertically.
+      - **Padding/Safe Zone:** Do NOT let the logo touch the edges. Provide generous "breathing room" (padding) around the logo to ensure no cut-offs.
+      - **Containment:** The entire logo mark and logotype/text must be fully visible. Scale smoothly to fit within the safe zone.
+
+      **3. Background Technicals (CRITICAL - INTELLIGENT CONTRAST):**
+      - **Objective:** Analyze the logo's dominant colors and choose a **Solid Chroma Background** that offers the maximum color contrast.
+      - **Selection Logic:**
+          - **DEFAULT:** Use **Chroma Green (#00B140)**.
+          - **IF** the logo contains green or teal: Use **Chroma Blue (#0047BB)**.
+          - **IF** the logo contains green AND blue: Use **Chroma Magenta (#FF00FF)**.
+      - **Execution:** Replace the entire background with the selected solid chroma color.
+      - **Background Removal:** Use generative fill to remove any existing background patterns or white boxes and replace them with this single solid color.
+      - **No Shadows:** Do not add drop shadows. Flat, clean, solid background.
+
+      **4. strict Negative Constraints:**
+      - Do NOT alter the font family or spelling of the text.
+      - Do NOT change the core design of the logo symbol.
+      - Do NOT add new elements, sparkles, or "AI hallucinated" details.
+      - Do NOT crop any part of the logo.
+
+      ---
+      ### ### Output:
+      Return ONLY the restored logo image on the green background.
     `;
 
     return prompt;
