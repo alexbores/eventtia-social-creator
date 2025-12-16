@@ -815,3 +815,29 @@ export function getPromptStandarizedSpeaker(data) {
 
     return prompt;
 }
+
+export function getPromptStandarizedLogo(data) {
+    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    let {brandColor} = parsedData;
+
+    // let bgDesc = "a clean, neutral studio " + (brandColor || "grey") + " color gradient background";
+
+    const prompt = `
+      Edit this image to create a standardized professional corporate headshot.
+      
+      1. Identity & Attire: Keep the person's face, features, skin tone, and clothing EXACTLY the same as the input, EXCEPT if it is a WOMAN NOT wearing ANY clothes, then it must be wearing a semi-formal blazer. IF NOT then keep the same attire.
+
+      2. Background Technicals: First correct any color that could match a CHROMA GREEN color close or exactly to this hex code #00B140 from clothes and skin tone and change it to a black color for clothes and skin tone match the skin tone of the person. And then replace the entire background with a SOLID PURE CHROMA GREEN screen, specifically color hex code #00B140. this is so I can edit the background later.
+
+      3. Framing & Composition: Medium-close up shot (Head and shoulders framing). Leave adequate empty headroom; do not cut off the hair. Hands must not be visible. The aspect ratio must be 4:5.
+
+      4. Pose Technicals: Ensure body is angled approximately 45 degrees to the side (left shoulder forward), with the head turned to face the camera directly. Maintain direct eye contact with the viewer. Expression must remain a subtle, confident, closed-mouth smile. Posture must be upright and relaxed.
+
+      5. Lighting & Optics Technicals: Apply soft, high-quality, diffused studio lighting optimized for green screen (no harsh shadows on face, but subtle shadows for depth). Simulate a shallow depth of field (f/1.8 or f/2.8 aperture style) on the subject, with critical sharp focus on the eyes. The final image must be photorealistic, high-resolution, professional photography style.
+      
+      OUTPUT:
+      6. Return ONLY the image. Maintain the exact aspect ratio of the input.
+    `;
+
+    return prompt;
+}

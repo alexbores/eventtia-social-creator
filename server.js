@@ -29,6 +29,7 @@ import { getWebScreenshot } from './analyzers/web_screenshot.js';
 
 
 import { getStandarizedSpeaker } from './analyzers/get_standarized_speaker.js';
+import { getStandarizedLogo } from './analyzers/get_standarized_logo.js';
 
 import { fileURLToPath } from 'url';
 
@@ -229,6 +230,10 @@ app.post('/api/analyze', async (req, res) => {
           case 'get_speaker_photo':
             console.log('getting speaker photo...');
             response = await getStandarizedSpeaker(webData);
+          break;
+          case 'get_logo':
+            console.log('getting logo...');
+            response = await getStandarizedLogo(webData);
           break;
         }
         

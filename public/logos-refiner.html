@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Standarizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#64748B', // Slate 500
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <style>
+
+        
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        #image-container{
+            gap: 20px;
+            align-items: stretch;
+        }
+        #image-container .card-wrapper,
+        #image-container .drop-zone-holder{
+            width: calc(25% - 20px);
+            height: 100%;
+        }
+        #image-container .image-card{
+            width: 100%;
+            aspect-ratio: 16/9;
+        }
+        #image-container .image-card .background-image-holder{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0; 
+            background-image: url('/back.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(0px) grayscale(1);
+        }
+        #image-container .image-card .background-dynamic-color{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            opacity: 1;
+            mix-blend-mode: overlay;
+        }
+        #image-container .image-card::after{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            filter: url(#noiseFilter) grayscale(1);
+            opacity: 0.5;
+            mix-blend-mode: overlay;
+        }
+         #image-container .image-card > img{
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            position: relative;
+        }
+
+        #image-container .image-card .background-shadow-holder{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 4;
+        }
+        #image-container .image-card .background-shadow-holder img{
+            width: 100%;
+            height: 100%;
+            filter: grayscale(1) brightness(0.2) blur(40px);
+        }
+       
+
+
+        /* Upload Spinner Styles */
+        .upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .upload-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4F46E5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        .swatches{
+            display: flex;
+            gap: 8px;
+        }
+        .swatches .swatch-holder{
+            width: calc(100% / 5);
+            aspect-ratio: 1;
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            max-height: 57px;
+            border: 2px solid #626267;
+        }
+        .swatches .swatch-holder img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(0px) grayscale(1);
+        }
+        .swatches .swatch-holder.selected,
+        .swatches .swatch-holder:hover{
+            border: 2px solid #4F46E5;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+    <svg style="display: none;">
+        <filter id="noiseFilter">
+            <feTurbulence 
+                type="fractalNoise" 
+                baseFrequency="0.6" 
+                stitchTiles="stitch" />
+        </filter>
+    </svg>
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-[1920px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <h1 class="text-xl font-bold tracking-tight">Logo <span class="text-primary">Standardiser</span></h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col p-6 max-w-[1920px] mx-auto w-full space-y-6">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex justify-end">
+                <button type="button" id="process-all-btn" disabled
+                    class="h-10 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z" />
+                        <path d="m14 7 3 3" />
+                        <path d="M5 6v4" />
+                        <path d="M19 14v4" />
+                        <path d="M10 2v2" />
+                        <path d="M7 8H3" />
+                        <path d="M21 16h-4" />
+                        <path d="M11 3H9" />
+                    </svg>
+                    Standardize All
+                </button>
+        </div>
+
+        <div class="flex-grow flex flex-col bg-slate-100 rounded-xl border border-slate-200 overflow-hidden relative">
+            <div id="image-container"
+                class="flex-wrap flex items-center overflow-x-auto p-8 gap-8 h-full min-h-[500px] w-full snap-x">
+            </div>
+        </div>
+    </main>
+
+    <div id="input-modal"
+        class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all scale-100 mx-4">
+            <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4">Title</h3>
+            <input type="text" id="modal-input"
+                class="w-full border border-slate-300 rounded-lg px-4 py-2 mb-6 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                placeholder="Project Name">
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="modal-cancel"
+                    class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors">Cancel</button>
+                <button type="button" id="modal-confirm"
+                    class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-colors shadow-sm">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ImageProcessor = {
+            STORAGE_KEY: 'logo_standardizer_data',
+            state: {
+                project: null,
+            },
+
+            elements: {},
+            modalCallback: null,
+            // Removed backgroundImages
+
+            async init() {
+                try {
+                    this.setElements();
+                    this.bindEvents();
+                    this.exposeGlobalHelpers();
+                    this.checkStorage();
+                } catch (err) {
+                    console.error("Initialization Error:", err);
+                }
+            },
+
+            setElements() {
+                this.elements = {
+                    imageContainer: document.getElementById('image-container'),
+                    processAllBtn: document.getElementById('process-all-btn'),
+                    
+                    modal: document.getElementById('input-modal'),
+                    modalTitle: document.getElementById('modal-title'),
+                    modalInput: document.getElementById('modal-input'),
+                    modalCancel: document.getElementById('modal-cancel'),
+                    modalConfirm: document.getElementById('modal-confirm'),
+
+                    getDropZone: () => document.getElementById('drop-zone'),
+                    getFileInput: () => document.getElementById('file-input'),
+                };
+            },
+
+            bindEvents() {
+                if (this.elements.modalCancel) this.elements.modalCancel.addEventListener('click', () => this.hideModal());
+                if (this.elements.modalConfirm) {
+                    this.elements.modalConfirm.addEventListener('click', () => {
+                        if (this.modalCallback) {
+                            const val = this.elements.modalInput.value.trim();
+                            if (val) this.modalCallback(val);
+                        }
+                        this.hideModal();
+                    });
+                }
+                if (this.elements.modalInput) {
+                    this.elements.modalInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') this.elements.modalConfirm.click();
+                    });
+                }
+
+
+                // Color Picker Events Removed
+
+                if (this.elements.processAllBtn) {
+                    this.elements.processAllBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.processAllImages();
+                    });
+                }
+
+                // Background Swatch Events Removed
+            },
+
+            showInputModal(title, defaultValue, callback) {
+                this.elements.modalTitle.textContent = title;
+                this.elements.modalInput.value = defaultValue;
+                this.modalCallback = callback;
+                this.elements.modal.classList.remove('hidden');
+                this.elements.modal.classList.add('flex');
+                setTimeout(() => this.elements.modalInput.focus(), 50);
+            },
+
+            hideModal() {
+                this.elements.modal.classList.add('hidden');
+                this.elements.modal.classList.remove('flex');
+                this.modalCallback = null;
+            },
+
+            bindUploadEvents() {
+                const dropZone = this.elements.getDropZone();
+                const fileInput = this.elements.getFileInput();
+                if (!dropZone || !fileInput) return;
+
+                dropZone.addEventListener('click', () => fileInput.click());
+                fileInput.onchange = (e) => {
+                    if (e.target.files.length) this.handleFiles(e.target.files);
+                    fileInput.value = '';
+                };
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+                });
+                dropZone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                    if (e.dataTransfer.files.length) this.handleFiles(e.dataTransfer.files);
+                });
+            },
+
+            exposeGlobalHelpers() {
+                window.removeImage = (id) => this.removeImage(id);
+                window.retryImage = (id) => this.retryImage(id);
+                window.downloadCardAsImage = (id, filename) => this.downloadCardAsImage(id, filename);
+            },
+
+            async downloadCardAsImage(id, filename) {
+                const imgData = this.state.project.images.find(img => img.id === id);
+                if (!imgData) return;
+
+                console.log("Starting Logo Canvas Composition...", imgData);
+
+                // 1. Prepare Resources - 16:9 Ratio
+                const WIDTH = 1600;
+                const HEIGHT = 900;
+
+                // Prefer the processed (transparent) image, fall back to original if needed
+                const logoUrl = imgData.processedSrc || imgData.originalSrc; 
+                
+                const objectUrls = [];
+
+                try {
+                    // --- HELPER: Load Image safely to use in Canvas (Proxy -> Blob -> ImageBitmap/Img) ---
+                    const loadImage = async (url) => {
+                        if (!url) return null;
+                        
+                        let srcToLoad = url;
+                        
+                        let useProxy = false;
+                        if (url.startsWith('http') && !url.includes(window.location.origin)) {
+                            useProxy = true;
+                        }
+
+                        if (useProxy) {
+                             try {
+                                const response = await this.fetchBinaryApi('/api/analyze', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        url: this.state.project ? this.state.project.id : 'proxy-req', 
+                                        request: 'download_image', 
+                                        webData: url
+                                    })
+                                });
+                                const blob = await response.blob();
+                                srcToLoad = URL.createObjectURL(blob);
+                                objectUrls.push(srcToLoad);
+                             } catch (e) {
+                                 console.warn("Proxy load failed, trying direct", e);
+                             }
+                        }
+
+                        return new Promise((resolve, reject) => {
+                            const img = new Image();
+                            img.crossOrigin = "Anonymous";
+                            img.onload = () => resolve(img);
+                            img.onerror = (e) => {
+                                console.error("Failed to load image:", url);
+                                resolve(null);
+                            };
+                            img.src = srcToLoad;
+                        });
+                    };
+
+                    const logoImg = await loadImage(logoUrl);
+
+                    if (!logoImg) {
+                        alert("Failed to load source image. Please try again.");
+                        return;
+                    }
+
+                    // --- CANVAS SETUP ---
+                    const canvas = document.createElement('canvas');
+                    canvas.width = WIDTH;
+                    canvas.height = HEIGHT;
+                    const ctx = canvas.getContext('2d');
+
+                    // --- LAYER 1: Background (White) ---
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                    // --- LAYER 2: Logo (Centered & Contained) ---
+                    // Calculate aspect ratios
+                    const imgRatio = logoImg.width / logoImg.height;
+                    const canvasRatio = WIDTH / HEIGHT;
+                    
+                    let drawW, drawH, drawX, drawY;
+
+                    // Add some padding (e.g., 20% total padding)
+                    const MAX_W = WIDTH * 0.8;
+                    const MAX_H = HEIGHT * 0.8;
+
+                    if (imgRatio > canvasRatio) {
+                        // Image is wider than canvas (relative to height) -> Fit to Width
+                        drawW = MAX_W;
+                        drawH = drawW / imgRatio;
+                    } else {
+                        // Image is taller than canvas -> Fit to Height
+                        drawH = MAX_H;
+                        drawW = drawH * imgRatio;
+                    }
+                    
+                    // Center it
+                    drawX = (WIDTH - drawW) / 2;
+                    drawY = (HEIGHT - drawH) / 2;
+
+                    ctx.drawImage(logoImg, drawX, drawY, drawW, drawH);
+
+                    // --- EXPORT ---
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+
+                } catch (err) {
+                    console.error("Manual Canvas Generation failed:", err);
+                    alert("Failed to generate image. Check console.");
+                } finally {
+                    objectUrls.forEach(u => URL.revokeObjectURL(u));
+                }
+            },
+
+            // --- Storage Logic ---
+            checkStorage() {
+                let data = this.loadData(this.STORAGE_KEY);
+                if (data) {
+                    this.state.project = data.project || null;
+                }
+
+                if(this.state.project === null) {
+                    this.createProject("My First Project", false);
+                }
+
+                this.renderImages();
+                this.updateUI();
+            },
+
+            saveData(key, data) {
+                try {
+                    const serializedData = JSON.stringify(data);
+                    localStorage.setItem(key, serializedData);
+                } catch (error) {
+                    console.error("Error saving data:", error);
+                    if (error.name === 'QuotaExceededError') alert("Storage full!");
+                }
+            },
+
+            loadData(key) {
+                try {
+                    const serializedData = localStorage.getItem(key);
+                    if (serializedData === null) return null;
+                    return JSON.parse(serializedData);
+                } catch (error) {
+                    return null;
+                }
+            },
+
+            saveState() {
+                this.saveData(this.STORAGE_KEY, {
+                    project: this.state.project
+                });
+                console.log('saved');
+            },
+
+            // --- Project Logic ---
+            createProject(title, save = true) {
+                const id = this.getUUID();
+                const newProject = {
+                    id,
+                    title: title || id,
+                    images: []
+                }
+                this.state.project = newProject;
+                if (save) this.saveState();
+                this.renderImages();
+                this.updateUI();
+            },
+
+
+
+            // --- Image Handling Logic ---
+            handleFiles(fileList) {
+                if (!this.state.project) return;
+
+                const files = Array.from(fileList);
+
+                files.forEach(file => {
+                    // 1. Create temporary Blob URL for immediate display
+                    const tempUrl = URL.createObjectURL(file);
+                    const id = this.getUUID();
+                    
+                    const imgData = {
+                        id,
+                        fileName: file.name,
+                        fileSize: file.size,
+                        fileObject: file, // Keep reference for upload
+                        originalSrc: tempUrl, // Temporary display
+                        originalServerUrl: null,
+                        processedSrc: null,
+                        status: 'uploading', // New status
+                        error: null
+                    };
+
+                    this.state.project.images.push(imgData);
+                    // Do NOT save state yet (avoids saving blob URL)
+                    this.appendImageCard(imgData);
+                    this.updateUI();
+
+                    // 2. Trigger background upload
+                    this.uploadImage(file, imgData);
+                });
+            },
+
+            async waitForUpload(imgData) {
+                if (imgData.status !== 'uploading') return;
+                console.log(`Waiting for upload: ${imgData.fileName}`);
+                
+                return new Promise((resolve) => {
+                    const checkInterval = setInterval(() => {
+                        if (imgData.status !== 'uploading') {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 500); // Check every 500ms
+                    
+                    // Timeout after 60 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        if (imgData.status === 'uploading') {
+                            console.warn(`Upload timeout for ${imgData.fileName}`);
+                            imgData.status = 'error'; // Force error state
+                            resolve();
+                        }
+                    }, 60000);
+                });
+            },
+
+            async uploadImage(file, imgData) {
+                try {
+                    console.log(`Uploading ${file.name}...`);
+                    
+                    // Show spinner
+                    const card = document.getElementById(`card-${imgData.id}`);
+                    if (card) {
+                        const overlay = card.querySelector('.upload-overlay');
+                        if (overlay) overlay.classList.add('active');
+                    }
+
+                    // Convert to Base64 for the API
+                    const encodedImage = await this.encodeLocalImage(file);
+                    
+                    // Prepare payload for save_image
+                    const payload = {
+                        data: encodedImage.data,
+                        mimeType: encodedImage.mimeType,
+                        name: file.name.split('.')[0] // Remove extension as saveImage adds it
+                    };
+
+                    const response = await this.fetchApi('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            url: 'upload-action', // Placeholder
+                            request: 'save_image',
+                            webData: JSON.stringify(payload)
+                        })
+                    });
+
+                    if (response && response.url) {
+                        console.log(`Upload successful: ${response.url}`);
+                        
+                        // Update image data with permanent server URL
+                        imgData.originalSrc = response.url;
+                        imgData.originalServerUrl = response.url;
+                        imgData.status = 'idle'; // Ready for processing
+
+                        // Update UI to use new URL
+                        const imgEl = document.getElementById(`img-${imgData.id}`);
+                        if (imgEl) imgEl.src = response.url;
+
+                        // Hide spinner
+                        if (card) {
+                            const overlay = card.querySelector('.upload-overlay');
+                            if (overlay) overlay.classList.remove('active');
+                        }
+
+                        // NOW save state with the URL
+                        this.saveState();
+                        this.updateCardDOM(imgData);
+                    } else {
+                        throw new Error("Server returned no URL.");
+                    }
+
+                } catch (error) {
+                    console.error(`Upload failed for ${file.name}:`, error);
+                    imgData.status = 'error';
+                    imgData.error = "Upload failed";
+                    
+                    // Hide spinner on error
+                    const card = document.getElementById(`card-${imgData.id}`);
+                    if (card) {
+                        const overlay = card.querySelector('.upload-overlay');
+                        if (overlay) overlay.classList.remove('active');
+                    }
+                    this.updateCardDOM(imgData);
+                    this.updateUI(); 
+                }
+            },
+
+            removeImage(id) {
+                if (!this.state.project) return;
+                this.state.project.images = this.state.project.images.filter(img => img.id !== id);
+                this.saveState();
+                const card = document.getElementById(`card-${id}`);
+                if (card) card.remove();
+                this.updateUI();
+            },
+
+            retryImage(id) {
+                if (!this.state.project) return;
+                const imgData = this.state.project.images.find(i => i.id === id);
+                console.log(imgData);
+                if (imgData) this.processSingleImage(imgData);
+            },
+
+            updateUI() {
+                const currentProj = this.state.project;
+                const images = currentProj ? currentProj.images : [];
+                this.elements.processAllBtn.disabled = images.length === 0;
+            },
+
+            // --- API & Processing Utilities ---
+
+            async fetchApi(endpoint, options = {}) {
+                try {
+                    options.credentials = 'include';
+                    const response = await fetch(endpoint, options);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: 'An unknown server error occurred.' }));
+                        throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    console.error(`Failed to fetch ${endpoint}:`, error);
+                    throw error;
+                }
+            },
+
+            async fetchBinaryApi(endpoint, options = {}) {
+               try {
+                   options.credentials = 'include'; 
+                   const response = await fetch(endpoint, options);
+                   if (!response.ok) {
+                       const errorData = await response.json().catch(() => ({
+                           error: 'Server responded with a non-JSON error format.'
+                       }));
+                       throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+                   }
+                   return response;
+
+               } catch (error) {
+                   console.error(`Failed to fetch ${endpoint} (Binary Call):`, error);
+                   throw error;
+               }
+            },
+
+            // 1. Convert URL to Blob
+            async urlStringToBlob(imageUrl) {
+                if (!imageUrl || typeof imageUrl !== 'string') throw new Error('Invalid URL string provided.');
+                try {
+                    const response = await fetch(imageUrl);
+                    if (!response.ok) throw new Error(`Failed to fetch image: Status ${response.status}`);
+                    return await response.blob();
+                } catch (error) {
+                    throw new Error(`Could not process image URL: ${error.message}`);
+                }
+            },
+
+            // 2. Encode Blob/File to Base64 struct
+            async encodeLocalImage(fileObject) {
+                return new Promise((resolve, reject) => {
+                    if (!fileObject) return reject(new Error("No file object provided."));
+                    if (!(fileObject instanceof Blob)) return reject(new TypeError("Invalid input: Expected a File or Blob object."));
+
+                    const mimeType = fileObject.type;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const dataUrl = reader.result;
+                        const base64Index = dataUrl.indexOf(',');
+                        if (base64Index === -1) return reject(new Error("Could not parse file data URL."));
+                        const base64Data = dataUrl.substring(base64Index + 1);
+                        resolve({ data: base64Data, mimeType: mimeType });
+                    };
+                    reader.onerror = (error) => reject(new Error(`Error reading file: ${error.target.error.name}`));
+                    reader.readAsDataURL(fileObject);
+                });
+            },
+
+            // 3. Save Image from URL (fetches, encodes, then sends)
+            async saveImageByUrl(imageUrl) {
+                let newImageData = null;
+                try {
+                    let imageBlob = await this.urlStringToBlob(imageUrl);
+                    newImageData = await this.encodeLocalImage(imageBlob);
+                } catch (error) {
+                    console.error("Image processing error:", error);
+                    throw error;
+                }
+                newImageData['name'] = this.getImageName(imageUrl) || `image-${this.getUUID()}`;
+                console.log("Saving by URL data:", newImageData);
+
+                return await this.fetchApi('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: this.state.project.id,
+                        request: 'save_image',
+                        webData: JSON.stringify(newImageData)
+                    })
+                });
+            },
+
+            // 4. Save Image from Data Object (already encoded)
+            async saveImageByData(imageData, name) {
+                imageData['name'] = name;
+                console.log("Saving by Data:", imageData);
+
+                return await this.fetchApi('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: this.state.project.id,
+                        request: 'save_image',
+                        webData: JSON.stringify(imageData)
+                    })
+                });
+            },
+            
+            // Helper to parse DataURL string to object
+            parseDataUrl(dataUrl) {
+                if (!dataUrl || !dataUrl.startsWith('data:')) return null;
+                const [meta, data] = dataUrl.split(',');
+                const mimeType = meta.split(':')[1].split(';')[0];
+                return { data: data, mimeType: mimeType };
+            },
+
+            // --- Main Processing Logic ---
+
+            async processSingleImage(imgData) {
+                // Wait for upload if still uploading
+                if (imgData.status === 'uploading') {
+                    await this.waitForUpload(imgData);
+                    // Re-check status after wait
+                    if (imgData.status === 'error') {
+                        console.error(`Skipping ${imgData.fileName} due to upload failure.`);
+                        return;
+                    }
+                }
+
+                if (imgData.status === 'processing') return;
+
+                imgData.status = 'processing';
+                imgData.error = null;
+                this.updateCardDOM(imgData);
+
+                try {
+                    // --- STEP 1: RESOLVE/SAVE ORIGINAL IMAGE ---
+                    // We need a server URL for the analysis API. 
+                    // Check if we already have one from a previous attempt.
+                    let currentServerUrl = imgData.originalServerUrl;
+
+                    if (!currentServerUrl) {
+                        let savedOriginalResponse;
+                        const filename = `original_${imgData.id}`;
+                        if (imgData.originalSrc && imgData.originalSrc.startsWith('data:')) {
+                            // Scenario B: Retry after Page Reload
+                            // The File object is lost, but we have the Data URL in memory/storage.
+                            // We MUST parse the string directly; do NOT use encodeLocalImage here.
+                            const parsedData = this.parseDataUrl(imgData.originalSrc);
+                            savedOriginalResponse = await this.saveImageByData(parsedData, filename);
+                        }
+                        else if (imgData.fileObject) {
+                            // Scenario A: Fresh Upload (Best Quality)
+                            // We have the raw File object from the input
+                            const encodedOriginal = await this.encodeLocalImage(imgData.fileObject);
+                            savedOriginalResponse = await this.saveImageByData(encodedOriginal, filename);
+                        }
+                        else {
+                            throw new Error("No valid image source found to upload.");
+                        }
+
+                        // Save this URL so we don't re-upload if we retry again later
+                        currentServerUrl = savedOriginalResponse.url;
+                        imgData.originalServerUrl = currentServerUrl;
+
+                        this.saveState();
+                        console.log("Original Image Saved to Server:", currentServerUrl);
+                    } else {
+                        console.log("Skipping upload, using existing server URL:", currentServerUrl);
+                    }
+
+                    // --- STEP 2: CALL ANALYSIS API ---
+                    const processingOptions = {
+                        imageUrl: currentServerUrl, 
+                    };
+
+                    console.log("Requesting Analysis...", processingOptions);
+
+                    const analysisResponse = await this.fetchApi('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            url: this.state.project.id,
+                            request: 'get_logo',
+                            webData: JSON.stringify(processingOptions) // Pass simple object
+                        })
+                    });
+
+                    // --- STEP 3: SAVE RESULTING IMAGE ---
+                    const resultImageRaw = analysisResponse.logo;
+
+                    console.log("Result Image Raw:", resultImageRaw);
+
+                    if (!resultImageRaw) throw new Error("Server processed the request but returned no image data.");
+
+                    // --- STEP 3.5: REMOVE GREEN SCREEN & SAVE TRANSPARENT ---
+                    const transparentDataUrl = await this.removeGreenScreen(resultImageRaw);
+                    
+                    const transparentImageParsed = this.parseDataUrl(transparentDataUrl);
+                    const savedTransparentResponse = await this.saveImageByData(transparentImageParsed, `processed_${imgData.id}`);
+                    console.log("Transparent Result Saved:", savedTransparentResponse);
+
+                    // --- STEP 4: UPDATE UI ---
+                    imgData.status = 'success';
+                    imgData.processedSrc = savedTransparentResponse.url; // Use the transparent one
+                    imgData.transparentImageServerUrl = savedTransparentResponse.url;
+
+                    this.saveState();
+                    this.updateCardDOM(imgData);
+
+                } catch (err) {
+                    console.error("Processing failed:", err);
+                    imgData.status = 'error';
+                    imgData.error = err.message || "Processing failed";
+
+                    // Save state so we remember the error (and the originalServerUrl if we got that far)
+                    this.saveState();
+                    this.updateCardDOM(imgData);
+                }
+            },
+
+            async processAllImages() {
+                if (!this.state.project) return;
+
+                const btn = this.elements.processAllBtn;
+                btn.disabled = true;
+                btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+
+                // Filter images that need processing (idle or error or uploading)
+                const imagesToProcess = this.state.project.images.filter(img => img.status === 'idle' || img.status === 'error' || img.status === 'uploading');
+
+                if (imagesToProcess.length === 0) {
+                    alert("No images to process.");
+                    this.elements.processAllBtn.disabled = false;
+                    this.elements.processAllBtn.textContent = "Standardize All";
+                    return;
+                }
+
+                const BATCH_SIZE = 3;
+                for (let i = 0; i < imagesToProcess.length; i += BATCH_SIZE) {
+                    const batch = imagesToProcess.slice(i, i + BATCH_SIZE);
+                    await Promise.all(batch.map(img => this.processSingleImage(img)));
+                }
+
+                btn.disabled = false;
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg> Standardize All`;
+            },
+
+            // --- Utilities ---
+            getUUID() {
+                const timeNow = Date.now();
+                const randomPart1 = Math.floor(Math.random() * 0xFFFFFFFFFF).toString(16).padStart(10, '0');
+                const timeHex = timeNow.toString(16).padStart(12, '0');
+                return timeHex.substring(0, 8) + '-' + '4' + randomPart1.substring(0, 3);
+            },
+
+            getImageName(imageUrl) {
+                if (!imageUrl || typeof imageUrl !== 'string') return '';
+                const parts = imageUrl.split('/');
+                let fileName = parts.pop() || '';
+                if (fileName === '') fileName = parts.pop() || '';
+                return fileName.split('?')[0];
+            },
+            
+
+            async removeGreenScreen(imageObj) {
+                console.log("Remove Green Screen Input:", imageObj);
+
+                if (!imageObj || !imageObj.data || !imageObj.mimeType) {
+                    throw new Error("Invalid input for removeGreenScreen. Expected object with {data, mimeType}.");
+                }
+
+                const srcUrl = `data:${imageObj.mimeType};base64,${imageObj.data}`;
+
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous"; 
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        
+                        // Target Color: #00B140 (RGB: 0, 177, 64)
+                        // HSV Calculation for #00B140:
+                        // Max=177(G), Min=0(R), Delta=177
+                        // H = 60 * ((64-0)/177 + 2) = 141.6 deg
+                        // H_norm = 141.6 / 360 = 0.393
+                        const targetHue = 0.393;
+                        
+                        // Tunable Thresholds
+                        const hueThreshold = 0.12; // +/- range around target (0.27 to 0.51)
+                        const satThreshold = 0.15; // Must be somewhat colored
+                        const valThreshold = 0.15; // Must be somewhat bright
+
+                        for (let i = 0; i < data.length; i += 4) {
+                            const r = data[i];
+                            const g = data[i + 1];
+                            const b = data[i + 2];
+
+                            // Convert RGB to HSV
+                            const max = Math.max(r, g, b);
+                            const min = Math.min(r, g, b);
+                            const d = max - min;
+                            let h, s, v = max / 255;
+
+                            if (max === min) {
+                                h = 0;
+                            } else {
+                                switch (max) {
+                                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                                    case g: h = (b - r) / d + 2; break;
+                                    case b: h = (r - g) / d + 4; break;
+                                }
+                                h /= 6;
+                            }
+                            s = max === 0 ? 0 : d / max;
+
+                            // 1. CHROMA KEY MASK
+                            if (Math.abs(h - targetHue) < hueThreshold && s > satThreshold && v > valThreshold) {
+                                
+                                // Calculate distance from ideal key color
+                                const dist = Math.abs(h - targetHue);
+                                
+                                // Alpha Calculation:
+                                // Core range (very close): 100% transparent
+                                // Feather range (edges): Gradient
+                                let alpha = 1;
+
+                                const coreRange = 0.04; // Hard cut
+                                const featherRange = 0.08; // Soft edge
+
+                                if (dist < coreRange && s > 0.30) {
+                                    alpha = 0;
+                                } else if (dist < featherRange) {
+                                    // Linear falloff
+                                    alpha = (dist - coreRange) / (featherRange - coreRange);
+                                    // Smoothstep-like Easing for cleaner edge
+                                    alpha = alpha * alpha * (3 - 2 * alpha);
+                                }
+
+                                // Apply transparency
+                                alpha = Math.max(0, Math.min(1, alpha));
+                                data[i + 3] = Math.floor(alpha * 255);
+                            }
+
+                            // 2. AURA / SPILL REMOVAL (Applied globally to catch fringes)
+                            // Standard Despill: G cannot exceed max(R, B)
+                            // This neutralizes any green tint remaining on the subject's edge
+                            
+                            // Check if this pixel is "Green dominant" relative to target Hue geometry
+                            // Simple check: Is Green the strongest channel?
+                            if (g > r && g > b) {
+                                // "Soft" Spill Removal:
+                                // Limit G to the average of R and B, or Max of R/B
+                                const limit = Math.max(r, b); 
+                                
+                                // Only dampen if it's actually greenish hue logic-wise (0.15 - 0.55) to avoid killing teals/yellows too hard
+                                if (h > 0.15 && h < 0.55) {
+                                     // Reduce Green component to neutral
+                                     data[i + 1] = limit;
+                                }
+                            }
+                        }
+                        
+                        ctx.putImageData(imageData, 0, 0);
+                        resolve(canvas.toDataURL('image/png'));
+                    };
+                    img.onerror = (err) => reject(new Error("Failed to load image for green screen removal: " + err.message));
+                    img.src = srcUrl;
+                });
+            },
+
+
+            // --- Rendering Logic ---
+            renderImages() {
+                const container = this.elements.imageContainer;
+
+                // Static Upload Card HTML
+                const uploadCardHTML = `
+                <div class="drop-zone-holder flex-none w-[320px] h-[426px] snap-center">
+                    <div id="drop-zone" class="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center group">
+                        <input type="file" id="file-input" multiple accept="image/*" class="hidden">
+                        <div class="bg-slate-100 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800">Add Photos</h3>
+                        <p class="text-sm text-slate-500 mt-2">Drag & drop or click to upload</p>
+                    </div>
+                </div>`;
+
+                container.innerHTML = uploadCardHTML;
+                this.bindUploadEvents();
+
+                if (this.state.project && this.state.project.images) {
+                    this.state.project.images.forEach(img => {
+                        this.appendImageCard(img);
+                    });
+                }
+                this.updateUI();
+                this.updateAllImageBackgrounds();
+            },
+
+            appendImageCard(imgData) {
+                const card = document.createElement('div');
+                card.id = `card-${imgData.id}`;
+                card.className = "card-wrapper flex-none snap-center rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col group relative";
+
+                card.innerHTML = `
+                    <div class="image-card relative overflow-hidden">
+                        <div class="background-image-holder"></div>
+                        <div class="background-shadow-holder">
+                          ${imgData.processedSrc ? `<img src="${imgData.processedSrc}" />` : ''}
+                        </div>
+                        <div class="background-dynamic-color"></div>
+                        <img id="img-${imgData.id}" src="${imgData.processedSrc || imgData.originalSrc}" class="object-cover transition-all duration-500" />
+                        
+                        <!-- Upload Spinner -->
+                        <div class="upload-overlay absolute inset-0 bg-white/80 flex items-center justify-center z-30 transition-opacity duration-300 ${imgData.status === 'uploading' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
+                            <div class="spinner w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                        </div>
+
+                        <div id="loading-${imgData.id}" class="absolute inset-0 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-20 ${imgData.status === 'processing' ? 'flex' : 'hidden'}">
+                            <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin mb-3"></div>
+                            <span class="text-white font-medium text-sm">Standardizing...</span>
+                        </div>
+
+                        <div id="error-${imgData.id}" class="absolute inset-0 bg-red-50/90 flex flex-col items-center justify-center z-20 px-4 text-center ${imgData.status === 'error' ? 'flex' : 'hidden'}">
+                            <svg class="w-8 h-8 text-red-500 mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <p class="text-red-800 text-xs mb-2">Failed to process</p>
+                            <button onclick="retryImage('${imgData.id}')" class="px-3 py-1 bg-white border border-red-200 text-red-600 rounded-full text-xs hover:bg-red-50">Retry</button>
+                        </div>
+
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur relative z-10 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                            ${imgData.status === 'success' ? 'Standardized' : 'Original'}
+                        </div>
+                        
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 relative z-10 bg-black/60 backdrop-blur text-white text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${imgData.status === 'success' ? 'block' : 'hidden'}">
+                            Hover to compare
+                        </div>
+
+                        <button onclick="removeImage('${imgData.id}')" class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-slate-500 hover:text-red-500 hover:bg-white transition-colors opacity-0 group-hover:opacity-100 z-30 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="p-4 flex-1 flex items-center justify-between bg-white border-t border-slate-100">
+                        <div class="truncate max-w-[60%]">
+                            <p class="text-sm font-medium text-slate-700 truncate">${imgData.fileName || 'Image'}</p>
+                            <p class="text-xs text-slate-400">${imgData.fileSize ? (imgData.fileSize / 1024).toFixed(0) + ' KB' : ''}</p>
+                        </div>
+                        ${this.renderFooterAction(imgData)}
+                    </div>
+                `;
+
+                if (imgData.status === 'success') {
+                    this.attachHoverEffects(card, imgData);
+                }
+
+                this.elements.imageContainer.appendChild(card);
+            },
+
+            renderFooterAction(imgData) {
+              if (imgData.status === 'success') {
+                  return `
+                      <button onclick="downloadCardAsImage('${imgData.id}', 'standardized-${imgData.fileName || 'image.jpg'}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors" title="Download Combined Image">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      </button>
+                  `;
+              }
+              return `<span class="text-xs text-slate-400  bg-slate-100 px-2 py-1 rounded">Pending</span>`;
+            },
+
+            attachHoverEffects(card, imgData) {
+                const imgEl = card.querySelector(`#img-${imgData.id}`);
+                const relativeContainer = card.querySelector('div.relative');
+                relativeContainer.addEventListener('mouseenter', () => {
+                    imgEl.src = imgData.originalSrc;
+                });
+                relativeContainer.addEventListener('mouseleave', () => {
+                    imgEl.src = imgData.processedSrc;
+                });
+            },
+
+            debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), wait);
+                };
+            },
+
+            updateAllImageBackgrounds() {
+                // Removed
+            },
+
+            updateCardDOM(imgData) {
+                const card = document.getElementById(`card-${imgData.id}`);
+                if (!card) return;
+                const loading = card.querySelector(`#loading-${imgData.id}`);
+                const error = card.querySelector(`#error-${imgData.id}`);
+                const imgEl = card.querySelector(`#img-${imgData.id}`);
+                const uploadOverlay = card.querySelector('.upload-overlay');
+
+                const backgroundShadowHolder = card.querySelector('.background-shadow-holder');
+                
+                console.log(`Updating DOM for ${imgData.id}: status=${imgData.status}`);
+
+                // Always handle upload spinner visibility
+                if (imgData.status === 'uploading') {
+                    if (uploadOverlay) {
+                        uploadOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                        uploadOverlay.classList.add('opacity-100', 'pointer-events-auto');
+                    }
+                } else {
+                    // For any other status (idle, processing, success, error), hide the upload spinner
+                    if (uploadOverlay) {
+                        uploadOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                        uploadOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                }
+
+                if (imgData.status === 'idle') {
+                    // Idle state (uploaded but not processed)
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    error.classList.add('hidden');
+                    error.classList.remove('flex');
+                    imgEl.classList.remove('blur-sm');
+                    // Ensure we show the original (server) URL
+                    if (imgData.originalServerUrl) {
+                        imgEl.src = imgData.originalServerUrl;
+                    }
+                } else if (imgData.status === 'processing') {
+                    loading.classList.remove('hidden');
+                    loading.classList.add('flex');
+                    error.classList.add('hidden');
+                    error.classList.remove('flex');
+                    imgEl.classList.add('blur-sm');
+                } else if (imgData.status === 'success') {
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    imgEl.classList.remove('blur-sm');
+                    imgEl.src = imgData.processedSrc;
+                    
+                    backgroundShadowHolder.innerHTML = imgData.processedSrc ? `<img src="${imgData.processedSrc}" />` : '';
+
+                    const footer = card.lastElementChild;
+                    footer.innerHTML = `
+                        <div class="truncate max-w-[60%]">
+                            <p class="text-sm font-medium text-slate-700 truncate">${imgData.fileName || 'Image'}</p>
+                            <p class="text-xs text-slate-400">${imgData.fileSize ? (imgData.fileSize / 1024).toFixed(0) + ' KB' : ''}</p>
+                        </div>
+                        ${this.renderFooterAction(imgData)}
+                    `;
+                    const label = card.querySelector('.absolute.top-3.left-3');
+                    label.textContent = "Standardized";
+                    const hoverLabel = card.querySelector('.absolute.bottom-3');
+                    hoverLabel.classList.remove('hidden');
+                    hoverLabel.classList.add('block');
+                    this.attachHoverEffects(card, imgData);
+                } else if (imgData.status === 'error') {
+                    loading.classList.add('hidden');
+                    loading.classList.remove('flex');
+                    error.classList.remove('hidden');
+                    error.classList.add('flex');
+                    imgEl.classList.remove('blur-sm');
+                }
+
+
+            },
+            
+            renderSwatches() {
+                // Removed
+            },
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            ImageProcessor.init();
+        });
+    </script>
+</body>
+
+</html>
