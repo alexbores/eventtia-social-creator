@@ -51,7 +51,7 @@
         }
         #image-container .card-wrapper,
         #image-container .drop-zone-holder{
-            width: calc(25% - 20px);
+            width: calc(20% - 20px);
             height: 100%;
         }
         #image-container .image-card{
@@ -168,8 +168,7 @@
         const ImageProcessor = {
             STORAGE_KEY: 'logo_standardizer_data',
             state: {
-                project: null,
-                logoStyle: 'color'
+                project: null
             },
 
             elements: {},
@@ -209,9 +208,11 @@
                 
                 if(this.elements.logoStyleSelect) {
                     this.elements.logoStyleSelect.addEventListener('change', (e) => {
-                        this.state.logoStyle = e.target.value;
-                        this.saveState();
-                        this.applyLogoStyle();
+                        if (this.state.project) {
+                            this.state.project.logoStyle = e.target.value;
+                            this.saveState();
+                            this.applyLogoStyle();
+                        }
                     });
                 }
 
@@ -341,10 +342,8 @@
                     canvas.width = WIDTH;
                     canvas.height = HEIGHT;
                     const ctx = canvas.getContext('2d');
-
-                    // --- LAYER 1: Background (White) ---
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                   
+                   
 
                     // --- LAYER 2: Logo (Centered & Contained) ---
                     // Calculate aspect ratios
@@ -370,6 +369,10 @@
                     // Center it
                     drawX = (WIDTH - drawW) / 2;
                     drawY = (HEIGHT - drawH) / 2;
+                    
+                    if(this.state.project.logoStyle == 'grayscale'){
+                        ctx.filter = 'grayscale(100%)';
+                    }
 
                     ctx.drawImage(logoImg, drawX, drawY, drawW, drawH);
 
@@ -392,7 +395,7 @@
                 let data = this.loadData(this.STORAGE_KEY);
                 if (data) {
                     this.state.project = data.project || null;
-                    this.state.logoStyle = data.logoStyle || 'color';
+                    this.state.project.logoStyle = data.logoStyle || 'color';
                 }
 
                 if(this.state.project === null) {
@@ -400,7 +403,7 @@
                 }
                 
                 if(this.elements.logoStyleSelect) {
-                    this.elements.logoStyleSelect.value = this.state.logoStyle;
+                    this.elements.logoStyleSelect.value = this.state.project.logoStyle;
                 }
 
                 this.renderImages();
@@ -431,7 +434,6 @@
             saveState() {
                 this.saveData(this.STORAGE_KEY, {
                     project: this.state.project,
-                    logoStyle: this.state.logoStyle
                 });
                 console.log('saved');
             },
@@ -442,7 +444,8 @@
                 const newProject = {
                     id,
                     title: title || id,
-                    images: []
+                    images: [],
+                    logoStyle: 'color'
                 }
                 this.state.project = newProject;
                 if (save) this.saveState();
@@ -1032,7 +1035,7 @@
                         <div class="bg-slate-100 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
                             <svg class="w-8 h-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-slate-800">Add Photos</h3>
+                        <h3 class="text-lg font-semibold text-slate-800">Add Logos</h3>
                         <p class="text-sm text-slate-500 mt-2">Drag & drop or click to upload</p>
                     </div>
                 </div>`;
@@ -1046,7 +1049,6 @@
                     });
                 }
                 this.updateUI();
-                this.updateAllImageBackgrounds();
             },
 
             appendImageCard(imgData) {
@@ -1135,9 +1137,6 @@
                 };
             },
 
-            updateAllImageBackgrounds() {
-                // Removed
-            },
 
             updateCardDOM(imgData) {
                 const card = document.getElementById(`card-${imgData.id}`);
@@ -1220,8 +1219,8 @@
             },
 
             applyLogoStyle() {
-                if (this.elements.imageContainer) {
-                    this.elements.imageContainer.dataset.logoStyle = this.state.logoStyle;
+                if (this.elements.imageContainer && this.state.project) {
+                    this.elements.imageContainer.dataset.logoStyle = this.state.project.logoStyle;
                 }
             },
         };

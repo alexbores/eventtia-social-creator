@@ -1426,6 +1426,39 @@
         document.addEventListener('DOMContentLoaded', () => {
             ImageProcessor.init();
         });
+
+
+
+        // Configuration: exact domain of the Parent page
+    const PARENT_ORIGIN = "https://www.eventtia.com";
+
+    function sendHeight() {
+        // Measure the height of the content
+        // We use Math.max to get the largest possible dimension to avoid scrollbars
+        const height = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight
+        );
+
+        // Send the message to the parent
+        window.parent.postMessage({ 
+            type: 'iframe-resize', 
+            height: height 
+        }, PARENT_ORIGIN);
+    }
+
+    // 1. Send immediately on load
+    window.addEventListener('load', sendHeight);
+
+    // 2. Use ResizeObserver to detect dynamic changes (accordions, lazy images, etc.)
+    const resizeObserver = new ResizeObserver(() => {
+        sendHeight();
+    });
+
+    // Observe the body for any size changes
+    resizeObserver.observe(document.body);
     </script>
 </body>
 
